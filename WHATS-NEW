@@ -1,3 +1,7 @@
+== 0.2.1 (2012-01-29) ==
+* (JIRA KRINKLE-6) Use Toolserver Intuition instance to determine <html dir>
+  and <html lang>.
+
 == 0.2 (2012-01-29) ==
 * First published in Krinkle's Toolserver SVN repository under [krinkle]/trunk/common.
   https://svn.toolserver.org/svnroot/krinkle/trunk/common
@@ -9,4 +13,4 @@
 * Added GlobalConfig.
 
 == 0.1 (2011-01-15) ==
-* Initial version
+* Initial version.

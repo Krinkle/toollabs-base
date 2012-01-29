@@ -291,9 +291,11 @@ HTML;
 				;
 
 				header( 'Content-Type: text/html; charset=utf-8' );
+				$contentLanguageCode = !is_null( $kgConf->I18N ) ? $kgConf->I18N->getLang() : 'en-US';
+				$contentLanguageDir = !is_null( $kgConf->I18N ) ? $kgConf->I18N->getDir() : 'ltr';
 				echo <<<HTML
 <!DOCTYPE html>
-<html dir="ltr" lang="en-US">
+<html dir="$contentLanguageDir" lang="$contentLanguageCode">
 
 HTML;
 				echo $innerHTML;

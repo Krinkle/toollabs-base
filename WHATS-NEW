@@ -1,0 +1,12 @@
+== 0.2 (2012-01-29) ==
+* First published in Krinkle's Toolserver SVN repository under [krinkle]/trunk/common.
+  https://svn.toolserver.org/svnroot/krinkle/trunk/common
+
+== 0.1.2 (2011-03-15) ==
+* Added Html, HtmlSelect, Request. Based on MediaWiki.
+
+== 0.1.1 (2011-01-16) ==
+* Added GlobalConfig.
+
+== 0.1 (2011-01-15) ==
+* Initial version

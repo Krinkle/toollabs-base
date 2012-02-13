@@ -207,12 +207,12 @@ class BaseTool {
 		$head = '';
 		if ( is_array( $this->styles ) ) {
 			foreach( $this->styles as $style ) {
-				$head .= '<link type="text/css" rel="stylesheet" href="' . kfEscapeHTML( $style ) . '?v=2"/>' . "\n";
+				$head .= '<link rel="stylesheet" href="' . kfEscapeHTML( $style ) . '?v=2"/>' . "\n";
 			}
 		}
 		if ( is_array( $this->scripts ) ) {
 			foreach( $this->scripts as $script ) {
-				$head .= '<script type="text/javascript" src="' . kfEscapeHTML( $script ) . '"></script>' . "\n";
+				$head .= '<script src="' . kfEscapeHTML( $script ) . '"></script>' . "\n";
 			}
 		}
 		$this->addHeadOut( $head );
@@ -238,12 +238,11 @@ class BaseTool {
 		}
 		$h1_pre = $this->krinklePrefix ? '<a href="' . $kgConf->getRemoteBase() .'"><small>Krinkle</small></a> | ' : '';
 		$body = <<<HTML
+<div id="page-wrap">
 
-	<div id="page-wrap">
-
-		<h1>$h1_pre<a href="{$this->remoteBasePath}">{$titleVal}</a></h1>
-		$myAccount<small><em>$line</em></small>
-		<hr/>
+	<h1>$h1_pre<a href="{$this->remoteBasePath}">{$titleVal}</a></h1>
+	$myAccount<small><em>$line</em></small>
+	<hr/>
 HTML;
 		$this->addOut( $body );
 		$this->bodyClosed = false;
@@ -255,7 +254,7 @@ HTML;
 		if ( $this->bodyClosed === false ) {
 			$body = <<<HTML
 
-	</div>
+</div>
 HTML;
 			$this->addOut( $body );
 			$this->bodyClosed = true;
@@ -283,10 +282,10 @@ HTML;
 					"<head>\n"
 					.	'<meta charset="utf-8">'
 					.	"\n<title>" . $this->headTitle . "</title>\n"
-					.	$this->mainOutput['head']
+					.	trim($this->mainOutput['head'])
 					.	"\n</head>\n"
 					.	"<body>\n"
-					.	$this->mainOutput['body']
+					.	trim($this->mainOutput['body'])
 					.	"\n</body>"
 				;
 

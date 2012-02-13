@@ -507,8 +507,24 @@ function kfGetWikiDataFromDBName( $dbname ) {
 	}
 
 	$dbQuery = " /* LIMIT:15 */
-		SELECT * FROM wiki WHERE dbname='" . mysql_clean( $dbname ) . "'
-		ORDER BY size DESC LIMIT 1;";
+		SELECT
+			dbname,
+			lang,
+			family,
+			domain,
+			size,
+			is_meta,
+			is_closed,
+			is_multilang,
+			is_sensitive,
+			root_category,
+			server,
+			script_path
+		FROM wiki
+		WHERE dbname='" . mysql_clean( $dbname ) . "'
+		ORDER BY size DESC
+		LIMIT 1;
+	";
 	$dbReturn = kfDoSelectQueryRaw( $dbQuery, $connect );
 
 	mysql_close( $connect );
@@ -533,7 +549,8 @@ function wikiDataFromRow( $row ) {
 	return array_merge( (array)$row, array(
 		'wikicode' => substr( $row->dbname, 0, -2 ),
 		'localdomain' => kfStrLastReplace( '.org', '', $row->domain ),
-		'url' => 'http://' . $row->domain,
+		'url' => '//' . $row->domain,
+		'canonical_url' => 'http://' . $row->domain,
 		'apiurl' => 'http://' . $row->domain . $row->script_path . 'api.php',
 	));
 }

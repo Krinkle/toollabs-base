@@ -1,3 +1,9 @@
+== 0.2.2 (2012-02-13) ==
+* (JIRA KRINKLE-8) Output protocol-url and support canonical urls
+  kfGetWikiData functions now return the 'url' property as protocol-relative.
+  A new 'canonical_url' property was added that still contains a full url including protocol
+  (canonical url have the http-protocol, which matches the canonical url WMF uses).
+
 == 0.2.1 (2012-01-29) ==
 * (JIRA KRINKLE-6) Use Toolserver Intuition instance to determine <html dir>
   and <html lang>.

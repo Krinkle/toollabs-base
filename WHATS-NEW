@@ -10,7 +10,9 @@ THIS IS NOT A RELEASE YET
   kfGetWikiData functions now return the 'url' property as protocol-relative.
   A new 'canonical_url' property was added that still contains a full url including protocol
   (canonical url have the http-protocol, which matches the canonical url WMF uses).
-* Deprecated
+* Deprecated GlobalConfig::getDebugMode() in favor of GlobalConfig::isDebugMode()
+* If debug mode is enabled, InitTools sets error_reporting( E_ALL ); and
+  ini_set( 'display_errors', 1 );
 
 == Krinkle BaseTool 0.2 ==
 2012-01-29

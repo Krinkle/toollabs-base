@@ -45,5 +45,11 @@ require_once( __DIR__ . '/GlobalFunctions.php' );
 // Must be after GlobalFunctions
 $kgConf->initConfig();
 
+// Debug
+if ( $kgConf->isDebugMode() ) {
+	error_reporting( E_ALL );
+	ini_set( 'display_errors', 1 );
+}
+
 require_once( __DIR__ . '/BaseTool.php' );
 // $Tool = BaseTool::newFromArray( array( /* ... */ ) );

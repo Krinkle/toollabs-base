@@ -271,7 +271,7 @@ HTML;
 
 		switch( $mode ) {
 			case KR_OUTPUT_BROWSER_HTML5:
-				if ( $kgConf->getDebugMode() ) {
+				if ( $kgConf->isDebugMode() ) {
 					$this->addOut( kfLogFlush( KR_LOG_RETURN ) );
 				}
 				if ( $this->bodyClosed === false ) {

@@ -3,7 +3,7 @@
  * GlobalConfig.php
  * Created on January 16th, 2011
  *
- * @since 0.1.1
+ * @since 0.1
  * @author Krinkle <krinklemail@gmail.com>, 2010 - 2012
  *
  * @package KrinkleToolsCommon
@@ -170,12 +170,19 @@ class GlobalConfig {
 
 
 	/**
-	 * get*- and set* -functions for modifiable members
+	 * Getters and settes for mutable members
 	 * -------------------------------------------------
 	 */
 
 	/**
+	 * Wether debug mode is enabled
+	 * @return bool
+	 */
+	public function isDebugMode() { return (bool)$this->debugMode; }
+
+	/**
 	 * Returns the debug mode
+	 * @deprecated since 0.3: Use isDebugMode() instead.
 	 */
 	public function getDebugMode() { return (bool)$this->debugMode; }
 

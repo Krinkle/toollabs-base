@@ -1,23 +1,27 @@
-== 0.2.2 (2012-02-13) ==
+== Krinkle BaseTool 0.3 ==
+
+THIS IS NOT A RELEASE YET
+
+== Changes since 0.2 ==
+* (JIRA KRINKLE-6) Use Toolserver Intuition instance to determine <html dir>
+  and <html lang>.
+* Droppping default attributes for <link> and <script>. We're using HTML5 structure.
 * (JIRA KRINKLE-8) Output protocol-url and support canonical urls
   kfGetWikiData functions now return the 'url' property as protocol-relative.
   A new 'canonical_url' property was added that still contains a full url including protocol
   (canonical url have the http-protocol, which matches the canonical url WMF uses).
-* Droppping default attributes for <link> and <script>. We're using HTML5 structure.
+* Deprecated
 
-== 0.2.1 (2012-01-29) ==
-* (JIRA KRINKLE-6) Use Toolserver Intuition instance to determine <html dir>
-  and <html lang>.
+== Krinkle BaseTool 0.2 ==
+2012-01-29
 
-== 0.2 (2012-01-29) ==
+=== Changes since 0.1 ===
+* Added GlobalConfig.
+* Added Html, HtmlSelect, Request. Based on MediaWiki.
 * First published in Krinkle's Toolserver SVN repository under [krinkle]/trunk/common.
   https://svn.toolserver.org/svnroot/krinkle/trunk/common
 
-== 0.1.2 (2011-03-15) ==
-* Added Html, HtmlSelect, Request. Based on MediaWiki.
+== Krinkle BaseTool 0.1 ==
+2011-01-15
 
-== 0.1.1 (2011-01-16) ==
-* Added GlobalConfig.
-
-== 0.1 (2011-01-15) ==
-* Initial version.
+Initial version checked into Subversion as of 2011-01-15.

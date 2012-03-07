@@ -6,7 +6,7 @@
  * This file is inspired by MediaWiks' WebRequest class.
  * svn.wikimedia.org/viewvc/mediawiki/trunk/phase3/includes/WebRequest.php?view=markup&pathrev=82694
  *
- * @since 0.1.2
+ * @since 0.1
  * @author Krinkle <krinklemail@gmail.com>, 2011 - 2012
  *
  * @package KrinkleToolsCommon

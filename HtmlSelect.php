@@ -9,7 +9,7 @@
  * Modifications:
  * - Removed dependancy on the Xml class, using Html class instead.
  *
- * @since 0.1.2
+ * @since 0.1
  * @author Krinkle <krinklemail@gmail.com>, 2011 - 2012
  *
  * @package KrinkleToolsCommon

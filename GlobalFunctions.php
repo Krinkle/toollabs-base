@@ -85,6 +85,10 @@ function kfTimeSince( $detail = KR_MICROSECONDS ) {
  * String & integer functions
  * -------------------------------------------------
  */
+function kfEscapeHTML( $str ) {
+	return htmlentities( $str, ENT_QUOTES, 'UTF-8' );
+}
+
 function kfStripStr( $str ) {
 	return htmlspecialchars( addslashes( strip_tags( trim( $str ) ) ) );
 }

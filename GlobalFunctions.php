@@ -184,7 +184,7 @@ function getParamVar( $key, $fallback = '', $map = null ) {
 	if ( is_null( $map ) ) { $map = $_GET; }
 
 	if ( array_key_exists( $key, $map ) ) {
-		if ( strlen( $map[$key] ) ) {
+		if ( isset( $map[$key] ) ) {
 			return strval( $map[$key] );
 		} else {
 			return $fallback;
@@ -567,7 +567,7 @@ function kfSanatizeJsCallback( $str ) {
  * @param $specialFormat string If $format is set to this format this function will not output
  *  anything and return true. This can be used for a GUI front-end.
  */
-function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '', $callback = '', $specialFormat = '' ) {
+function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '', $callback = null, $specialFormat = '' ) {
 
 	if ( $format == $specialFormat ) {
 		return true;
@@ -587,7 +587,7 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 		case 'jsonp':
 
 			// Serve as AJAX object object or JSONP callback
-			if ( empty( $callback ) ) {
+			if ( $callback === null ) {
 				header(' Content-Type: text/javascript; charset=utf-8' );
 				die( json_encode( $data ) );
 			} else {

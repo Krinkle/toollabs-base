@@ -13,6 +13,8 @@ THIS IS NOT A RELEASE YET
 * Deprecated GlobalConfig::getDebugMode() in favor of GlobalConfig::isDebugMode()
 * If debug mode is enabled, InitTools sets error_reporting( E_ALL ); and
   ini_set( 'display_errors', 1 );
+* getParamVar now uses isset() instead of strlen() to decide wether to use the
+  fallback value. So that &foo= will give an empty string as intended.
 
 == Krinkle BaseTool 0.2 ==
 2012-01-29

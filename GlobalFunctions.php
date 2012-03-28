@@ -49,7 +49,7 @@ function kfLogFlush( $echo = KR_LOG_ECHO, $mode = KR_FLUSH_HTMLPRE ) {
 
 	switch( $mode ) {
 		case KR_FLUSH_HTMLPRE:
-			$output = '<pre>' . kfEscapeHTML( $output ) . '</pre>';
+			$output = '<pre>' . htmlspecialchars( $output ) . '</pre>';
 			break;
 		case KR_FLUSH_CLEARTEXT:
 			// Nothing
@@ -85,12 +85,8 @@ function kfTimeSince( $detail = KR_MICROSECONDS ) {
  * String & integer functions
  * -------------------------------------------------
  */
-function kfEscapeHTML( $str ) {
-	return htmlentities( $str, ENT_QUOTES, 'UTF-8' );
-}
-
 function kfStripStr( $str ) {
-	return kfEscapeHTML( addslashes( strip_tags( trim( $str ) ) ) );
+	return htmlspecialchars( addslashes( strip_tags( trim( $str ) ) ) );
 }
 
 function kfEscapeRE( $str ) {
@@ -613,12 +609,14 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 		case 'php_print':
 
 			header( 'Content-Type: text/html; charset=utf-8' );
-			die( '<pre>' . htmlspecialchars( print_r( $data, true ) ) . '</pre>' );
+			echo '<pre>' . htmlspecialchars( print_r( $data, true ) ) . '</pre>';
+			die;
 			break;
 
 		default:
 			header( 'Content-Type: text/plain; charset=utf-8' );
-			die( 'Invalid format.' );
+			echo 'Invalid format.';
+			exit;
 	}
 
 }

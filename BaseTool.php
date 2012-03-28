@@ -207,12 +207,12 @@ class BaseTool {
 		$head = '';
 		if ( is_array( $this->styles ) ) {
 			foreach( $this->styles as $style ) {
-				$head .= '<link rel="stylesheet" href="' . kfEscapeHTML( $style ) . '?v=2"/>' . "\n";
+				$head .= '<link rel="stylesheet" href="' . htmlspecialchars( $style ) . '?v=2"/>' . "\n";
 			}
 		}
 		if ( is_array( $this->scripts ) ) {
 			foreach( $this->scripts as $script ) {
-				$head .= '<script src="' . kfEscapeHTML( $script ) . '"></script>' . "\n";
+				$head .= '<script src="' . htmlspecialchars( $script ) . '"></script>' . "\n";
 			}
 		}
 		$this->addHeadOut( $head );
@@ -221,7 +221,7 @@ class BaseTool {
 
 	public function doStartBodyWrapper() {
 		global $kgConf;
-		$titleVal = kfEscapeHTML( $this->displayTitle );
+		$titleVal = htmlspecialchars( $this->displayTitle );
 
 		if ( !is_null( $kgConf->I18N ) ) {
 

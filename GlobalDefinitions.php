@@ -34,4 +34,5 @@ define( 'KR_KEEP_PRIM_DBCON', false);
 
 
 define( 'KR_TSINT_START_INC', '/home/project/i/n/t/intuition/ToolserverI18N/ToolStart.php' );
-define( 'KR_TSINT_SANDBOX_START_INC', '/home/krinkle/TsIntuition/ToolStart.php' );
+# Sandbox @ KrinkleMac
+define( 'KR_TSINT_SANDBOX_START_INC', '/Users/krinkle/Development/wm-svn/trunk/tools/ToolserverI18N/ToolStart.php' );

@@ -25,7 +25,7 @@ require_once( __DIR__ . '/Request.php' );
 // We don't use $_REQUEST here to avoid interference from cookies...
 $kgReq = new Request( $_POST + $_GET );
 
-function kfIncludeMwHtml(){
+function kfIncludeMwClasses(){
 	global $wgWellFormedXml, $wgHtml5, $wgJsMimeType;
 	$wgWellFormedXml = true;
 	$wgHtml5 = true;
@@ -34,9 +34,11 @@ function kfIncludeMwHtml(){
 	// MediaWiki's /includes/Html.php
 	// Patched to remove the Html::htmlHeader() method.
 	require_once( __DIR__ . '/mw/Html.php' );
+
+	require_once( __DIR__ . '/mw/GitInfo.php' );
 }
 
-kfIncludeMwHtml();
+kfIncludeMwClasses();
 
 require_once( __DIR__ . '/HtmlSelect.php' );
 

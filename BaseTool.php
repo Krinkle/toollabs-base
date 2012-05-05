@@ -37,6 +37,11 @@ class BaseTool {
 	var $sessionNamespace = 'default';
 	var $I18N = null;
 
+	/**
+	 * @var array $sourceInfo Properties:
+	 * issueTrackerUrl, repoViewUrl, repoDir, repoCommitID, repoCommitUrl.
+	 */
+	protected $sourceInfo = null;
 
 	public static function newFromArray( $config ) {
 		global $kgConf;
@@ -46,9 +51,18 @@ class BaseTool {
 		if ( isset( $config['simplePath'] ) ) {
 			$t->remoteBasePath = $kgConf->getRemoteBase() . $config['simplePath'];
 			$t->localBasePath = $kgConf->getLocalHome() . '/public_html' . $config['simplePath'];
-		} else {
-			$t->remoteBasePath = isset( $config['remoteBasePath'] ) ? $config['remoteBasePath'] : '';
-			$t->localBasePath = isset( $config['localBasePath'] ) ? $config['localBasePath'] : '';
+		}
+
+		if ( isset( $config['remoteBasePath'] ) ) {
+			$t->remoteBasePath = $config['remoteBasePath'];
+		}
+
+		if ( isset( $config['localBasePath'] ) ) {
+			$t->localBasePath = $config['localBasePath'];
+		}
+
+		if ( isset( $config['sourceInfo'] ) ) {
+			$this->sourceInfo = $config['sourceInfo'];
 		}
 
 		$kgConf->I18N = isset( $config['I18N'] ) ? $config['I18N'] : null;
@@ -65,6 +79,43 @@ class BaseTool {
 		kfLog( 'New tool "' . $t->displayTitle . '" created!', __METHOD__ );
 
 		return $t;
+	}
+
+	public function setSourceInfoGithub( $owner, $repo ) {
+		$this->sourceInfo = array(
+			'issueTrackerUrl' => "https://github.com/$owner/$repo/issues",
+			'repoViewUrl' => "https://github.com/$owner/$repo",
+		);
+
+		$repoDirGuesses = array(
+			"{$this->localBasePath}",
+			"/home/krinkle/externals/$repo",
+		);
+		foreach ( $repoDirGuesses as $repoDir ) {
+			if ( is_dir( $repoDir ) ) {
+				$gitInfo = new GitInfo( $repoDir );
+				$repoCommitID = $gitInfo->getHeadSHA1();
+				if ( $repoCommitID ) {
+					$this->sourceInfo['repoDir'] = $repoDir;
+					$this->sourceInfo['repoCommitID'] = substr( $repoCommitID, 0, 8 );
+					$this->sourceInfo['repoCommitUrl'] = "https://github.com/$owner/$repo/commit/$repoCommitID";
+				}
+			}
+		}
+	}
+
+	public function getSourceInfo() {
+		$sourceInfo = array(
+			'issueTrackerUrl' => 'https://jira.toolserver.org/browse/KRINKLE',
+			'repoViewUrl' => false,
+			'repoDir' => false,
+			'repoCommitID' => false,
+			'repoCommitUrl' => false,
+		);
+		if ( is_array( $this->sourceInfo ) ) {
+			$sourceInfo = $this->sourceInfo + $sourceInfo;
+		}
+		return $sourceInfo;
 	}
 
 	public function getStyles( $custom = array() ) {
@@ -223,20 +274,57 @@ class BaseTool {
 		global $kgConf;
 		$titleVal = htmlspecialchars( $this->displayTitle );
 
-		if ( !is_null( $kgConf->I18N ) ) {
+		$versionHtml = $this->revisionId;
+		$sourceInfo = $this->getSourceInfo();
 
+		if ( $sourceInfo['repoCommitID'] ) {
+			$sourceVersion = $sourceInfo['repoCommitID'];
+			if ( $sourceInfo['repoCommitUrl'] ) {
+				$sourceVersion = Html::element( 'a', array(
+					'dir' => 'ltr',
+					'lang' => 'en',
+					'href' => $sourceInfo['repoCommitUrl'],
+				), $sourceVersion );
+			} else {
+				$sourceVersion = Html::element( 'span', array(
+					'dir' => 'ltr',
+					'lang' => 'en',
+				), $sourceVersion );
+			}
+			$versionHtml .= " ($sourceVersion)";
+		}
+
+		if ( !is_null( $kgConf->I18N ) ) {
 			$opts = array(
 				'domain' => 'general',
 				'escape' => 'htmlentities',
 				'variables' => array( 1 => $this->revisionDate )
 			);
-			$line = str_replace( '$1', $this->revisionId, $kgConf->I18N->msg( 'toolversionstamp',  $opts ) );
+			$line = str_replace( '$1', $versionHtml, $kgConf->I18N->msg( 'toolversionstamp',  $opts ) );
 			$myAccount = $kgConf->I18N->dashboardBacklink();
 		} else {
-			$line = "Version {$this->revisionId} as uploaded on {$this->revisionDate}";
+			$line = "Version {$versionHtml} as uploaded on {$this->revisionDate}";
 			$myAccount = '';
 		}
+
+		if ( $sourceInfo['issueTrackerUrl'] ) {
+			$line .= ' &bull; ' . Html::element( 'a', array(
+				'dir' => 'ltr',
+				'lang' => 'en',
+				'href' => $sourceInfo['issueTrackerUrl']
+			), 'Issue tracker' );
+		}
+
+		if ( $sourceInfo['repoViewUrl'] ) {
+			$line .= ' &bull; ' . Html::element( 'a', array(
+				'dir' => 'ltr',
+				'lang' => 'en',
+				'href' => $sourceInfo['repoViewUrl']
+			), 'Source code' );
+		}
+
 		$h1_pre = $this->krinklePrefix ? '<a href="' . $kgConf->getRemoteBase() .'"><small>Krinkle</small></a> | ' : '';
+
 		$body = <<<HTML
 <div id="page-wrap">
 

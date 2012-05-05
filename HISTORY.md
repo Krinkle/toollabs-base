@@ -18,6 +18,11 @@ THIS IS NOT A RELEASE YET
   fallback value. So that &foo= will give an empty string as intended.
 * Removed global `kfEscapeHTML()` (was a wrapper for `htmlentities(.., ENT_QUOTES, UTF-8)`).
   No need to entity encode everything, plain calls to `htmlspecialchars()` are good enough.
+* Moved repository from https://svn.toolserver.org/svnroot/krinkle/trunk/common
+  to https://github.com/Krinkle/ts-krinkle-basetool.git
+* Deprecated BaseTool config option 'simplePath'.
+* Added support for LocalConfig.php
+* Moved KR_TSINT_START_INC into LocalConfig.sample.php
 
 ## Krinkle BaseTool 0.2
 2012-01-29

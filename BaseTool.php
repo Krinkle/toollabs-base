@@ -48,6 +48,13 @@ class BaseTool {
 
 		$t = new BaseTool();
 
+		/**
+		 * @deprecated Use remoteBasePath and localBasePath instead:
+		 * <code>
+		 * 'remoteBasePath'   => $kgConf->getRemoteBase() . '/OrphanTalk2/',
+		 * 'localBasePath'    => __DIR__,
+		 * </code>
+		 */
 		if ( isset( $config['simplePath'] ) ) {
 			$t->remoteBasePath = $kgConf->getRemoteBase() . $config['simplePath'];
 			$t->localBasePath = $kgConf->getLocalHome() . '/public_html' . $config['simplePath'];
@@ -99,6 +106,7 @@ class BaseTool {
 					$this->sourceInfo['repoDir'] = $repoDir;
 					$this->sourceInfo['repoCommitID'] = substr( $repoCommitID, 0, 8 );
 					$this->sourceInfo['repoCommitUrl'] = "https://github.com/$owner/$repo/commit/$repoCommitID";
+					break;
 				}
 			}
 		}

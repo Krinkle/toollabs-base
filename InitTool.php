@@ -53,5 +53,9 @@ if ( $kgConf->isDebugMode() ) {
 	ini_set( 'display_errors', 1 );
 }
 
+// Local settings
+if ( file_exists(  __DIR__ . '/LocalConfig.php' ) ) {
+	require_once( __DIR__ . '/LocalConfig.php' );
+}
+
 require_once( __DIR__ . '/BaseTool.php' );
-// $Tool = BaseTool::newFromArray( array( /* ... */ ) );

@@ -49,10 +49,9 @@ class BaseTool {
 		$t = new BaseTool();
 
 		/**
-		 * @deprecated Use remoteBasePath and localBasePath instead:
+		 * @deprecated simplePath: Use remoteBasePath and localBasePath instead:
 		 * <code>
 		 * 'remoteBasePath'   => $kgConf->getRemoteBase() . '/OrphanTalk2/',
-		 * 'localBasePath'    => __DIR__,
 		 * </code>
 		 */
 		if ( isset( $config['simplePath'] ) ) {
@@ -64,6 +63,7 @@ class BaseTool {
 			$t->remoteBasePath = $config['remoteBasePath'];
 		}
 
+		/** @deprecated localBasePath: No longer used */
 		if ( isset( $config['localBasePath'] ) ) {
 			$t->localBasePath = $config['localBasePath'];
 		}
@@ -88,26 +88,19 @@ class BaseTool {
 		return $t;
 	}
 
-	public function setSourceInfoGithub( $owner, $repo ) {
+	public function setSourceInfoGithub( $owner, $repo, $repoDir = null ) {
 		$this->sourceInfo = array(
 			'issueTrackerUrl' => "https://github.com/$owner/$repo/issues",
 			'repoViewUrl' => "https://github.com/$owner/$repo",
 		);
 
-		$repoDirGuesses = array(
-			"{$this->localBasePath}",
-			"/home/krinkle/externals/$repo",
-		);
-		foreach ( $repoDirGuesses as $repoDir ) {
-			if ( is_dir( $repoDir ) ) {
-				$gitInfo = new GitInfo( $repoDir );
-				$repoCommitID = $gitInfo->getHeadSHA1();
-				if ( $repoCommitID ) {
-					$this->sourceInfo['repoDir'] = $repoDir;
-					$this->sourceInfo['repoCommitID'] = substr( $repoCommitID, 0, 8 );
-					$this->sourceInfo['repoCommitUrl'] = "https://github.com/$owner/$repo/commit/$repoCommitID";
-					break;
-				}
+		if ( is_dir( $repoDir ) ) {
+			$gitInfo = new GitInfo( $repoDir );
+			$repoCommitID = $gitInfo->getHeadSHA1();
+			if ( $repoCommitID ) {
+				$this->sourceInfo['repoDir'] = $repoDir;
+				$this->sourceInfo['repoCommitID'] = substr( $repoCommitID, 0, 8 );
+				$this->sourceInfo['repoCommitUrl'] = "https://github.com/$owner/$repo/commit/$repoCommitID";
 			}
 		}
 	}

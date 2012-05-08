@@ -25,34 +25,47 @@ class Request {
 	/* Simple return functions */
 
 	public function getRawVal( $arr, $key, $default ) {
-
-		// If it's set and not an array, return it
-		// Otherwise $default
-		if ( isset( $arr[$key] ) ) {
-			if ( is_array( $arr[$key] ) ) {
-				return $default;
-			} else {
-				return (string)$arr[$key];
-			}
-		} else {
-			return $default;
-		}
+		return isset( $arr[$key] ) ? $arr[$key] : $default;
 	}
 
 	public function getVal( $key, $default = null ) {
-		return $this->getRawVal( $this->raw, $key, $default );
+		$val = $this->getRawVal( $this->raw, $key, $default );
+		if ( is_array( $val ) ) {
+			$val = $default;
+		}
+		if ( is_null( $val ) ) {
+			return null;
+		} else {
+			return (string)$val;
+		}
 	}
 
-	public function exists( $key, $negative = false ) {
-		return array_key_exists( $key, $this->raw ) ? $negative : true;
+	/** @return array|null */
+	public function getArray( $name, $default = null ) {
+		$val = $this->getRawVal( $this->raw, $name, $default );
+		if ( is_null( $val ) ) {
+			return null;
+		} else {
+			return (array)$val;
+		}
 	}
 
+	/** @return bool */
 	public function getBool( $key, $default = false ) {
 		return (bool)$this->getVal( $key, $default );
 	}
 
+	/** @return int */
 	public function getInt( $key, $default = 0 ) {
 		return intval( $this->getVal( $key, $default ) );
+	}
+
+	/**
+	 * Is the key is set, whatever the value. Useful when dealing with HTML checkboxes.
+	 * @return bool
+	 */
+	public function exists( $key, $negative = false ) {
+		return !array_key_exists( $key, $this->raw ) ? $negative : true;
 	}
 
 	public function getFuzzyBool( $key, $default = false ) {
@@ -60,6 +73,11 @@ class Request {
 	}
 
 	/* Other utilities */
+
+	/** @return bool */
+	public function wasPosted() {
+		return isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'POST';
+	}
 
 	public function getQueryString(){
 		return http_build_query( $this->raw );

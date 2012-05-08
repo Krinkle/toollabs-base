@@ -39,7 +39,7 @@ function kfLogFlush( $echo = KR_LOG_ECHO, $mode = KR_FLUSH_HTMLPRE ) {
 
 	// Generate output
 	$output = '------- [ KrinkleTool Runlog | Flush ' . $kgConf->getRunlogFlushCount()
-		. ' @ ' . date( $kgConf->getFullSimpleDatefmt() )
+		. ' @ ' . date( 'r' )
 		. " ]----------\n"
 		. $kgConf->getRunlog()
 		. "\n";
@@ -113,7 +113,7 @@ function is_odd( $num ) {
  */
 function kfMsgBlock( $message /* [, $kind [, $level ] ] */ ) {
 	$class = func_get_args();
-	array_unshift( $class ); // remove $message
+	array_shift( $class ); // remove $message
 	$class[] = 'basetool-msg';
 	$class[] = 'ns';
 	return Html::rawElement( 'div', array( 'class' => implode( ' ', $class ) ), $message );
@@ -703,6 +703,38 @@ function kfGetSvnrev( $path = '' ) {
 	}
 	define ( 'SVN_REVISION', 0);
 	return 0;
+}
+
+function kfShellExec( $cmd ) {
+	$retval = null;
+
+	ob_start();
+	passthru( $cmd, $retval );
+	$output = ob_get_contents();
+	ob_end_clean();
+
+	if ( $retval != 0 ) {
+		return "Command failed:\n$cmd\nReturn: $retval $output";
+	}
+
+	return $output;
+}
+
+function kfEscapeShellArg() {
+	$args = func_get_args();
+	$args = array_map( 'escapeshellarg', $args );
+	return implode( ' ', $args );
+}
+
+/**
+ * @source php.net/filesize#100097
+ */
+function kfFormatBytes( $size, $precision = 2 ) {
+	$units = array( ' B', ' KB', ' MB', ' GB', ' TB' );
+	for ( $i = 0; $size >= 1024 && $i < 4; $i++ ) {
+		$size /= 1024;
+	}
+	return round( $size, 2 ) . $units[$i];
 }
 
 // Untill a better solution exists, call the real api or use raw sql

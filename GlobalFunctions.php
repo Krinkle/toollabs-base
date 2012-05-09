@@ -663,11 +663,11 @@ function kfGetSvnInfo( $path = '' ) {
 		// pre 1.4 svn used xml for this file
 		if ( !is_numeric( trim( $lines[3] ) ) ) {
 			$return = array( 'checkout-rev' => 0 );
-        } else {
-        	$coRev = intval( trim( $lines[3] ) );
-        	$dirRev = intval( trim( $lines[10] ) );
-        	$coUrl = trim( $lines[4] );
-        	$repoUrl = trim( $lines[5] );
+		} else {
+			$coRev = intval( trim( $lines[3] ) );
+			$dirRev = intval( trim( $lines[10] ) );
+			$coUrl = trim( $lines[4] );
+			$repoUrl = trim( $lines[5] );
 			$return = array(
 				'checkout-rev' => $coRev,
 				'checkout-cr-rev' => "http://www.mediawiki.org/wiki/Special:Code/MediaWiki/$coRev",
@@ -678,7 +678,7 @@ function kfGetSvnInfo( $path = '' ) {
 				'directory-up-date' => trim( $lines[9] ),
 				'directory-cr-rev' => "http://www.mediawiki.org/wiki/Special:Code/MediaWiki/$dirRev",
 			);
-        }
+		}
 		define( 'SVN_REVISION', $return['checkout-rev'] );
 		return $return;
 	} else {
@@ -737,6 +737,7 @@ function kfFormatBytes( $size, $precision = 2 ) {
 	return round( $size, 2 ) . $units[$i];
 }
 
+
 // Untill a better solution exists, call the real api or use raw sql
 // Most of the time raw sql will be used (which has downsides)
 // other times, for more complicated stuff (multiple joins, caching, paging,
@@ -749,7 +750,7 @@ function kfFormatBytes( $size, $precision = 2 ) {
  * @param Array $wikiData - all data (dbname, sitename, url, apiurl etc.) for the selected
  *							  wiki (from function kfGetWikiDataFromDBName() ).
  * @param Array $params   - api query (eg. array( 'action' => 'query' etc. ) ).
- * @return Array          - unserialized result of the API.
+ * @return Array  		- unserialized result of the API.
  * @return Boolean false  - ... if something went wrong.
  */
 function kfQueryWMFAPI( $wikiData , $params ) {

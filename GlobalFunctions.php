@@ -579,7 +579,7 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 
 	switch ( $format ) {
 		case 'php':
-			header( 'Content-Type: application/vnd.php.serialized; charset=utf-8' );
+			header( 'Content-Type: application/vnd.php.serialized; charset=utf-8', /*replace=*/true );
 			die( serialize( $data ) );
 			break;
 
@@ -588,10 +588,10 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 
 			// Serve as AJAX object object or JSONP callback
 			if ( $callback === null ) {
-				header(' Content-Type: text/javascript; charset=utf-8' );
+				header(' Content-Type: text/javascript; charset=utf-8', /*replace=*/true );
 				die( json_encode( $data ) );
 			} else {
-				header(' Content-Type: application/json; charset=utf-8' );
+				header(' Content-Type: application/json; charset=utf-8', /*replace=*/true );
 
 				// Sanatize callback
 				$callback = kfSanatizeJsCallback( $callback );
@@ -603,7 +603,7 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 		case 'php_dump':
 
 			// No text/html due to IE7 bug
-			header( 'Content-Type: text/text; charset=utf-8' );
+			header( 'Content-Type: text/text; charset=utf-8', /*replace=*/true );
 			var_dump( $data );
 			die;
 			break;
@@ -612,13 +612,13 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 		case 'print':
 		case 'php_print':
 
-			header( 'Content-Type: text/html; charset=utf-8' );
+			header( 'Content-Type: text/html; charset=utf-8', /*replace=*/true );
 			echo '<pre>' . htmlspecialchars( print_r( $data, true ) ) . '</pre>';
 			die;
 			break;
 
 		default:
-			header( 'Content-Type: text/plain; charset=utf-8' );
+			header( 'Content-Type: text/plain; charset=utf-8', /*replace=*/true );
 			echo 'Invalid format.';
 			exit;
 	}

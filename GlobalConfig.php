@@ -18,8 +18,8 @@ class GlobalConfig {
 	 */
 	var $remoteBase = '//toolserver.org/~krinkle';
 	var $localHome = '/home/krinkle';
-	var $jQueryVersion = '1.5.1';
-	var $jQueryUIVersion = '1.8.11';
+	var $jQueryVersion = '1.7.2';
+	var $jQueryUIVersion = '1.8.19';
 	var $fullSimpleDatefmt = 'Y-m-d H:i:s';
 	var $fullReadableDatefmt = 'l, j F Y H:i:s';
 	var $userAgent = 'KrinkleTools/2.0 (Wikimedia Toolserver; toolserver.org/~krinkle) Contact/krinkle@toolserver.org';
@@ -130,12 +130,11 @@ class GlobalConfig {
 		// Example : //ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js
 		$scripts[] = "//ajax.googleapis.com/ajax/libs/jqueryui/{$this->jQueryUIVersion}/jquery-ui.$suffix";
 
-		// Example : //ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/i18n/jquery-ui-i18n.min.js
-		$scripts[] = "//ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/i18n/jquery-ui-i18n.$suffix";
+		// Example : //ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/i18n/jquery-ui-i18n.min.js
+		$scripts[] = "//ajax.googleapis.com/ajax/libs/jqueryui/{$this->jQueryUIVersion}/i18n/jquery-ui-i18n.$suffix";
 
 		// Example : //ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/themes/smoothness/jquery-ui.css
 		$styles[] = "//ajax.googleapis.com/ajax/libs/jqueryui/{$this->jQueryUIVersion}/themes/smoothness/jquery-ui.css";
-		$styles[] = "//meta.wikimedia.org/w/resources/jquery.ui/themes/vector/jquery.ui.theme.css";
 
 		return array( 'scripts' => $scripts, 'styles' => $styles );
 	}

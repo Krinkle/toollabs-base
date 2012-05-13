@@ -51,8 +51,8 @@ class Request {
 	}
 
 	/** @return bool */
-	public function getBool( $key, $default = false ) {
-		return (bool)$this->getVal( $key, $default );
+	public function getBool( $key, $negative = false ) {
+		return !array_key_exists( $key, $this->raw ) ? $negative : true;
 	}
 
 	/** @return int */
@@ -63,9 +63,10 @@ class Request {
 	/**
 	 * Is the key is set, whatever the value. Useful when dealing with HTML checkboxes.
 	 * @return bool
+	 * @deprecated
 	 */
 	public function exists( $key, $negative = false ) {
-		return !array_key_exists( $key, $this->raw ) ? $negative : true;
+		return $this->getBool( $key, $negative );
 	}
 
 	public function getFuzzyBool( $key, $default = false ) {

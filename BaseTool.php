@@ -31,6 +31,7 @@ class BaseTool {
 	var $revisionDate = '1970-01-01';
 	var $styles = array();
 	var $scripts = array();
+	var $scriptsHead = array();
 	var $mainOutput = array( 'head' => '', 'body' => '' );
 	var $headTitle = '';
 	var $bodyClosed = null;
@@ -79,8 +80,32 @@ class BaseTool {
 		$t->sessionNamespace = isset( $config['sessionNamespace'] ) ? $config['sessionNamespace'] : 'default';
 		$t->revisionId = isset( $config['revisionId'] ) ? $config['revisionId'] : '';
 		$t->revisionDate = isset( $config['revisionDate'] ) ? $config['revisionDate'] : '';
-		$t->styles = !empty( $config['styles'] ) ? $t->getStyles( $config['styles'] ) : $t->getStyles();
-		$t->scripts = !empty( $config['scripts'] ) ? $t->getScripts( $config['scripts'] ) : $t->getScripts();
+
+		$t->styles = array(
+			'//toolserver.org/~krinkle/main.css',
+		);
+		$t->scripts = array(
+			'//toolserver.org/~krinkle/main.js',
+		);
+		$t->scriptsHead = array(
+			$kgConf->getJQueryURI()
+		);
+
+		if ( !empty( $config['styles'] ) ) {
+			$t->styles = $t->expandUrlArray(
+				array_merge( $t->styles, $config['styles'] )
+			);
+		}
+		if ( !empty( $config['scripts'] ) ) {
+			$t->scripts = $t->expandUrlArray(
+				array_merge( $t->scripts, $config['scripts'] )
+			);
+		}
+		if ( !empty( $config['scriptsHead'] ) ) {
+			$t->scriptsHead = $t->expandUrlArray(
+				array_merge( $t->scriptsHead, $config['scriptsHead'] )
+			);
+		}
 
 
 		kfLog( 'New tool "' . $t->displayTitle . '" created!', __METHOD__ );
@@ -119,33 +144,24 @@ class BaseTool {
 		return $sourceInfo;
 	}
 
-	public function getStyles( $custom = array() ) {
-		global $kgConf;
+	public function expandUrlArray( $items = array() ) {
+		$expanded = array();
 
-		$styles = array(
-			$kgConf->getRemoteBase() . '/main.css',
-		);
-
-		foreach ( $custom as $style ) {
-			$styles[] = $this->expandURL( $style );
+		foreach ( $items as $item ) {
+			$expanded[] = $this->expandURL( $item );
 		}
 
-		return $styles;
+		return $expanded;
 	}
 
+	/** @deprecated */
+	public function getStyles( $custom = array() ) {
+		return $this->expandUrlArray( $custom );
+	}
+
+	/** @deprecated */
 	public function getScripts( $custom = array() ) {
-		global $kgConf;
-
-		$scripts = array(
-			$kgConf->getJQueryURI(),
-			$kgConf->getRemoteBase() . '/main.js',
-		);
-
-		foreach ( $custom as $script ) {
-			$scripts[] = $this->expandURL( $script );
-		}
-
-		return $scripts;
+		return $this->expandUrlArray( $custom );
 	}
 
 	public function addStyles( $style ) {
@@ -257,16 +273,6 @@ class BaseTool {
 	public function doHtmlHead() {
 		$this->headTitle = ( $this->krinklePrefix ? 'Krinkle | ' : '' ) . $this->displayTitle;
 		$head = '';
-		if ( is_array( $this->styles ) ) {
-			foreach( $this->styles as $style ) {
-				$head .= '<link rel="stylesheet" href="' . htmlspecialchars( $style ) . '?v=2"/>' . "\n";
-			}
-		}
-		if ( is_array( $this->scripts ) ) {
-			foreach( $this->scripts as $script ) {
-				$head .= '<script src="' . htmlspecialchars( $script ) . '"></script>' . "\n";
-			}
-		}
 		$this->addHeadOut( $head );
 		return true;
 	}
@@ -366,6 +372,40 @@ HTML;
 				if ( $this->bodyClosed === false ) {
 					$this->doCloseBodyWrapper();
 				}
+
+				// Stylesheets
+				$resourcesHead = '';
+				if ( is_array( $this->styles ) ) {
+					foreach( $this->styles as $style ) {
+						$resourcesHead .= '<link rel="stylesheet" href="' . htmlspecialchars( $style ) . '"/>' . "\n";
+					}
+				}
+				if ( is_array( $this->scriptsHead ) ) {
+					foreach( $this->scriptsHead as $script ) {
+						$resourcesHead .= '<script src="' . htmlspecialchars( $script ) . '"></script>' . "\n";
+					}
+				}
+				$this->addHeadOut( $resourcesHead );
+
+				// window.KRINKLE
+				$this->addHeadOut(
+					'<script>'
+					. 'window.KRINKLE = ' . json_encode(array(
+						'baseTool' => array(
+							'basePath' => $this->remoteBasePath,
+						),
+					))
+					. ';</script>'
+				);
+
+				// Scripts
+				$resourcesBody = '';
+				if ( is_array( $this->scripts ) ) {
+					foreach( $this->scripts as $script ) {
+						$resourcesBody .= '<script src="' . htmlspecialchars( $script ) . '"></script>' . "\n";
+					}
+				}
+				$this->addOut( $resourcesBody );
 
 				$innerHTML =
 					"<head>\n"

@@ -546,6 +546,9 @@ function kfGetWikiDataFromDBName( $dbname ) {
  * @param $row The row from mysql_fetch_object() of a query like "SELECT * FROM toolserver.wiki WHERE .."
  */
 function wikiDataFromRow( $row ) {
+	if ( !isset( $row->domain ) && isset( $row->lang ) && isset( $row->family ) ) {
+		$row->domain = "{$row->lang}.{$row->family}.org";
+	}
 	return array_merge( (array)$row, array(
 		'wikicode' => substr( $row->dbname, 0, -2 ),
 		'localdomain' => kfStrLastReplace( '.org', '', $row->domain ),

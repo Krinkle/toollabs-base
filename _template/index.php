@@ -1,7 +1,7 @@
 <?php
 /**
  * _B_L_A_N_K_
- * Created on May 2, 2012
+ * Created on January 1, 2012
  *
  * @author Timo Tijhof <krinklemail@gmail.com>, 2012
  * @license CC-BY-SA 3.0 Unported: creativecommons.org/licenses/by/3.0/
@@ -17,12 +17,10 @@ require_once( KR_TSINT_START_INC );
 
 // Class for this tool
 #require_once( __DIR__ . '/class.php' );
-# class KrBLANK extends KrToolBaseClass {}
 #$kgTool = new KrBLANK();
 
 // Local settings
 #require_once( __DIR__ . '/local.php' );
-# $kgTool->setSettings(array( ));
 
 $I18N = new TsIntuition( '_B_L_A_N_K_' );
 
@@ -62,7 +60,7 @@ $kgBaseTool->doStartBodyWrapper();
  * -------------------------------------------------
  */
 $kgBaseTool->addOut( 'Hello world' );
-$kgBaseTool->addOut( '<script>$(document).ready(function () {
+$kgBaseTool->addOut( '<script>jQuery(document).ready(function ($) {
 	$("body").append( "<em>JavaScript is working</em>" );
 } );</script>' );
 
@@ -73,4 +71,3 @@ $kgBaseTool->addOut( '<script>$(document).ready(function () {
  */
 #kfCloseAllConnections();
 $kgBaseTool->flushMainOutput();
-

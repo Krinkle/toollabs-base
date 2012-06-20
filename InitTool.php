@@ -59,3 +59,5 @@ if ( file_exists(  __DIR__ . '/LocalConfig.php' ) ) {
 }
 
 require_once( __DIR__ . '/BaseTool.php' );
+
+require_once( __DIR__ . '/KrToolBaseClass.php' );

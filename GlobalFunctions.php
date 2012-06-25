@@ -418,7 +418,7 @@ function kfGetAllWikiSelect( $options = array(), $sqlToolserverConnect = null ) 
 
 	// Get wikis
 	mysql_select_db( 'toolserver', $sqlToolserverConnect );
-	$dbResults = kfDoSelectQueryRaw( "SELECT * FROM wiki WHERE is_closed = 0", $sqlToolserverConnect );
+	$dbResults = kfDoSelectQueryRaw( 'SELECT * FROM wiki WHERE is_closed = 0', $sqlToolserverConnect );
 
 	// Don't close connections not created by this function
 	if ( $isTemp ) {
@@ -636,7 +636,7 @@ function kfApiFormatHTML( $text ) {
 	$text = htmlspecialchars( $text );
 
 	// encode all comments or tags as safe blue strings
-	$text = preg_replace( '/\&lt;(!--.*?--|.*?)\&gt;/', '<span style="color:blue;">&lt;\1&gt;</span>', $text );
+	$text = preg_replace( '/\&lt;(!--.*?--|.*?)\&gt;/', '<span style="color: blue;">&lt;\1&gt;</span>', $text );
 
 	/**
 	 * Temporary fix for bad links in help messages. As a special case,
@@ -704,8 +704,58 @@ function kfGetSvnrev( $path = '' ) {
 	if ( kfGetSvnInfo( $path ) && defined('SVN_REVISION') ) {
 		return SVN_VERSION;
 	}
-	define ( 'SVN_REVISION', 0);
+	define( 'SVN_REVISION', 0);
 	return 0;
+}
+
+/**
+ * @param string $path (optional) Full path to where the git repository is.
+ * By default it will assume the current directory is already the git repository.
+ *
+ * @param string $branch (optional) Branch to reset to, defaults to 'master'.
+ * Set to null to not switch branches (only cleanup and reset to HEAD).
+ *
+ * @param bool $mayUnlock (optional) Whether or not it may remove
+ * an index.lock file if that is blocking the reset.
+ *
+ * @return bool|string: Boolean false on failure, or a string
+ * with the output of the commands.
+ */
+function kfGitCleanReset( $otherPath = null, $branch = 'master', $mayUnlock = false ) {
+	$orgPath = __DIR__;
+
+	if ( $otherPath ) {
+		if ( !is_dir( $otherPath ) ) {
+			return false;
+		}
+
+		// Navigate to the repo so we can execute the git commands
+		chdir( $path );
+	}
+
+	$out = '';
+	$cmds = array(
+		'git clean -d -x --force',
+		'git reset --hard HEAD',
+	);
+	if ( $mayUnlock ) {
+		array_unshift( $cmds, 'rm -f .git/index.lock' );
+	}
+	if ( $branch ) {
+		array_push( $cmds, 'git checkout ' . kfEscapeShellArg( $branch ) );
+	}
+
+	foreach ( $cmds as $cmd ) {
+		$out .= "$ $cmd\n";
+		$out .= kfShellExec( $cmd ) . "\n";
+	}
+
+	// Go back to the original dir if we changed it
+	if ( $otherPath ) {
+		chdir( $orgPath );
+	}
+
+	return $out;
 }
 
 function kfShellExec( $cmd ) {

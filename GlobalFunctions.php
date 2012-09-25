@@ -345,7 +345,8 @@ function kfDoSelectQueryRaw( $query, $connect = null ) {
 	if ( !$connect ) {
 		return false;
 	}
-	$return = mysql_query( $query, $connect );
+	$fnname = __FUNCTION__;
+	$return = mysql_query( "/* $fnname */ $query", $connect );
 	if ( $return ) {
 		return mysql_object_all( $return );
 	} else {

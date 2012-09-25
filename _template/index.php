@@ -3,6 +3,7 @@
  * _B_L_A_N_K_
  * Created on January 1, 2012
  *
+ * @package ts-krinkle-_B_L_A_N_K_
  * @author Timo Tijhof <krinklemail@gmail.com>, 2012
  * @license CC-BY-SA 3.0 Unported: creativecommons.org/licenses/by/3.0/
  */

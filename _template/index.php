@@ -34,7 +34,7 @@ $toolConfig = array(
 );
 
 $kgBaseTool = BaseTool::newFromArray( $toolConfig );
-#$kgBaseTool->setSourceInfoGithub( 'Krinkle', 'ts-krinkle-_B_L_A_N_K_' );
+#$kgBaseTool->setSourceInfoGithub( 'Krinkle', 'ts-krinkle-_B_L_A_N_K_', __DIR__ );
 
 $kgBaseTool->doHtmlHead();
 $kgBaseTool->doStartBodyWrapper();

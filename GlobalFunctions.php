@@ -591,14 +591,16 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 
 			// Serve as AJAX object object or JSONP callback
 			if ( $callback === null ) {
-				header(' Content-Type: text/javascript; charset=utf-8', /*replace=*/true );
-				die( json_encode( $data ) );
+				header( 'Content-Type: text/javascript; charset=utf-8', /*replace=*/true );
+				echo json_encode( $data );
+				die;
 			} else {
-				header(' Content-Type: application/json; charset=utf-8', /*replace=*/true );
+				header( 'Content-Type: application/json; charset=utf-8', /*replace=*/true );
 
 				// Sanatize callback
 				$callback = kfSanatizeJsCallback( $callback );
-				die( $callback . '(' . json_encode( $data ) .')' );
+				echo $callback . '(' . json_encode( $data ) .')';
+				die;
 			}
 			break;
 

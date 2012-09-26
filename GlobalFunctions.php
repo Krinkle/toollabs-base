@@ -335,22 +335,30 @@ function kfConnectToolserverDB() {
 	return $kgConf->setDbConnect( kfConnectRRServerByHostname( 'sql.toolserver.org', 'toolserver' ), 'sql.toolserver.org' );
 }
 
-// @param $query String: A SELECT query string
-// @return array of objects from the result
-function kfDoSelectQueryRaw( $query, $connect = null ) {
+/**
+ * @param $query string: A SELECT query string
+ * @param $connect [optional]
+ * @param $origin [optional]
+ * @return Array of objects from the result
+ */
+function kfDoSelectQueryRaw( $query, $connect = null, $origin = null ) {
 	global $kgConf;
-	if ( is_null( $connect ) ) {
+
+	if ( is_null( $connect ) || is_string( $connect ) ) {
+		$origin = $connect ? $connect : __FUNCTION__;
+		$origin .= "@{$kgConf->dbConnectHostname}";
 		$connect = $kgConf->getDbConnect();
+	} else {
+		$origin = $origin ? $origin : __FUNCTION__;
 	}
 	if ( !$connect ) {
 		return false;
 	}
-	$fnname = __FUNCTION__;
-	$return = mysql_query( "/* $fnname */ $query", $connect );
+	$return = mysql_query( "/* $origin */ $query", $connect );
 	if ( $return ) {
 		return mysql_object_all( $return );
 	} else {
-		kfLog( $query, __FUNCTION__ );
+		kfLog( $query, $origin );
 		return mysql_object_all( $return );
 	}
 }
@@ -412,6 +420,7 @@ function kfGetAllWikiSelect( $options = array(), $sqlToolserverConnect = null ) 
 	$defaultOptions = array(
 		'withLabel' => true,
 		'name' => 'wikidb',
+		'id' => 'wikidb',
 		'current' => '',
 		'exclude' => array(),
 	);
@@ -432,9 +441,9 @@ function kfGetAllWikiSelect( $options = array(), $sqlToolserverConnect = null ) 
 
 	// Messages
 	if ( !is_null( $kgConf->I18N ) ) {
-		$selectWiki = _html('alws-selectwiki', 'krinkle');
-		$mostUsed = _html('alws-group-mustused', 'krinkle');
-		$allWikisAZ = _html('alws-group-allaz', 'krinkle');
+		$selectWiki = _html( 'alws-selectwiki', 'krinkle' );
+		$mostUsed = _html( 'alws-group-mustused', 'krinkle' );
+		$allWikisAZ = _html( 'alws-group-allaz', 'krinkle' );
 	} else {
 		$selectWiki = '(select wiki)';
 		$mostUsed = 'Most used wikis';
@@ -443,7 +452,7 @@ function kfGetAllWikiSelect( $options = array(), $sqlToolserverConnect = null ) 
 
 	// Spit it out
 	$html = Html::openElement( 'select' );
-	$html = '<select id="' . $options['name'] . '" name="' . $options['name'] . '"><option value="">' . $selectWiki . '</option>';
+	$html = '<select id="' . $options['id'] . '" name="' . $options['name'] . '"><option value="">' . $selectWiki . '</option>';
 	$outputA = '';
 	$outputB = '';
 	$selectAttr = ' selected="selected"';
@@ -471,9 +480,9 @@ function kfGetAllWikiSelect( $options = array(), $sqlToolserverConnect = null ) 
 	$html .= '</select>';
 	if ( $options['withLabel'] ) {
 		if ( !is_null( $kgConf->I18N ) ) {
-			$html = Html::element( 'label', array( 'for' => $options['name'] ), _( 'alws-label', 'krinkle' ) ) . $html;
+			$html = Html::element( 'label', array( 'for' => $options['id'] ), _( 'alws-label', 'krinkle' ) ) . $html;
 		} else {
-			$html = Html::element( 'label', array( 'for' => $options['name'] ), 'Wikis' ) . $html;
+			$html = Html::element( 'label', array( 'for' => $options['id'] ), 'Wikis' ) . $html;
 		}
 	}
 	return $html;
@@ -712,40 +721,37 @@ function kfGetSvnrev( $path = '' ) {
 }
 
 /**
- * @param string $path (optional) Full path to where the git repository is.
- * By default it will assume the current directory is already the git repository.
- *
- * @param string $branch (optional) Branch to reset to, defaults to 'master'.
- * Set to null to not switch branches (only cleanup and reset to HEAD).
- *
- * @param bool $mayUnlock (optional) Whether or not it may remove
- * an index.lock file if that is blocking the reset.
+ * @param Array $options (optional):
+ * - string dir: Full path to where the git repository is.
+ *    By default it will assume the current directory is already the git repository.
+ * - string checkout: Will be checked out and reset to its HEAD. Otherwise stays in
+ *    the current branch and resets to its head.
+ * - unlock: Whether or not it should ensure there is no lock.
  *
  * @return bool|string: Boolean false on failure, or a string
  * with the output of the commands.
  */
-function kfGitCleanReset( $otherPath = null, $branch = 'master', $mayUnlock = false ) {
+function kfGitCleanReset( $options = array() ) {
 	$orgPath = __DIR__;
 
-	if ( $otherPath ) {
-		if ( !is_dir( $otherPath ) ) {
+	if ( isset( $options['dir'] ) ) {
+		if ( !is_dir( $options['dir'] ) ) {
 			return false;
 		}
 
 		// Navigate to the repo so we can execute the git commands
-		chdir( $path );
+		chdir( $options['dir'] );
 	}
 
 	$out = '';
-	$cmds = array(
-		'git clean -d -x --force',
-		'git reset --hard HEAD',
-	);
-	if ( $mayUnlock ) {
-		array_unshift( $cmds, 'rm -f .git/index.lock' );
+	$cmds = array();
+	if ( isset( $options['unlock'] ) && $options['unlock'] ) {
+		$cmds[] = 'rm -f .git/index.lock';
 	}
-	if ( $branch ) {
-		array_push( $cmds, 'git checkout ' . kfEscapeShellArg( $branch ) );
+	$cmds[] = 'git clean -d -x --force -q';
+	$cmds[] = 'git reset --hard HEAD -q';
+	if ( isset( $options['checkout'] ) ) {
+		$cmds[] = 'git checkout ' . kfEscapeShellArg( $options['checkout'] ) . ' -q';
 	}
 
 	foreach ( $cmds as $cmd ) {
@@ -754,7 +760,7 @@ function kfGitCleanReset( $otherPath = null, $branch = 'master', $mayUnlock = fa
 	}
 
 	// Go back to the original dir if we changed it
-	if ( $otherPath ) {
+	if ( isset( $options['dir'] ) ) {
 		chdir( $orgPath );
 	}
 

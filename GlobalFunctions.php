@@ -24,11 +24,14 @@ if ( !is_object( $kgConf ) ) {
 function kfLog( $msg = '', $current = '', $echo = KR_LOG_RETURN ) {
 	global $kgConf;
 
-	$msg = number_format( kfTimeSince( KR_MICROSECONDS ), 7 ) . ': ' . $msg;
+	$msg =
+		number_format( kfTimeSince( KR_MICROSECONDS ), 7 ) . ': '
+		. $current . '> '
+		. $msg;
 	if ( $echo == KR_LOG_ECHO ) {
 		echo $msg;
 	}
-	return $kgConf->setRunlog( $current . '> ' . $msg . "\n" . $kgConf->getRunlog() );
+	return $kgConf->setRunlog( $msg . "\n" . $kgConf->getRunlog() );
 }
 
 // @param $echo Boolean: KR_LOG_ECHO or KR_LOG_RETURN
@@ -245,7 +248,8 @@ function kfDbPassword(){
 // Get an array of objects for all results from the mysql_query() call
 function mysql_object_all( $result ) {
 	$all = array();
-	while ( $all[] = mysql_fetch_object($result) ){ }
+	while ( $all[] = mysql_fetch_object($result) ) {
+	}
 	unset( $all[count( $all )-1] );
 	return $all;
 }
@@ -345,21 +349,23 @@ function kfDoSelectQueryRaw( $query, $connect = null, $origin = null ) {
 	global $kgConf;
 
 	if ( is_null( $connect ) || is_string( $connect ) ) {
-		$origin = $connect ? $connect : __FUNCTION__;
+		$origin = is_string( $connect ) ? $connect : __FUNCTION__;
 		$origin .= "@{$kgConf->dbConnectHostname}";
 		$connect = $kgConf->getDbConnect();
 	} else {
-		$origin = $origin ? $origin : __FUNCTION__;
+		$origin = is_string( $origin ) ? $origin : __FUNCTION__;
 	}
 	if ( !$connect ) {
 		return false;
 	}
-	$return = mysql_query( "/* $origin */ $query", $connect );
-	if ( $return ) {
-		return mysql_object_all( $return );
+	$result = mysql_query( "/* $origin */ $query", $connect );
+	if ( $result ) {
+		$rows = mysql_object_all( $result );
+		mysql_free_result( $result );
+		return $rows;
 	} else {
-		kfLog( $query, $origin );
-		return mysql_object_all( $return );
+		kfLog( mysql_error() . "\nQuery:\n" . $query, $origin );
+		return array();
 	}
 }
 

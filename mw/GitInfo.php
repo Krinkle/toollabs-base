@@ -5,6 +5,21 @@
  * of anyone working on large branches in git to setup config that show up only
  * when specific branches are currently checked out.
  *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ * http://www.gnu.org/copyleft/gpl.html
+ *
  * @file
  */
 
@@ -26,10 +41,18 @@ class GitInfo {
 	private static $viewers = false;
 
 	/**
-	 * @param $dir string The root directory of the repo where the .git dir can be found
+	 * @param string $dir The root directory of the repo where the .git dir can be found
 	 */
 	public function __construct( $dir ) {
-		$this->basedir = "{$dir}/.git/";
+		$this->basedir = "{$dir}/.git";
+		if ( is_readable( $this->basedir ) && !is_dir( $this->basedir ) ) {
+			$GITfile = file_get_contents( $this->basedir );
+			if ( strlen( $GITfile ) > 8 && substr( $GITfile, 0, 8 ) === 'gitdir: ' ) {
+				$path = rtrim( substr( $GITfile, 8 ), "\r\n" );
+				$isAbsolute = $path[0] === '/' || substr( $path, 1, 1 ) === ':';
+				$this->basedir = $isAbsolute ? $path : "{$dir}/{$path}";
+			}
+		}
 	}
 
 	/**
@@ -47,7 +70,7 @@ class GitInfo {
 	/**
 	 * Check if a string looks like a hex encoded SHA1 hash
 	 *
-	 * @param $str string The string to check
+	 * @param string $str The string to check
 	 * @return bool Whether or not the string looks like a SHA1
 	 */
 	public static function isSHA1( $str ) {
@@ -87,7 +110,7 @@ class GitInfo {
 		}
 
 		// If not a SHA1 it may be a ref:
-		$REFfile = "{$this->basedir}{$HEAD}";
+		$REFfile = "{$this->basedir}/{$HEAD}";
 		if ( !is_readable( $REFfile ) ) {
 			return false;
 		}
@@ -187,20 +210,10 @@ class GitInfo {
 	 * @return array
 	 */
 	protected static function getViewers() {
+		global $wgGitRepositoryViewers;
+
 		if( self::$viewers === false ) {
-
-			// Map of repo URLs to viewer URLs.
-			//
-			// Key is a pattern passed to preg_match() and preg_replace(),
-			// without the delimiters (which are #) and must match the whole URL.
-			// The value is the replacement for the key (it can contain $1, etc.)
-			// %h will be replaced by the short SHA-1 (7 first chars) and %H by the
-			// full SHA-1 of the HEAD revision.
-			self::$viewers = array(
-				'https://gerrit.wikimedia.org/r/p/(.*)' => 'https://gerrit.wikimedia.org/r/gitweb?p=$1;h=%H',
-				'ssh://(?:[a-z0-9_]+@)?gerrit.wikimedia.org:29418/(.*)' => 'https://gerrit.wikimedia.org/r/gitweb?p=$1;h=%H',
-			);
-
+			self::$viewers = $wgGitRepositoryViewers;
 			wfRunHooks( 'GitViewers', array( &self::$viewers ) );
 		}
 

@@ -82,10 +82,10 @@ class BaseTool {
 		$t->revisionDate = isset( $config['revisionDate'] ) ? $config['revisionDate'] : '';
 
 		$t->styles = array(
-			'//toolserver.org/~krinkle/main.css',
+			$kgConf->remoteBase . '/main.css',
 		);
 		$t->scripts = array(
-			'//toolserver.org/~krinkle/main.js',
+			$kgConf->remoteBase . '/main.js',
 		);
 		$t->scriptsHead = array(
 			$kgConf->getJQueryURI()

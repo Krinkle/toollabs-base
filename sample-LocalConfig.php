@@ -6,4 +6,4 @@
  */
 
 // Localization
-define( 'KR_TSINT_START_INC', '/home/project/i/n/t/intuition/ToolserverI18N/ToolStart.php' );
+define( 'KR_TSINT_START_INC', dirname( __DIR__ ) . '/TsIntuition/ToolStart.php' );

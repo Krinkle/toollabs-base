@@ -607,11 +607,11 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 
 			// Serve as AJAX object object or JSONP callback
 			if ( $callback === null ) {
-				header( 'Content-Type: text/javascript; charset=utf-8', /*replace=*/true );
+				header( 'Content-Type: application/json; charset=utf-8', /*replace=*/true );
 				echo json_encode( $data );
 				die;
 			} else {
-				header( 'Content-Type: application/json; charset=utf-8', /*replace=*/true );
+				header( 'Content-Type: text/javascript; charset=utf-8', /*replace=*/true );
 
 				// Sanatize callback
 				$callback = kfSanatizeJsCallback( $callback );
@@ -639,13 +639,16 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 			break;
 
 		default:
+			if ( function_exists( 'http_response_code' ) ) {
+				http_response_code( 400 /* Bad Request */ );
+			}
 			header( 'Content-Type: text/plain; charset=utf-8', /*replace=*/true );
 			echo 'Invalid format.';
 			exit;
 	}
 
 }
-function kfApiFormats(){
+function kfApiFormats() {
 	return array( 'php', 'json', 'dump', 'print' );
 }
 function kfApiFormatHTML( $text ) {
@@ -655,16 +658,6 @@ function kfApiFormatHTML( $text ) {
 
 	// encode all comments or tags as safe blue strings
 	$text = preg_replace( '/\&lt;(!--.*?--|.*?)\&gt;/', '<span style="color: blue;">&lt;\1&gt;</span>', $text );
-
-	/**
-	 * Temporary fix for bad links in help messages. As a special case,
-	 * XML-escaped metachars are de-escaped one level in the help message
-	 * for legibility. Should be removed once we have completed a fully-HTML
-	 * version of the help message.
-	 */
-	if ( true ) {
-		$text = preg_replace( '/&amp;(amp|quot|lt|gt);/', '&\1;', $text );
-	}
 
 	return $text;
 }
@@ -840,3 +833,68 @@ function kfQueryWMFAPI( $wikiData , $params ) {
 	return $return;
 }
 // ^ [Krinkle] 2011-01-05 http://lists.wikimedia.org/pipermail/toolserver-l/2011-February/003873.html
+
+
+
+// php.net/http_response_code
+if (!function_exists('http_response_code')) {
+	function http_response_code($code = null) {
+
+		if ($code !== null) {
+			switch ($code) {
+				case 100: $text = 'Continue'; break;
+				case 101: $text = 'Switching Protocols'; break;
+				case 200: $text = 'OK'; break;
+				case 201: $text = 'Created'; break;
+				case 202: $text = 'Accepted'; break;
+				case 203: $text = 'Non-Authoritative Information'; break;
+				case 204: $text = 'No Content'; break;
+				case 205: $text = 'Reset Content'; break;
+				case 206: $text = 'Partial Content'; break;
+				case 300: $text = 'Multiple Choices'; break;
+				case 301: $text = 'Moved Permanently'; break;
+				case 302: $text = 'Moved Temporarily'; break;
+				case 303: $text = 'See Other'; break;
+				case 304: $text = 'Not Modified'; break;
+				case 305: $text = 'Use Proxy'; break;
+				case 400: $text = 'Bad Request'; break;
+				case 401: $text = 'Unauthorized'; break;
+				case 402: $text = 'Payment Required'; break;
+				case 403: $text = 'Forbidden'; break;
+				case 404: $text = 'Not Found'; break;
+				case 405: $text = 'Method Not Allowed'; break;
+				case 406: $text = 'Not Acceptable'; break;
+				case 407: $text = 'Proxy Authentication Required'; break;
+				case 408: $text = 'Request Time-out'; break;
+				case 409: $text = 'Conflict'; break;
+				case 410: $text = 'Gone'; break;
+				case 411: $text = 'Length Required'; break;
+				case 412: $text = 'Precondition Failed'; break;
+				case 413: $text = 'Request Entity Too Large'; break;
+				case 414: $text = 'Request-URI Too Large'; break;
+				case 415: $text = 'Unsupported Media Type'; break;
+				case 500: $text = 'Internal Server Error'; break;
+				case 501: $text = 'Not Implemented'; break;
+				case 502: $text = 'Bad Gateway'; break;
+				case 503: $text = 'Service Unavailable'; break;
+				case 504: $text = 'Gateway Time-out'; break;
+				case 505: $text = 'HTTP Version not supported'; break;
+				default:
+					$code = 500;
+					$text = 'Unknown-Http-Status-Code';
+				break;
+			}
+
+			$protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+
+			header($protocol . ' ' . $code . ' ' . $text);
+
+			$GLOBALS['http_response_code'] = $code;
+
+		} else {
+			$code = (isset($GLOBALS['http_response_code']) ? $GLOBALS['http_response_code'] : 200);
+		}
+
+		return $code;
+	}
+}

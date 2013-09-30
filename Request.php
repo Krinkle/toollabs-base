@@ -17,9 +17,7 @@ class Request {
 
 	/* Initialize */
 	function __construct( $raw ) {
-
 		$this->raw = $raw;
-
 	}
 
 	/* Simple return functions */
@@ -46,7 +44,7 @@ class Request {
 		if ( is_null( $val ) ) {
 			return null;
 		} else {
-			return (array)$val;
+			return (array) $val;
 		}
 	}
 

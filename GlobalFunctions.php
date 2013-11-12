@@ -640,9 +640,8 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 			break;
 
 		default:
-			if ( function_exists( 'http_response_code' ) ) {
-				http_response_code( 400 /* Bad Request */ );
-			}
+			// HTTP 400 Bad Request
+			http_response_code( 400 );
 			header( 'Content-Type: text/plain; charset=utf-8', /*replace=*/true );
 			echo 'Invalid format.';
 			exit;

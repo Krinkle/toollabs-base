@@ -576,7 +576,8 @@ function wikiDataFromRow( $row ) {
 
 // Sanatize callback
 function kfSanatizeJsCallback( $str ) {
-	return preg_replace( "/[^][.\\'\\\"_A-Za-z0-9]/", '', $str );
+	// Valid: foo.bar_Baz["quux"]['01']
+	return preg_replace( "/[^a-zA-Z0-9_\.\]\[\'\"]/", '', $str );
 }
 
 

@@ -28,7 +28,7 @@ class BaseTool {
 	var $remoteBasePath = '';
 	var $localBasePath = '';
 	var $revisionId = '0.0.0';
-	var $revisionDate = '1970-01-01';
+	var $revisionDate = null;
 	var $styles = array();
 	var $scripts = array();
 	var $scriptsHead = array();
@@ -79,7 +79,7 @@ class BaseTool {
 		$t->krinklePrefix = isset( $config['krinklePrefix'] ) ? $config['krinklePrefix'] : true;
 		$t->sessionNamespace = isset( $config['sessionNamespace'] ) ? $config['sessionNamespace'] : 'default';
 		$t->revisionId = isset( $config['revisionId'] ) ? $config['revisionId'] : '';
-		$t->revisionDate = isset( $config['revisionDate'] ) ? $config['revisionDate'] : '';
+		$t->revisionDate = isset( $config['revisionDate'] ) ? $config['revisionDate'] : null;
 
 		$t->styles = array(
 			$kgConf->remoteBase . '/main.css',
@@ -304,13 +304,21 @@ class BaseTool {
 		if ( !is_null( $kgConf->I18N ) ) {
 			$opts = array(
 				'domain' => 'general',
-				'escape' => 'htmlentities',
-				'variables' => array( 1 => $this->revisionDate )
+				'escape' => 'htmlentities'
 			);
-			$line = str_replace( '$1', $versionHtml, $kgConf->I18N->msg( 'toolversionstamp',  $opts ) );
+			if ( $this->revisionDate ) {
+				$opts['variables'] = array( 1 => $this->revisionDate );
+				$line = str_replace( '$1', $versionHtml, $kgConf->I18N->msg( 'toolversionstamp', $opts ) );
+			} else {
+				$line = str_replace( '$1', $versionHtml, $kgConf->I18N->msg( 'toolversion', $opts ) );
+			}
 			$myAccount = $kgConf->I18N->dashboardBacklink();
 		} else {
-			$line = "Version {$versionHtml} as uploaded on {$this->revisionDate}";
+			if ( $this->revisionDate ) {
+				$line = "Version {$versionHtml} as uploaded on {$this->revisionDate}";
+			} else {
+				$line = "Version {$versionHtml}";
+			}
 			$myAccount = '';
 		}
 

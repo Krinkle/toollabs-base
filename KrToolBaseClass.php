@@ -8,11 +8,15 @@ class KrToolBaseClass {
 
 	public function setSettings( $settings ) {
 		foreach ( $this->settingsKeys as $key ) {
-			if ( !array_key_exists( $key, $settings ) ) {
+			if ( !isset( $this->settings[ $key ] ) && !array_key_exists( $key, $settings ) ) {
 				throw new InvalidArgumentException( "Settings must have key $key." );
 			}
 		}
-		$this->settings = $settings;
+		foreach ( $settings as $key => $value ) {
+			if ( in_array( $key, $this->settingsKeys ) ) {
+				$this->settings[ $key ] = $value;
+			}
+		}
 	}
 
 	public function getSetting( $key ) {

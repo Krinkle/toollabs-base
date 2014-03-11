@@ -702,18 +702,18 @@ li .mw-collapsible-toggle {
 	font-style: italic;
 }
 
-/* Toolserver Intuition */
-.tsint-dashboardbacklink {
+/* Intuition */
+.int-dashboardbacklink {
 	float: right;
 }
 
-.tsint-promobox {
+.int-promobox {
 	border: 1px solid threedface;
 	padding: 5px 8px;
 	margin: 10px 0;
 	font-size: 85%;
 }
 
-.tsint-promobox .tsint-dashboardbacklink {
+.int-promobox .int-dashboardbacklink {
 	float: none;
 }

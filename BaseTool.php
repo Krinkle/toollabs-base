@@ -26,7 +26,6 @@ class BaseTool {
 	var $displayTitle = '';
 	var $krinklePrefix = true;
 	var $remoteBasePath = '';
-	var $localBasePath = '';
 	var $revisionId = '0.0.0';
 	var $revisionDate = null;
 	var $styles = array();
@@ -49,24 +48,8 @@ class BaseTool {
 
 		$t = new BaseTool();
 
-		/**
-		 * @deprecated simplePath: Use remoteBasePath and localBasePath instead:
-		 * <code>
-		 * 'remoteBasePath'   => $kgConf->getRemoteBase() . '/OrphanTalk2/',
-		 * </code>
-		 */
-		if ( isset( $config['simplePath'] ) ) {
-			$t->remoteBasePath = $kgConf->getRemoteBase() . $config['simplePath'];
-			$t->localBasePath = $kgConf->getLocalHome() . '/public_html' . $config['simplePath'];
-		}
-
 		if ( isset( $config['remoteBasePath'] ) ) {
 			$t->remoteBasePath = $config['remoteBasePath'];
-		}
-
-		/** @deprecated localBasePath: No longer used */
-		if ( isset( $config['localBasePath'] ) ) {
-			$t->localBasePath = $config['localBasePath'];
 		}
 
 		if ( isset( $config['sourceInfo'] ) ) {

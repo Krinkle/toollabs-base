@@ -17,7 +17,6 @@ class GlobalConfig {
 	 * Variables that are read-only
 	 */
 	var $remoteBase = '//toolserver.org/~krinkle';
-	var $localHome = '/home/krinkle';
 	var $jQueryVersion = '1.7.2';
 	var $jQueryUIVersion = '1.8.19';
 	var $fullSimpleDatefmt = 'Y-m-d H:i:s';
@@ -55,6 +54,7 @@ class GlobalConfig {
 		}
 
 		// Session and time
+		global $kgReq;
 		session_start();
 		date_default_timezone_set( 'UTC' );
 		$this->startTime = time();
@@ -65,18 +65,18 @@ class GlobalConfig {
 
 		// Determine debug mode
 		// Does the current request want to change/set the debug mode ?
-		$debugVal = getParamExists( 'debug' ) ? getParamVar( 'debug' ) : null;
-		if ( is_null( $debugVal ) ) {
+		$isDebug = $kgReq->hasKey( 'debug' );
+		if ( !$isDebug ) {
 			// If nothing in the request, re-use the setting from the session
 			// This makes it easier to debug in a workflow without having to
 			// append it all the time.
-			$debugVal = getParamExists( 'debug', false, $_SESSION ) ? getParamVar( 'debug', null, $_SESSION ) : null;
+			$isDebug = isset( $_SESSION['debug'] );
 		} else {
 			// If something in the request, put it in the session to remember it
 			// in the next request
-			$_SESSION['debug'] = $debugVal;
+			$_SESSION['debug'] = $isDebug;
 		}
-		$this->debugMode = $debugVal == 'true' ? true : false;
+		$this->debugMode = $isDebug;
 
 		$this->confInitiated = true;
 		return true;
@@ -99,9 +99,12 @@ class GlobalConfig {
 	/**
 	 * Get path to home directory
 	 *
-	 * @return String: Local home starting at /home (eg. /home/username or /home/projects/f/o/o/foobar)
+	 * @return String: Home directory of tool user account (eg. /home/username or /data/project/mytool)
 	 */
-	public function getLocalHome() { return $this->localHome; }
+	public function getLocalHome() {
+		$info = posix_getpwuid(posix_geteuid());
+		return $info['dir'];
+	}
 
 	/**
 	 * Get uri to jquery library
@@ -220,27 +223,29 @@ class GlobalConfig {
 	/**
 	 * Returns the database username
 	 */
-	public function getDbUsername() { return $this->dbUsername; }
-
-	/**
-	 * Sets the database username
-	 *
-	 * @return Boolean
-	 */
-	public function setDbUsername( $val ) { $this->dbUsername = $val; return true; }
+	public function getDbUsername() {
+		if ( $this->dbUsername === null ) {
+			// Read and cache in-class
+			$cnf = parse_ini_file( $this->getLocalHome() . '/replica.my.cnf' );
+			$this->dbUsername = $cnf['user'];
+			unset( $cnf );
+		}
+		return $this->dbUsername;
+	}
 
 
 	/**
 	 * Returns the database password
 	 */
-	public function getDbPassword() { return $this->dbPassword; }
-
-	/**
-	 * Sets the database password
-	 *
-	 * @return Boolean
-	 */
-	public function setDbPassword( $val ) { $this->dbPassword = $val; return true; }
+	public function getDbPassword() {
+		if ( $this->dbPassword === null ) {
+			// Read and cache in-class
+			$cnf = parse_ini_file( $this->getLocalHome() . '/replica.my.cnf' );
+			$this->dbPassword = $cnf['password'];
+			unset( $cnf );
+		}
+		return $this->dbPassword;
+	}
 
 
 	/**

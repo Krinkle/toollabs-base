@@ -88,9 +88,6 @@ function kfTimeSince( $detail = KR_MICROSECONDS ) {
  * String & integer functions
  * -------------------------------------------------
  */
-function kfEscapeHTML( $str ) {
-	return htmlentities( $str, ENT_QUOTES, 'UTF-8' );
-}
 
 function kfStripStr( $str ) {
 	return htmlspecialchars( addslashes( strip_tags( trim( $str ) ) ) );
@@ -99,7 +96,6 @@ function kfStripStr( $str ) {
 function kfEscapeRE( $str ) {
 	return preg_quote( $str, KR_REGEX_DELIMITER );
 }
-
 
 function kfStrLastReplace( $search, $replace, $subject ) {
 	return substr_replace( $subject, $replace, strrpos( $subject, $search ), strlen( $search ) );
@@ -123,122 +119,19 @@ function kfMsgBlock( $message /* [, $kind [, $level ] ] */ ) {
 }
 
 /**
- * URI interaction
- * -------------------------------------------------
- */
-// Returns true or fallback
-function getParamExists( $key, $fallback = false, $map = null ) {
-	if ( is_null( $map ) ) { $map = $_GET; }
-
-	if ( array_key_exists( $key, $map ) ) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-// Returns 1 or fallback
-function getParamBool( $key, $fallback = 0, $map = null ) {
-	if ( is_null( $map ) ) { $map = $_GET; }
-
-	if ( array_key_exists( $key, $map ) ) {
-		if ( $map[$key] == '1' ) {
-			return 1;
-		} else {
-			return $fallback;
-		}
-	} else {
-		return $fallback;
-	}
-}
-
-// Returns 'on' or fallback
-function getParamCheck( $key, $fallback = false, $map = null ) {
-	if ( is_null( $map ) ) { $map = $_GET; }
-
-	if ( array_key_exists( $key, $map ) ) {
-		if ( $map[$key] == 'on' ) {
-			return 'on';
-		} else {
-			return $fallback;
-		}
-	} else {
-		return $fallback;
-	}
-}
-
-// Returns intval of parameter value, fallback if nothing
-function getParamInt( $key, $fallback = 0, $map = null ) {
-	if ( is_null( $map ) ) { $map = $_GET; }
-
-	if ( array_key_exists( $key, $map ) ) {
-		if ( !empty( $map[$key] ) ) {
-			return intval( $map[$key] );
-		} else {
-			return $fallback;
-		}
-	} else {
-		return $fallback;
-	}
-}
-
-// Returns strval of parameter value, fallback if nothing
-function getParamVar( $key, $fallback = '', $map = null ) {
-	if ( is_null( $map ) ) { $map = $_GET; }
-
-	if ( array_key_exists( $key, $map ) ) {
-		if ( isset( $map[$key] ) ) {
-			return strval( $map[$key] );
-		} else {
-			return $fallback;
-		}
-	} else {
-		return $fallback;
-	}
-}
-
-// Relay functions for POST
-// @deprecated, use Request Class
-function postParamExists($key,$fallback = false){ return getParamExists($key,$fallback,$_POST); }
-function postParamBool($key,$fallback = 0){ return getParamBool($key, $fallback, $_POST); }
-function postParamCheck($key,$fallback = false){ return getParamCheck($key, $fallback, $_POST); }
-function postParamInt($key,$fallback = 0){ return getParamInt($key, $fallback, $_POST); }
-function postParamVar($key,$fallback = ''){ return getParamVar($key, $fallback, $_POST); }
-
-/**
  * Database related functions
  * -------------------------------------------------
  */
 function kfDbUsername(){
 	global $kgConf;
 
-	// Cache
-	if ( is_string( $kgConf->getDbUsername() ) ) {
-		return $kgConf->getDbUsername();
-	} else {
-		// Read from file and cache it in GlobalConfig
-		$mycnf = parse_ini_file( $kgConf->getlocalHome() . '/.my.cnf' );
-		$kgConf->setDbUsername( $mycnf['user'] );
-		unset( $mycnf );
-		return $kgConf->getDbUsername();
-	}
-
+	return $kgConf->getDbUsername();
 }
 
 function kfDbPassword(){
 	global $kgConf;
 
-	// Cache
-	if ( is_string( $kgConf->getDbPassword() ) ) {
-		return $kgConf->getDbPassword();
-	} else {
-		// Read from file and cache it in GlobalConfig
-		$mycnf = parse_ini_file( $kgConf->getlocalHome() . '/.my.cnf' );
-		$kgConf->setDbPassword( $mycnf['password'] );
-		unset( $mycnf );
-		return $kgConf->getDbPassword();
-	}
-
+	$kgConf->getDbPassword();
 }
 
 /**
@@ -257,6 +150,7 @@ function mysql_object_all( $result ) {
 // Function to sanitize values. Prevents SQL injection
 function mysql_clean( $str ) {
 	global $kgConf;
+
 	$str = @trim( $str );
 	if ( get_magic_quotes_gpc() ) {
 		$str = stripslashes( $str );
@@ -332,11 +226,6 @@ function kfConnectRRServerByDBName( $dbname = false ) {
 	$hostname = $tsSqlSubdomain . '.rrdb.toolserver.org';
 
 	return $kgConf->setDbConnect( kfConnectRRServerByHostname( $hostname, $dbname ), $hostname );
-}
-
-function kfConnectToolserverDB() {
-	global $kgConf;
-	return $kgConf->setDbConnect( kfConnectRRServerByHostname( 'sql.toolserver.org', 'toolserver' ), 'sql.toolserver.org' );
 }
 
 /**
@@ -499,20 +388,6 @@ function kfWikiHref( $wikidata, $title, $query = array() ) {
 		array( 'title' => $title ),
 		$query
 	) );
-}
-
-// Primitive html building
-// @deprecated, use Html Class instead
-function kfTag( $str, $wrapTag = 0, $attributes = array() ) {
-	if ( is_string( $str ) ) {
-		if ( is_string( $wrapTag ) ) {
-			return Html::element( $wrapTag, $attributes, $str );
-		} else {
-			return $str;
-		}
-	} else {
-		return '';
-	}
 }
 
 function kfGetWikiDataFromDBName( $dbname ) {
@@ -684,13 +559,13 @@ function kfGetSvnInfo( $path = '' ) {
 			$repoUrl = trim( $lines[5] );
 			$return = array(
 				'checkout-rev' => $coRev,
-				'checkout-cr-rev' => "http://www.mediawiki.org/wiki/Special:Code/MediaWiki/$coRev",
+				'checkout-cr-rev' => "https://www.mediawiki.org/wiki/Special:Code/MediaWiki/$coRev",
 				'checkout-url' => $coUrl,
 				'repo-url' => $repoUrl,
 				'directory-path' => str_replace( $repoUrl, '', $coUrl ),
 				'directory-rev' => $dirRev,
 				'directory-up-date' => trim( $lines[9] ),
-				'directory-cr-rev' => "http://www.mediawiki.org/wiki/Special:Code/MediaWiki/$dirRev",
+				'directory-cr-rev' => "https:://www.mediawiki.org/wiki/Special:Code/MediaWiki/$dirRev",
 			);
 		}
 		define( 'SVN_REVISION', $return['checkout-rev'] );
@@ -812,33 +687,30 @@ function kfFormatBytes( $size, $precision = 2 ) {
  * Get's the query, forces format=php, makes the request,
  * checks for errors, returns the unserialized data from the API or false.
  *
- * @param Array $wikiData - all data (dbname, sitename, url, apiurl etc.) for the selected
- *							  wiki (from function kfGetWikiDataFromDBName() ).
- * @param Array $params   - api query (eg. array( 'action' => 'query' etc. ) ).
- * @return Array  		- unserialized result of the API.
- * @return Boolean false  - ... if something went wrong.
+ * [Krinkle] 2011-01-05 https://lists.wikimedia.org/pipermail/toolserver-l/2011-February/003873.html
+ *
+ * @param Array $wikiData Data for the selected wiki (from kfGetWikiDataFromDBName).
+ * @param Array $params Query parameters for MediaWiki API
+ * @return Array|bool Unserialized data from the API response, or boolean false
  */
-function kfQueryWMFAPI( $wikiData , $params ) {
+function kfQueryWMFAPI( $wikiData, $params ) {
 	if ( !is_array( $wikiData ) || !is_array( $params ) || !isset( $wikiData['apiurl'] ) ) {
 		return false;
 	}
-	$params['format'] = 'php';
-	$return = file_get_contents( $wikiData['apiurl'] . '?' . http_build_query( $params ) );
-	if ( $return === false ) {
+	$params['format'] = 'json';
+	$response = file_get_contents( $wikiData['apiurl'] . '?' . http_build_query( $params ) );
+	if ( $response === false ) {
 		return false;
 	}
-	$return = unserialize( $return );
-	if ( !is_array( $return ) ) {
+	$data = json_decode( $response, /* $assoc */ true );
+	if ( !is_array( $data ) ) {
 		return false;
 	}
-	if ( isset( $return['error'] ) ) {
+	if ( isset( $data['error'] ) ) {
 		return false;
 	}
-	return $return;
+	return $data;
 }
-// ^ [Krinkle] 2011-01-05 http://lists.wikimedia.org/pipermail/toolserver-l/2011-February/003873.html
-
-
 
 // php.net/http_response_code
 if (!function_exists('http_response_code')) {

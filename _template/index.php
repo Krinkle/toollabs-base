@@ -1,11 +1,11 @@
 <?php
 /**
- * _B_L_A_N_K_
- * Created on January 1, 2012
+ * Example
  *
- * @package ts-krinkle-_B_L_A_N_K_
- * @author Timo Tijhof <krinklemail@gmail.com>, 2012
- * @license CC-BY-SA 3.0 Unported: creativecommons.org/licenses/by/3.0/
+ * Created on January 1, 2014
+ *
+ * @license http://krinkle.mit-license.org/
+ * @author Timo Tijhof, 2010-2014
  */
 
 /**
@@ -13,32 +13,31 @@
  * -------------------------------------------------
  */
 // BaseTool & Localization
-require_once( __DIR__ . '/../ts-krinkle-basetool/InitTool.php' );
+require_once( __DIR__ . '/../lib/basetool/InitTool.php' );
 require_once( KR_TSINT_START_INC );
 
 // Class for this tool
 #require_once( __DIR__ . '/class.php' );
-#$kgTool = new KrBLANK();
+#$kgTool = new KrExample();
 
 // Local settings
 #require_once( __DIR__ . '/local.php' );
 
-$I18N = new TsIntuition( '_B_L_A_N_K_' );
+$I18N = new TsIntuition( 'example' );
 
 $toolConfig = array(
-	'displayTitle'     => '_B_L_A_N_K_',
-	'remoteBasePath'   => $kgConf->getRemoteBase() . '/_B_L_A_N_K_/',
-	'localBasePath'    => __DIR__,
-	'revisionId'       => '0.0.0',
-	'revisionDate'     => '1970-01-01',
-	'I18N'             => $I18N,
+	'displayTitle' => 'Example',
+	'krinklePrefix' => false,
+	'remoteBasePath' => dirname( $kgConf->getRemoteBase() ). '/',
+	'revisionId' => '0.0.0',
+	'I18N' => $I18N,
 );
 
-$kgBaseTool = BaseTool::newFromArray( $toolConfig );
-#$kgBaseTool->setSourceInfoGithub( 'Krinkle', 'ts-krinkle-_B_L_A_N_K_', __DIR__ );
+$kgTool = BaseTool::newFromArray( $toolConfig );
+#$kgTool->setSourceInfoGithub( 'Krinkle', 'mw-tool-example', __DIR__ );
 
-$kgBaseTool->doHtmlHead();
-$kgBaseTool->doStartBodyWrapper();
+$kgTool->doHtmlHead();
+$kgTool->doStartBodyWrapper();
 
 
 /**
@@ -48,27 +47,14 @@ $kgBaseTool->doStartBodyWrapper();
 
 
 /**
- * Database connections
- * -------------------------------------------------
- */
-#kfConnectRRServerByDBName( 'commonswiki_p' );
-#kfConnectToolserverDB();
-#kfConnectToAllWikiDbServers();
-
-
-/**
  * Output
  * -------------------------------------------------
  */
-$kgBaseTool->addOut( 'Hello world' );
-$kgBaseTool->addOut( '<script>jQuery(document).ready(function ($) {
-	$("body").append( "<em>JavaScript is working</em>" );
-} );</script>' );
+$kgTool->addOut( 'Hello world' );
 
 
 /**
  * Close up
  * -------------------------------------------------
  */
-#kfCloseAllConnections();
-$kgBaseTool->flushMainOutput();
+$kgTool->flushMainOutput();

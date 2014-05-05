@@ -624,12 +624,8 @@ function kfGitCleanReset( $options = array() ) {
 	}
 	$cmds[] = 'git clean -q -d -x -f';
 	$cmds[] = 'git reset -q --hard';
-	// Apply removal of remote branches to the local remote/* reflection.
-	// This doesn't touch regular local branches, so I wonder why Git doesn't
-	// do this by default.
-	$cmds[] = 'git fetch --prune';
 	if ( isset( $options['checkout'] ) ) {
-		$cmds[] = 'git checkout -q ' . kfEscapeShellArg( $options['checkout'] );
+		$cmds[] = 'git checkout -q -f ' . kfEscapeShellArg( $options['checkout'] );
 	}
 
 	foreach ( $cmds as $cmd ) {

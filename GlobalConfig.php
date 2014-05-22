@@ -17,7 +17,7 @@ class GlobalConfig {
 	 * Variables that are read-only
 	 */
 	var $remoteBase = '//toolserver.org/~krinkle';
-	var $jQueryVersion = '1.7.2';
+	var $jQueryVersion = '1.11.1';
 	var $jQueryUIVersion = '1.8.19';
 	var $fullSimpleDatefmt = 'Y-m-d H:i:s';
 	var $fullReadableDatefmt = 'l, j F Y H:i:s';
@@ -112,11 +112,11 @@ class GlobalConfig {
 	 * @return String: Valid address to the script
 	 */
 	public function getJQueryURI( $minified = KR_MINIFY_ON ) {
-		$uri = "//ajax.googleapis.com/ajax/libs/jquery/{$this->jQueryVersion}/jquery.";
+		$uri = "//code.jquery.com/jquery-{$this->jQueryVersion}";
 		if ( $minified === KR_MINIFY_OFF ) {
-			return $uri . 'js';
+			return $uri . '.js';
 		} else {
-			return $uri . 'min.js';
+			return $uri . '.min.js';
 		}
 	}
 

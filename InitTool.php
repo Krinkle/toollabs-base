@@ -26,16 +26,20 @@ require_once( __DIR__ . '/Request.php' );
 $kgReq = new Request( $_POST + $_GET );
 
 function kfIncludeMwClasses(){
-	global $wgWellFormedXml, $wgHtml5, $wgJsMimeType;
-	$wgWellFormedXml = true;
-	$wgHtml5 = true;
-	$wgJsMimeType = 'text/javascript';
+	require_once( __DIR__ . '/mw/mock.php' );
 
-	// MediaWiki's /includes/Html.php
-	// Patched to remove the Html::htmlHeader() method.
+	// Patched to remove:
+	// - Html::htmlHeader()
 	require_once( __DIR__ . '/mw/Html.php' );
 
 	require_once( __DIR__ . '/mw/GitInfo.php' );
+
+	// Patched to remove:
+	// - Sanitizer::decodeCharReferencesAndNormalize ($wgContLang)
+	// - Sanitizer::stripAllTags (StringUtils)
+	// Patches to change:
+	// - Sanitizer::validateEmail (wfRunHooks)
+	require_once( __DIR__ . '/mw/Sanitizer.php' );
 }
 
 kfIncludeMwClasses();

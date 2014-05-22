@@ -11,9 +11,6 @@
  * @license Public domain, WTFPL
  */
 
-define( 'KR_MINIFY_ON', true );
-define( 'KR_MINIFY_OFF', false );
-
 define( 'KR_OUTPUT_BROWSER_HTML5', 1 );
 define( 'KR_OUTPUT_BROWSER_TEXT', 2 );
 define( 'KR_OUTPUT_API_JSON', 2 );

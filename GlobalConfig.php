@@ -17,8 +17,6 @@ class GlobalConfig {
 	 * Variables that are read-only
 	 */
 	var $remoteBase = '//toolserver.org/~krinkle';
-	var $jQueryVersion = '1.11.1';
-	var $jQueryUIVersion = '1.8.19';
 	var $fullSimpleDatefmt = 'Y-m-d H:i:s';
 	var $fullReadableDatefmt = 'l, j F Y H:i:s';
 	var $userAgent = 'KrinkleTools/2.0 (Wikimedia Toolserver; toolserver.org/~krinkle) Contact/krinkle@toolserver.org';
@@ -104,42 +102,6 @@ class GlobalConfig {
 	public function getLocalHome() {
 		$info = posix_getpwuid(posix_geteuid());
 		return $info['dir'];
-	}
-
-	/**
-	 * Get uri to jquery library
-	 *
-	 * @return String: Valid address to the script
-	 */
-	public function getJQueryURI( $minified = KR_MINIFY_ON ) {
-		$uri = "//code.jquery.com/jquery-{$this->jQueryVersion}";
-		if ( $minified === KR_MINIFY_OFF ) {
-			return $uri . '.js';
-		} else {
-			return $uri . '.min.js';
-		}
-	}
-
-	/**
-	 * Get uri to jquery library
-	 *
-	 * @return String: Valid address to the script
-	 */
-	public function getJQueryUI( $minified = KR_MINIFY_ON ) {
-		$scripts = array();
-		$styles = array();
-		$suffix = $minified === KR_MINIFY_OFF ? 'js' : 'min.js';
-
-		// Example : //ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js
-		$scripts[] = "//ajax.googleapis.com/ajax/libs/jqueryui/{$this->jQueryUIVersion}/jquery-ui.$suffix";
-
-		// Example : //ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/i18n/jquery-ui-i18n.min.js
-		$scripts[] = "//ajax.googleapis.com/ajax/libs/jqueryui/{$this->jQueryUIVersion}/i18n/jquery-ui-i18n.$suffix";
-
-		// Example : //ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/themes/smoothness/jquery-ui.css
-		$styles[] = "//ajax.googleapis.com/ajax/libs/jqueryui/{$this->jQueryUIVersion}/themes/smoothness/jquery-ui.css";
-
-		return array( 'scripts' => $scripts, 'styles' => $styles );
 	}
 
 	/**

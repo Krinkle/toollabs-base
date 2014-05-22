@@ -1,10 +1,10 @@
 <?php
 /**
- * class.php
+ * Main class
  *
- * @package ts-krinkle-BLANK
+ * @package mw-tool-example
  */
-class KrBLANK extends KrToolBaseClass {
+class KrExample extends KrToolBaseClass {
 
 	protected $settingsKeys = array(
 		'foo',

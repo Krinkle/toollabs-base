@@ -1,9 +1,8 @@
 <?php
 /**
- * Example
+ * Main index
  *
- * Created on January 1, 2014
- *
+ * @package mw-tool-example
  * @license http://krinkle.mit-license.org/
  * @author Timo Tijhof, 2010-2014
  */
@@ -13,15 +12,15 @@
  * -------------------------------------------------
  */
 // BaseTool & Localization
-require_once( __DIR__ . '/../lib/basetool/InitTool.php' );
-require_once( KR_TSINT_START_INC );
+require_once __DIR__ . '/../lib/basetool/InitTool.php';
+require_once KR_TSINT_START_INC;
 
 // Class for this tool
-#require_once( __DIR__ . '/class.php' );
+#require_once __DIR__ . '/class.php';
 #$kgTool = new KrExample();
 
 // Local settings
-#require_once( __DIR__ . '/local.php' );
+#require_once __DIR__ . '/local.php';
 
 $I18N = new TsIntuition( 'example' );
 
@@ -33,11 +32,11 @@ $toolConfig = array(
 	'I18N' => $I18N,
 );
 
-$kgTool = BaseTool::newFromArray( $toolConfig );
-#$kgTool->setSourceInfoGithub( 'Krinkle', 'mw-tool-example', __DIR__ );
+$kgBaseTool = BaseTool::newFromArray( $toolConfig );
+#$kgBaseTool->setSourceInfoGithub( 'Krinkle', 'mw-tool-example', __DIR__ );
 
-$kgTool->doHtmlHead();
-$kgTool->doStartBodyWrapper();
+$kgBaseTool->doHtmlHead();
+$kgBaseTool->doStartBodyWrapper();
 
 
 /**
@@ -50,11 +49,11 @@ $kgTool->doStartBodyWrapper();
  * Output
  * -------------------------------------------------
  */
-$kgTool->addOut( 'Hello world' );
+$kgBaseTool->addOut( 'Hello world' );
 
 
 /**
  * Close up
  * -------------------------------------------------
  */
-$kgTool->flushMainOutput();
+$kgBaseTool->flushMainOutput();

@@ -20,7 +20,7 @@ class Request {
 		$this->raw = $raw;
 	}
 
-	/* Simple return functions */
+	/* Simple getters */
 
 	public function getRawVal( $arr, $key, $default ) {
 		return isset( $arr[$key] ) ? $arr[$key] : $default;
@@ -65,7 +65,7 @@ class Request {
 		return $this->getBool( $key, $default ) && $this->getVal( $key ) != 'false';
 	}
 
-	/* Other utilities */
+	/* Utility methods */
 
 	/** @return bool */
 	public function wasPosted() {
@@ -74,6 +74,23 @@ class Request {
 
 	public function getQueryString(){
 		return http_build_query( $this->raw );
+	}
+
+	/**
+	 * Detect the protocol from $_SERVER.
+	 * This is for use prior to Setup.php, when no WebRequest object is available.
+	 * At other times, use the non-static function getProtocol().
+	 *
+	 * @return array
+	 */
+	public function getProtocol() {
+		if ( ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' ) ||
+			( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) &&
+			$_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' ) ) {
+			return 'https';
+		} else {
+			return 'http';
+		}
 	}
 
 	/** @deprecated */

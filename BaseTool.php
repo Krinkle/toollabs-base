@@ -515,13 +515,6 @@ HTML;
 		return true;
 	}
 
-	public function dieError( $message ) {
-		$this->addOut( kfMsgBlock( $message, 'error' ) );
-		$this->flushMainOutput();
-		kfCloseAllConnections();
-		die;
-	}
-
 	public function generatePermalink( $params = array(), $url = false ) {
 
 		$link = $url ? $url : $this->remoteBasePath;

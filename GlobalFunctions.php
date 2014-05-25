@@ -105,17 +105,21 @@ function is_odd( $num ) {
 	return (bool)($num % 2 );
 }
 
-
 /**
- * UI Message wrappers
- * -------------------------------------------------
+ * @param string $text
+ * @param string $type One of success, info, warning, or danger.
+ * @return string Html
  */
-function kfMsgBlock( $message /* [, $kind [, $level ] ] */ ) {
-	$class = func_get_args();
-	array_shift( $class ); // remove $message
-	$class[] = 'basetool-msg';
-	$class[] = 'ns';
-	return Html::rawElement( 'div', array( 'class' => implode( ' ', $class ) ), $message );
+function kfAlertText( $type, $text ) {
+	$class = 'alert';
+	$class .= $type ? ' alert-' . $type : ' alert-default';
+	return Html::element( 'div', array( 'class' => $class ), $text );
+}
+
+function kfAlertHtml( $type, $html ) {
+	$class = 'alert';
+	$class .= $type ? ' alert-' . $type : ' alert-default';
+	return Html::rawElement( 'div', array( 'class' => $class ), $html );
 }
 
 /**

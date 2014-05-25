@@ -53,6 +53,8 @@ $kgBaseTool->setLayout( 'header', array(
 
 $kgBaseTool->addOut( '<div class="container"><div class="row">' );
 
+$kgBaseTool->addOut( kfAlertHtml( 'info', '<strong>Welcome!</strong> Hello there.' ) );
+
 $kgBaseTool->addOut( 'Hello world' );
 
 // Close wrapping container/row

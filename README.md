@@ -1,4 +1,4 @@
-# Toolserver Krinkle / BaseTool
+# Tool Labs Base
 
 ## Install
 * Copy `sample-LocalConfig.php` to `LocalConfig.php` and set the right path to your install of [TsIntuition](https://github.com/Krinkle/TsIntuition)

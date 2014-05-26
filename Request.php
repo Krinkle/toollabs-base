@@ -1,16 +1,15 @@
 <?php
 /**
- * Request.php
- * Created on March 15, 2011
+ * Interact with request and session data for incoming web request
  *
  * This file is inspired by MediaWiks' WebRequest class.
- * svn.wikimedia.org/viewvc/mediawiki/trunk/phase3/includes/WebRequest.php?view=markup&pathrev=82694
+ *
+ * https://svn.wikimedia.org/viewvc/mediawiki/trunk/phase3/includes/WebRequest.php?view=markup&pathrev=82694
  *
  * @since 0.1
- * @author Krinkle <krinklemail@gmail.com>, 2011 - 2012
- *
- * @package KrinkleToolsCommon
+ * @author Krinkle, 2011-2014
  * @license Public domain, WTFPL
+ * @package toollabs-base
  */
 
 class Request {

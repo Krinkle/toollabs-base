@@ -1,14 +1,13 @@
 <?php
 /**
- * GlobalDefinitions.php :: Global definitions. Mostly boolean and integer
- * substitues for better readability.
- * Created on January 16th, 2011
+ * Global definitions.
+ *
+ * Mostly boolean and integer substitues for better readability.
  *
  * @since 0.1
- * @author Krinkle <krinklemail@gmail.com>, 2010 - 2012
- *
- * @package KrinkleToolsCommon
+ * @author Krinkle, 2010-2014
  * @license Public domain, WTFPL
+ * @package toollabs-base
  */
 
 define( 'KR_OUTPUT_BROWSER_HTML5', 1 );

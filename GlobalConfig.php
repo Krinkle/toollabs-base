@@ -1,25 +1,23 @@
 <?php
 /**
- * GlobalConfig.php
- * Created on January 16th, 2011
+ * Configuration
  *
  * @since 0.1
- * @author Krinkle <krinklemail@gmail.com>, 2010 - 2012
- *
- * @package KrinkleToolsCommon
+ * @author Krinkle, 2010-2014
  * @license Public domain, WTFPL
+ * @package toollabs-base
  */
-require_once( __DIR__ . '/GlobalDefinitions.php' );
+require_once __DIR__ . '/GlobalDefinitions.php';
 
 class GlobalConfig {
 
 	/**
 	 * Variables that are read-only
 	 */
-	var $remoteBase = '//toolserver.org/~krinkle';
+	var $remoteBase = 'http://example.org/tools/foo';
 	var $fullSimpleDatefmt = 'Y-m-d H:i:s';
 	var $fullReadableDatefmt = 'l, j F Y H:i:s';
-	var $userAgent = 'KrinkleTools/2.0 (Wikimedia Toolserver; toolserver.org/~krinkle) Contact/krinkle@toolserver.org';
+	var $userAgent = 'BaseTool/0.3.0 (https://github.com/Krinkle/toollabs-base)';
 	var $selfClosingTags = array( 'link', 'input', 'br', 'img' );
 
 	var $I18N = null;

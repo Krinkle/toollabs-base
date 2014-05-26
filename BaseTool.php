@@ -1,13 +1,11 @@
 <?php
 /**
- * BaseTool.php
- * Created on January 15th, 2011
+ * Main class
  *
  * @since 0.1
- * @author Krinkle <krinklemail@gmail.com>, 2010 - 2012
- *
- * @package KrinkleToolsCommon
+ * @author Krinkle, 2010-2014
  * @license Public domain, WTFPL
+ * @package toollabs-base
  */
 
 /**

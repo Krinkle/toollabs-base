@@ -1,16 +1,14 @@
 <?php
 /**
- * GlobalFunctions.php :: Common functions globally available.
- * Created on January 15th, 2011
+ * Common functions globally available
  *
  * @since 0.1
- * @author Krinkle <krinklemail@gmail.com>, 2010 - 2012
- *
- * @package KrinkleToolsCommon
+ * @author Krinkle, 2010-2014
  * @license Public domain, WTFPL
+ * @package toollabs-base
  */
-require_once( __DIR__ . '/GlobalDefinitions.php' );
-require_once( __DIR__ . '/GlobalConfig.php' );
+require_once __DIR__ . '/GlobalDefinitions.php';
+require_once __DIR__ . '/GlobalConfig.php';
 
 // Never twice, but if not done already, make sure GlobalConfig is initiated
 if ( !is_object( $kgConf ) ) {
@@ -126,13 +124,13 @@ function kfAlertHtml( $type, $html ) {
  * Database related functions
  * -------------------------------------------------
  */
-function kfDbUsername(){
+function kfDbUsername() {
 	global $kgConf;
 
 	return $kgConf->getDbUsername();
 }
 
-function kfDbPassword(){
+function kfDbPassword() {
 	global $kgConf;
 
 	$kgConf->getDbPassword();

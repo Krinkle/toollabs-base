@@ -2,9 +2,9 @@
 /**
  * Main index
  *
- * @package mw-tool-example
+ * @author Timo Tijhof, 2013-2014
  * @license http://krinkle.mit-license.org/
- * @author Timo Tijhof, 2010-2014
+ * @package mw-tool-example
  */
 
 /**

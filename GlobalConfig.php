@@ -33,10 +33,9 @@ class GlobalConfig {
 	var $runlogFlushCount = 0;
 	var $dbUsername = null;
 	var $dbPassword = null;
-	var $dbConnect = null;
-	var $dbConnectHostname = null;
-	var $dbExtraConnections = array();
 
+	protected $currentLogSection = '(init)';
+	protected $logSectionStack = array();
 
 	/**
 	 * Initiated certain configuration variables
@@ -143,135 +142,84 @@ class GlobalConfig {
 	public function isDebugMode() { return (bool)$this->debugMode; }
 
 	/**
-	 * Returns the debug mode
+	 * Return the debug mode
 	 * @deprecated since 0.3: Use isDebugMode() instead.
 	 */
-	public function getDebugMode() { return (bool)$this->debugMode; }
+	public function getDebugMode() { return $this->isDebugMode(); }
 
 	/**
-	 * Sets the debug mode
+	 * Set the debug mode
 	 *
-	 * @return Boolean
+	 * @return bool
 	 */
-	public function setDebugMode( $val ) { $this->debugMode = (bool)$val; return true; }
-
+	public function setDebugMode( $val ) {
+		$this->debugMode = (bool)$val;
+		return true;
+	}
 
 	/**
-	 * Returns the run log of everything that happened so far
+	 * Return the run log of everything that happened so far
 	 */
-	public function getRunlog() { return $this->runlog; }
+	public function getDebugLog() { return $this->runlog; }
 
 	/**
-	 * Overwrites the run log
-	 *
-	 * @return Boolean
+	 * Write one or more lines to the debug log
 	 */
-	public function setRunlog( $val ) { $this->runlog = $val; return true; }
-
-
-	/**
-	 * Returns the number of times the run log has been flushed
-	 */
-	public function getRunlogFlushCount() { return $this->runlogFlushCount; }
+	public function writeDebugLog( $val ) {
+		$this->runlog .=
+			number_format( kfTimeSince( KR_MICROSECONDS ), 7 ) . ': '
+			. $this->currentLogSection . '> '
+			. $val;
+	}
 
 	/**
-	 * Overwrites the flush count of the run log
+	 * Clear the run log
 	 */
-	public function setRunlogFlushCount( $val ) { $this->runlogFlushCount = $val; return true; }
+	public function clearDebugLog() {
+		$this->runlog = '';
+	}
+
+	public function getLogSection() {
+		return $this->currentLogSection;
+	}
+
+	public function startLogSection( $name ) {
+		$this->logSectionStack[] = $name;
+	}
+
+	public function endLogSection( $name ) {
+		$item = array_pop( $this->logSectionStack );
+		if ( $item !== $name ) {
+			kfLog( "Log section mismatch (in: $item, out: $name)" );
+		}
+	}
+
+	protected function fetchDbCredentials() {
+		// Read and cache in-class
+		$cnf = parse_ini_file( $this->getLocalHome() . '/replica.my.cnf' );
+		if ( !$cnf || !$cnf['user'] || !$cnf['password'] ) {
+			throw new Exception( 'Failed to fetch credentials from replica.my.cnf' );
+			return;
+		}
+		$this->dbUsername = $cnf['user'];
+		$this->dbPassword = $cnf['password'];
+	}
 
 
 	/**
 	 * Returns the database username
 	 */
 	public function getDbUsername() {
-		if ( $this->dbUsername === null ) {
-			// Read and cache in-class
-			$cnf = parse_ini_file( $this->getLocalHome() . '/replica.my.cnf' );
-			$this->dbUsername = $cnf['user'];
-			unset( $cnf );
-		}
+		$this->fetchDbCredentials();
 		return $this->dbUsername;
 	}
-
 
 	/**
 	 * Returns the database password
 	 */
 	public function getDbPassword() {
-		if ( $this->dbPassword === null ) {
-			// Read and cache in-class
-			$cnf = parse_ini_file( $this->getLocalHome() . '/replica.my.cnf' );
-			$this->dbPassword = $cnf['password'];
-			unset( $cnf );
-		}
+		$this->fetchDbCredentials();
 		return $this->dbPassword;
-	}
-
-
-	/**
-	 * Get the main database connection
-	 *
-	 * @return Mixed: The requested connection or boolean false
-	 */
-	public function getDbConnect() {
-		if ( is_resource( $this->dbConnect ) && get_resource_type( $this->dbConnect ) == 'mysql link' ) {
-			return $this->dbConnect;
-		}
-		return false;
-	}
-
-	/**
-	 * Sets the main database connection (if valid), returns false otherwise
-	 *
-	 * @return Boolean: True if value is a valid database connection
-	 */
-	public function setDbConnect( $val, $hostname = null ) {
-		if ( $val && is_resource( $val ) && get_resource_type( $val ) == 'mysql link' ) {
-			$this->dbConnect = $val;
-			$this->dbConnectHostname = $hostname;
-			kfLog( "Connection to $hostname set.", __METHOD__ );
-			return true;
-		}
-		kfLog( "Connection to $hostname not set.", __METHOD__ );
-		return false;
-	}
-
-
-	/**
-	 * Get a database connection by id
-	 *
-	 * @return Mixed: The requested connection or boolean false
-	 */
-	public function getDbExtraConnect( $id ) {
-		if ( array_key_exists( $id, $this->dbExtraConnections )
-		    && is_resource( $this->dbExtraConnections[$id] )
-		    && get_resource_type( $this->dbExtraConnections[$id] ) == 'mysql link'
-		   ) {
-			return $this->dbExtraConnections[$id];
-		}
-		return false;
-	}
-
-	/**
-	 * Sets the main database connection (if valid), returns false otherwise
-	 *
-	 * @return Boolean: True if value is a valid database connection
-	 */
-	public function setDbExtraConnect( $id, $connect ) {
-		if ( is_resource( $connect ) && get_resource_type( $connect ) == 'mysql link' ) {
-			$this->dbExtraConnections[$id] = $connect;
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Returns an array with all database connections
-	 */
-	public function getAllDbConnects() {
-		$candidates = $this->dbExtraConnections;
-		$candidates[] = $this->dbConnect;
-		return $candidates;
 	}
 
 }

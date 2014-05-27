@@ -45,6 +45,7 @@ kfIncludeMwClasses();
 
 require_once __DIR__ . '/HtmlSelect.php';
 require_once __DIR__ . '/GlobalFunctions.php';
+require_once __DIR__ . '/LabsDB.php';
 
 // Must be after GlobalFunctions
 $kgConf->initConfig();

@@ -22,4 +22,26 @@ class KrToolBaseClass {
 	public function getSetting( $key ) {
 		return isset( $this->settings[$key] ) ? $this->settings[$key] : null;
 	}
+
+	protected function show() {}
+
+	public function handleException( Exception $e ) {
+		global $kgBaseTool;
+		$kgBaseTool->addOut( $e->getMessage(), 'pre' );
+		exit( 1 );
+	}
+
+	public function run() {
+		set_exception_handler( array( $this, 'handleException' ) );
+
+		$fname = get_class( $this ) . '::run';
+		kfLogStart( $fname );
+		try {
+			$this->show();
+		} catch ( Exception $e ) {
+			global $kgBaseTool;
+			$kgBaseTool->addOut( $e->getMessage(), 'pre' );
+		}
+		kfLogEnd( $fname );
+	}
 }

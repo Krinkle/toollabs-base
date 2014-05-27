@@ -1,3 +1,17 @@
+/* Require JS */
+
+.requirejs-msg {
+    display: none;
+}
+
+.client-requirejs.client-nojs body > * {
+    display: none;
+}
+
+.client-requirejs.client-nojs body > .requirejs-msg {
+    display: block;
+}
+
 /* Top nav */
 
 .usage-nav {

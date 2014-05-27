@@ -11,19 +11,20 @@
  * Configuration
  * -------------------------------------------------
  */
+
 // BaseTool & Localization
 #require_once __DIR__ . '/../lib/basetool/InitTool.php';
 require_once __DIR__ . '/../InitTool.php';
 require_once KR_TSINT_START_INC;
 
 // Class for this tool
-#require_once __DIR__ . '/class.php';
-#$kgTool = new KrExample();
+require_once __DIR__ . '/class.php';
+$kgTool = new Example();
 
 // Local settings
 #require_once __DIR__ . '/config.php';
 
-$I18N = new TsIntuition( 'example' );
+$I18N = new Intuition( 'example' );
 
 $toolConfig = array(
 	'displayTitle' => 'Example',
@@ -33,36 +34,12 @@ $toolConfig = array(
 );
 
 $kgBaseTool = BaseTool::newFromArray( $toolConfig );
-#$kgBaseTool->setSourceInfoGithub( 'Krinkle', 'mw-tool-example', __DIR__ );
-
-/**
- * Setup
- * -------------------------------------------------
- */
-
+$kgBaseTool->setSourceInfoGithub( 'Krinkle', 'mw-tool-example', dirname( __DIR__ ) );
 
 /**
  * Output
  * -------------------------------------------------
  */
-$kgBaseTool->setHeadTitle( 'Home' );
-$kgBaseTool->setLayout( 'header', array(
-	'titleText' => 'Welcome',
-	'captionHtml' => 'Some text here',
-) );
 
-$kgBaseTool->addOut( '<div class="container"><div class="row">' );
-
-$kgBaseTool->addOut( kfAlertHtml( 'info', '<strong>Welcome!</strong> Hello there.' ) );
-
-$kgBaseTool->addOut( 'Hello world' );
-
-// Close wrapping container/row
-$kgBaseTool->addOut( '</div></div>' );
-
-
-/**
- * Close up
- * -------------------------------------------------
- */
+$kgTool->run();
 $kgBaseTool->flushMainOutput();

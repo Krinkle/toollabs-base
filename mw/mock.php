@@ -1,10 +1,9 @@
 <?php
-global $wgWellFormedXml, $wgHtml5, $wgJsMimeType;
+global $wgWellFormedXml, $wgHtml5Version, $wgXhtmlNamespaces;
 
 $wgWellFormedXml = true;
-$wgHtml5 = true;
-$wgJsMimeType = 'text/javascript';
-
+$wgHtml5Version = null;
+$wgXhtmlNamespaces = array();
 
 global $wgUseTidy, $wgAllowMicrodataAttributes, $wgAllowImageTag,
 	$wgAllowRdfaAttributes, $wgAllowMicrodataAttributes,

@@ -24,6 +24,3 @@ define( 'KR_SECONDS', 1 );
 define( 'KR_MICROSECONDS', 2 );
 
 define( 'KR_REGEX_DELIMITER', '/' );
-
-define( 'KR_SET_AS_PRIM_DBCON', true );
-define( 'KR_KEEP_PRIM_DBCON', false );

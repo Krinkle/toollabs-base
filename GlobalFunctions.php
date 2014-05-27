@@ -19,36 +19,34 @@ if ( !is_object( $kgConf ) ) {
  * Debug functions
  * -------------------------------------------------
  */
-function kfLog( $msg = '', $current = '', $echo = KR_LOG_RETURN ) {
-	global $kgConf;
 
-	$msg =
-		number_format( kfTimeSince( KR_MICROSECONDS ), 7 ) . ': '
-		. $current . '> '
-		. $msg;
-	if ( $echo == KR_LOG_ECHO ) {
-		echo $msg;
-	}
-	return $kgConf->setRunlog( $msg . "\n" . $kgConf->getRunlog() );
+function kfLogStart( $name ) {
+	global $kgConf;
+	$kgConf->startLogSection( $name );
 }
 
-// @param $echo Boolean: KR_LOG_ECHO or KR_LOG_RETURN
-// @param $mode Integer: KR_FLUSH_CLEARTEXT, KR_FLUSH_HTMLPRE
+function kfLogEnd( $name ) {
+	global $kgConf;
+	$kgConf->endLogSection( $name );
+}
+
+function kfLog( $msg ) {
+	global $kgConf;
+	return $kgConf->writeDebugLog( $msg );
+}
+
+/**
+ * @param bool $echo One of KR_LOG_ECHO, KR_LOG_RETURN
+ * @param int $mode One of KR_FLUSH_CLEARTEXT, KR_FLUSH_HTMLPRE
+ */
 function kfLogFlush( $echo = KR_LOG_ECHO, $mode = KR_FLUSH_HTMLPRE ) {
 	global $kgConf;
-	$kgConf->setRunlogFlushCount( $kgConf->getRunlogFlushCount()+1 );
 
-	// Generate output
-	$output = '------- [ KrinkleTool Runlog | Flush ' . $kgConf->getRunlogFlushCount()
-		. ' @ ' . date( 'r' )
-		. " ]----------\n"
-		. $kgConf->getRunlog()
-		. "\n";
+	$output = $kgConf->getDebugLog();
 
-	// Reset log
-	$kgConf->setRunlog( '' );
+	$kgConf->clearDebugLog();
 
-	switch( $mode ) {
+	switch ( $mode ) {
 		case KR_FLUSH_HTMLPRE:
 			$output = '<pre>' . htmlspecialchars( $output ) . '</pre>';
 			break;
@@ -67,11 +65,12 @@ function kfLogFlush( $echo = KR_LOG_ECHO, $mode = KR_FLUSH_HTMLPRE ) {
 	} else {
 		return $output;
 	}
-
 }
 
-// Time since config was initiated
-// @param $micro Interger: KR_MICROSECONDS or KR_SECONDS
+/**
+ * Time since config was initiated
+ * @param int $micro One of KR_MICROSECONDS or KR_SECONDS
+ */
 function kfTimeSince( $detail = KR_MICROSECONDS ) {
 	global $kgConf;
 	if ( $detail == KR_MICROSECONDS ) {
@@ -81,15 +80,10 @@ function kfTimeSince( $detail = KR_MICROSECONDS ) {
 	}
 }
 
-
 /**
  * String & integer functions
  * -------------------------------------------------
  */
-
-function kfStripStr( $str ) {
-	return htmlspecialchars( addslashes( strip_tags( trim( $str ) ) ) );
-}
 
 function kfEscapeRE( $str ) {
 	return preg_quote( $str, KR_REGEX_DELIMITER );
@@ -99,9 +93,10 @@ function kfStrLastReplace( $search, $replace, $subject ) {
 	return substr_replace( $subject, $replace, strrpos( $subject, $search ), strlen( $search ) );
 }
 
-function is_odd( $num ) {
-	return (bool)($num % 2 );
-}
+/**
+ * Twitter Bootstrap utilities
+ * -------------------------------------------------
+ */
 
 /**
  * @param string $text
@@ -124,172 +119,15 @@ function kfAlertHtml( $type, $html ) {
  * Database related functions
  * -------------------------------------------------
  */
+
 function kfDbUsername() {
 	global $kgConf;
-
 	return $kgConf->getDbUsername();
 }
 
 function kfDbPassword() {
 	global $kgConf;
-
-	$kgConf->getDbPassword();
-}
-
-/**
- * Database interaction functions
- * -------------------------------------------------
- */
-// Get an array of objects for all results from the mysql_query() call
-function mysql_object_all( $result ) {
-	$all = array();
-	while ( $all[] = mysql_fetch_object($result) ) {
-	}
-	unset( $all[count( $all )-1] );
-	return $all;
-}
-
-// Function to sanitize values. Prevents SQL injection
-function mysql_clean( $str ) {
-	global $kgConf;
-
-	$str = @trim( $str );
-	if ( get_magic_quotes_gpc() ) {
-		$str = stripslashes( $str );
-	}
-	if ( $kgConf->getDbConnect() ) {
-		return mysql_real_escape_string( $str, $kgConf->getDbConnect() );
-	}
-	return mysql_real_escape_string( $str );
-}
-
-
-/**
- * Checks if the hostname looks real
- * Creates a connection to the server and returns the mysql link resource
- * Optionally selects the correct database as well.
- *
- * @return Mixed: Mysql link or boolean false
- */
-function kfConnectRRServerByHostname( $hostname = null, $dbname = false /* optional */,
- $setAsMainConnect = KR_KEEP_PRIM_DBCON /* optional */ ) {
-	global $kgConf;
-
-	// Make sure the input is valid
-	if (	!is_string( $hostname )
-		||	substr( $hostname, -15, 15 ) !== '.toolserver.org'
-		||	kfStripStr( strtolower( $hostname ) ) !== $hostname
-		||	substr_count ( $hostname, 'toolserver.org' ) !== 1
-		) {
-		kfLog( "Invalid hostname ('$hostname') given.", __FUNCTION__ );
-		return false;
-	}
-
-	$dbConnect = mysql_connect( $hostname, kfDbUsername(), kfDbPassword() );
-	if ( !$dbConnect ) {
-		return false;
-	}
-
-	if ( $dbname ) {
-		$dbSelect = mysql_select_db( $dbname, $dbConnect );
-		if ( !$dbSelect ) {
-			return false;
-		}
-	}
-	if ( $setAsMainConnect == KR_SET_AS_PRIM_DBCON ) {
-		return $kgConf->setDbConnect( $dbConnect, $hostname );
-	} else {
-		return $dbConnect;
-	}
-}
-
-/**
- * Checks if the databasename looks real
- * Sets the main database connection if everything is good
- *
- * @return Boolean: True if database connection went fine
- */
-function kfConnectRRServerByDBName( $dbname = false ) {
-	global $kgConf;
-
-	// Make sure the input is valid
-	// Only accepts lowercase strings that only contain
-	// '_p' once and at the end of the string.
-	if (	!is_string( $dbname )
-		||	substr( $dbname, -2, 2 ) !== '_p'
-		||	kfStripStr( strtolower( $dbname ) ) !== $dbname
-		||	substr_count ( $dbname, '_p' ) !== 1
-		) {
-		kfLog( "Invalid dbname ('$dbname') given.", __FUNCTION__ );
-		return false;
-	}
-
-	$tsSqlSubdomain = str_replace( '_p', '-p', $dbname );
-	$hostname = $tsSqlSubdomain . '.rrdb.toolserver.org';
-
-	return $kgConf->setDbConnect( kfConnectRRServerByHostname( $hostname, $dbname ), $hostname );
-}
-
-/**
- * @param $query string: A SELECT query string
- * @param $connect [optional]
- * @param $origin [optional]
- * @return Array of objects from the result
- */
-function kfDoSelectQueryRaw( $query, $connect = null, $origin = null ) {
-	global $kgConf;
-
-	if ( is_null( $connect ) || is_string( $connect ) ) {
-		$origin = is_string( $connect ) ? $connect : __FUNCTION__;
-		$origin .= "@{$kgConf->dbConnectHostname}";
-		$connect = $kgConf->getDbConnect();
-	} else {
-		$origin = is_string( $origin ) ? $origin : __FUNCTION__;
-	}
-	if ( !$connect ) {
-		return false;
-	}
-	$result = mysql_query( "/* $origin */ $query", $connect );
-	if ( $result ) {
-		$rows = mysql_object_all( $result );
-		mysql_free_result( $result );
-		return $rows;
-	} else {
-		kfLog( mysql_error() . "\nQuery:\n" . $query, $origin );
-		return array();
-	}
-}
-
-/**
- * Opens up half a dozen connections (one for each database server)
- * and stores them in GlobalConfig by S# ids.
- *
- * Note: Does not include sql.toolserver.org
- *
- * Example: Get s2 through $kgConfig->getDbExtraConnect( 'sql-s2-rr' )
- *
- * @return Boolean: True on success
- */
-function kfConnectToAllWikiDbServers(){
-	global $kgConf;
-	$servers = array( 'sql-s1-rr', 'sql-s2-rr', 'sql-s3-rr', 'sql-s4-rr', 'sql-s5-rr', 'sql-s6-rr', 'sql-s7-rr' );
-	foreach ( $servers as $server ) {
-		$kgConf->setDbExtraConnect( $server, kfConnectRRServerByHostname( $server . '.toolserver.org' ) );
-	}
-}
-
-// Closes the main and any extra connections
-// and removes them from the global config
-function kfCloseAllConnections(){
-	global $kgConf;
-	$connections = $kgConf->getAllDbConnects();
-	foreach( $connections as $connect ) {
-		if ( is_resource( $connect ) ) mysql_close( $connect );
-	}
-	$kgConf->dbConnect = null;
-	$kgConf->dbConnectName = null;
-	$kgConf->dbExtraConnections = array();
-	return true;
+	return $kgConf->getDbPassword();
 }
 
 /**
@@ -297,158 +135,57 @@ function kfCloseAllConnections(){
  * -------------------------------------------------
  */
 
-// Optionally pass a custom connect variable
-// Defaults to the main dbConnect (if it's for sql.ts.o) or makes a temporary new connection
-function kfGetAllWikiSelect( $options = array(), $sqlToolserverConnect = null ) {
-	global $kgConf;
-
-	$isTemp = false;
-	if ( is_null( $sqlToolserverConnect ) ) {
-		if ( $kgConf->getDbConnect() && $kgConf->dbConnectHostname == 'sql.toolserver.org' ) {
-			$sqlToolserverConnect = $kgConf->getDbConnect();
-		} else {
-			$isTemp = true;
-			$sqlToolserverConnect = kfConnectRRServerByHostname( 'sql.toolserver.org', 'toolserver' );
-			kfLog( 'Created a temp. connection for kfGetAllWikiSelect.', __FUNCTION__ );
-		}
-	}
+function kfGetAllWikiOptionHtml( $options = array() ) {
+	kfLogStart( __FUNCTION__ );
 
 	// Options
 	$defaultOptions = array(
-		'withLabel' => true,
-		'name' => 'wikidb',
-		'id' => 'wikidb',
-		'current' => '',
+		'group' => true,
+		'current' => null,
 		'exclude' => array(),
 	);
-	$options = array_merge( $defaultOptions, $options );
+	$options = $options + $defaultOptions;
 
-	// Get wikis
-	mysql_select_db( 'toolserver', $sqlToolserverConnect );
-	$dbResults = kfDoSelectQueryRaw( 'SELECT * FROM wiki WHERE is_closed = 0', $sqlToolserverConnect );
-
-	// Don't close connections not created by this function
-	if ( $isTemp ) {
-		mysql_close( $sqlToolserverConnect );
-	}
-	if ( empty( $dbResults ) ) {
-		kfLog( 'Wiki information acquirement failed.', __FUNCTION__ );
-		return '';
-	}
-
-	// Messages
-	if ( !is_null( $kgConf->I18N ) ) {
-		$selectWiki = _html( 'alws-selectwiki', 'krinkle' );
-		$mostUsed = _html( 'alws-group-mustused', 'krinkle' );
-		$allWikisAZ = _html( 'alws-group-allaz', 'krinkle' );
-	} else {
-		$selectWiki = '(select wiki)';
-		$mostUsed = 'Most used wikis';
-		$allWikisAZ = 'All wikis alphabetically';
-	}
-
-	// Spit it out
-	$html = Html::openElement( 'select' );
-	$html = '<select id="' . $options['id'] . '" name="' . $options['name'] . '"><option value="">' . $selectWiki . '</option>';
-	$outputA = '';
-	$outputB = '';
-	$selectAttr = ' selected="selected"';
-	foreach( $dbResults as $wiki ) {
-		if ( !in_array( $wiki->dbname, $options['exclude'] ) ) {
-			if ( in_array( $wiki->dbname, array( 'enwiki_p', 'commonswiki_p', 'nlwiki_p', 'dewiki_p', 'eswiki_p' ) ) ) {
-				$outputA .=
-					'<option value="' . $wiki->dbname . '" '
-						 . ( $options['current'] == $wiki->dbname ? $selectAttr : '') . ' >'
-					. $wiki->dbname
-					. '</option>';
-			} else {
-				$outputB .=
-					'<option value="' . $wiki->dbname . '" '
-						 . ( $options['current'] == $wiki->dbname ? $selectAttr : '') . ' >'
-					. $wiki->dbname
-					. '</option>';
+	$wikiInfos = LabsDB::getAllWikiInfos();
+	$optionsHtml = '';
+	$optionsHtmlGroups = array();
+	foreach ( $wikiInfos as $wikiInfo ) {
+		if ( in_array( $wikiInfo['dbname'], $options['exclude'] ) ) {
+			continue;
+		}
+		$hostname = parse_url( $wikiInfo['url'], PHP_URL_HOST );
+		if ( !$hostname ) {
+			kfLog( "Unable to parse hostname of {$wikiInfo['dbname']}: '{$wikiInfo['url']}'" );
+			continue;
+		}
+		$optionHtml = Html::element( 'option', array(
+			'value' => $wikiInfo['dbname'],
+			'selected' => $wikiInfo['dbname'] === $options['current'],
+			'data-url' => $hostname
+		), $hostname );
+		if ( $options['group'] ) {
+			if ( !isset( $optionsHtmlGroups[ $wikiInfo['family'] ] ) ) {
+				$optionsHtmlGroups[ $wikiInfo['family'] ] = '';
 			}
-		}
-	}
-	$html .= '<optgroup label="' . $mostUsed . '">'
-		. $outputA . '</optgroup>'
-		. '<optgroup label="' . $allWikisAZ . '">'
-		. $outputB . '</optgroup>';
-	$html .= '</select>';
-	if ( $options['withLabel'] ) {
-		if ( !is_null( $kgConf->I18N ) ) {
-			$html = Html::element( 'label', array( 'for' => $options['id'] ), _( 'alws-label', 'krinkle' ) ) . $html;
+			$optionsHtmlGroups[ $wikiInfo['family'] ] .= $optionHtml;
 		} else {
-			$html = Html::element( 'label', array( 'for' => $options['id'] ), 'Wikis' ) . $html;
+			$optionsHtml .= $optionHtml;
+		}
+
+	}
+
+	if ( $options['group'] ) {
+		foreach ( $optionsHtmlGroups as $family => $groupHtml ) {
+			$optionsHtml .=
+				Html::openElement( 'optgroup', array( 'label' => $family ) )
+				. $groupHtml
+				. '</optgroup>';
+
 		}
 	}
-	return $html;
-}
 
-function kfWikiHref( $wikidata, $title, $query = array() ) {
-	return $wikidata['url'] . '/w/index.php?' . http_build_query( array_merge (
-		array( 'title' => $title ),
-		$query
-	) );
-}
-
-function kfGetWikiDataFromDBName( $dbname ) {
-
-	$connect = kfConnectRRServerByHostname( 'sql.toolserver.org', 'toolserver' );
-	if ( !$connect ) {
-		return false;
-	}
-
-	$dbQuery = " /* LIMIT:15 */
-		SELECT
-			dbname,
-			lang,
-			family,
-			domain,
-			size,
-			is_meta,
-			is_closed,
-			is_multilang,
-			is_sensitive,
-			root_category,
-			server,
-			script_path
-		FROM wiki
-		WHERE dbname='" . mysql_clean( $dbname ) . "'
-		ORDER BY size DESC
-		LIMIT 1;
-	";
-	$dbReturn = kfDoSelectQueryRaw( $dbQuery, $connect );
-
-	mysql_close( $connect );
-
-	if ( !is_array( $dbReturn ) || !isset( $dbReturn[0] ) ) {
-		return false;
-	} else {
-		$dbResults = $dbReturn[0];
-	}
-
-	return wikiDataFromRow( $dbResults );
-}
-
-
-/**
- * Create the 'data' array as known from my getWikiAPI.
- * getWikiAPI uses this as well.
- *
- * @param $row The row from mysql_fetch_object() of a query like "SELECT * FROM toolserver.wiki WHERE .."
- */
-function wikiDataFromRow( $row ) {
-	if ( !isset( $row->domain ) && isset( $row->lang ) && isset( $row->family ) ) {
-		$row->domain = "{$row->lang}.{$row->family}.org";
-	}
-	return array_merge( (array)$row, array(
-		'wikicode' => substr( $row->dbname, 0, -2 ),
-		'localdomain' => kfStrLastReplace( '.org', '', $row->domain ),
-		'url' => '//' . $row->domain,
-		'canonical_url' => 'http://' . $row->domain,
-		'apiurl' => 'http://' . $row->domain . $row->script_path . 'api.php',
-	));
+	kfLogEnd( __FUNCTION__ );
+	return $optionsHtml;
 }
 
 // Sanatize callback
@@ -456,7 +193,6 @@ function kfSanatizeJsCallback( $str ) {
 	// Valid: foo.bar_Baz["quux"]['01']
 	return preg_replace( "/[^a-zA-Z0-9_\.\]\[\'\"]/", '', $str );
 }
-
 
 /**
  * Function for API modules
@@ -525,9 +261,11 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 	}
 
 }
+
 function kfApiFormats() {
 	return array( 'php', 'json', 'dump', 'print' );
 }
+
 function kfApiFormatHTML( $text ) {
 
 	// Escape everything first for full coverage
@@ -537,63 +275,6 @@ function kfApiFormatHTML( $text ) {
 	$text = preg_replace( '/\&lt;(!--.*?--|.*?)\&gt;/', '<span style="color: blue;">&lt;\1&gt;</span>', $text );
 
 	return $text;
-}
-
-/**
- * Get array of SVN information about a directory.
- * Requires SVN 1.4 or higher, will return empty array otherwise.
- *
- * $path string (optional)
- */
-function kfGetSvnInfo( $path = '' ) {
-	if ( substr( $path, -1) != '/' ) {
-		$path = "$path/";
-	}
-	if ( file_exists( $path . '.svn/entries' ) )  {
-		$lines = file($path . '.svn/entries');
-		// pre 1.4 svn used xml for this file
-		if ( !is_numeric( trim( $lines[3] ) ) ) {
-			$return = array( 'checkout-rev' => 0 );
-		} else {
-			$coRev = intval( trim( $lines[3] ) );
-			$dirRev = intval( trim( $lines[10] ) );
-			$coUrl = trim( $lines[4] );
-			$repoUrl = trim( $lines[5] );
-			$return = array(
-				'checkout-rev' => $coRev,
-				'checkout-cr-rev' => "https://www.mediawiki.org/wiki/Special:Code/MediaWiki/$coRev",
-				'checkout-url' => $coUrl,
-				'repo-url' => $repoUrl,
-				'directory-path' => str_replace( $repoUrl, '', $coUrl ),
-				'directory-rev' => $dirRev,
-				'directory-up-date' => trim( $lines[9] ),
-				'directory-cr-rev' => "https:://www.mediawiki.org/wiki/Special:Code/MediaWiki/$dirRev",
-			);
-		}
-		define( 'SVN_REVISION', $return['checkout-rev'] );
-		return $return;
-	} else {
-		return array();
-	}
-}
-
-/**
- * Get current SVN revision of a directory.
- * Requires SVN 1.4 or higher, will return 0 otherwise.
- *
- * $path string (optional) Path ending with trailing slash.
- */
-function kfGetSvnrev( $path = '' ) {
-	// Already done ?
-	if ( defined('SVN_REVISION') ) {
-		return SVN_REVISION;
-	}
-	// kfGetSvnInfo() sets SVN_VERSION
-	if ( kfGetSvnInfo( $path ) && defined('SVN_REVISION') ) {
-		return SVN_VERSION;
-	}
-	define( 'SVN_REVISION', 0);
-	return 0;
 }
 
 /**
@@ -675,38 +356,29 @@ function kfFormatBytes( $size, $precision = 2 ) {
 	return round( $size, 2 ) . $units[$i];
 }
 
-
-// Untill a better solution exists, call the real api or use raw sql
-// Most of the time raw sql will be used (which has downsides)
-// other times, for more complicated stuff (multiple joins, caching, paging,
-// generators for other properties etc.) we lazy-opt for using the live api
-// That's what this function does.
 /**
- * Get's the query, forces format=php, makes the request,
- * checks for errors, returns the unserialized data from the API or false.
- *
- * [Krinkle] 2011-01-05 https://lists.wikimedia.org/pipermail/toolserver-l/2011-February/003873.html
- *
- * @param Array $wikiData Data for the selected wiki (from kfGetWikiDataFromDBName).
- * @param Array $params Query parameters for MediaWiki API
- * @return Array|bool Unserialized data from the API response, or boolean false
+ * Get data from MediaWiki API.
+ * *
+ * @param string $url Base url for wiki (from LabsDb::getDbInfo).
+ * @param array $params Query parameters for MediaWiki API
+ * @return array|bool Data from the API response, or boolean false
  */
-function kfQueryWMFAPI( $wikiData, $params ) {
-	if ( !is_array( $wikiData ) || !is_array( $params ) || !isset( $wikiData['apiurl'] ) ) {
-		return false;
-	}
+function kfApiRequest( $url, $params ) {
 	$params['format'] = 'json';
-	$response = file_get_contents( $wikiData['apiurl'] . '?' . http_build_query( $params ) );
-	if ( $response === false ) {
+	if ( !isset( $params['action'] ) ) {
+		$params['action'] = 'query';
+	}
+
+	$response = file_get_contents( $url . '/w/api.php?' . http_build_query( $params ) );
+	if ( !$response ) {
 		return false;
 	}
+
 	$data = json_decode( $response, /* $assoc */ true );
-	if ( !is_array( $data ) ) {
+	if ( !is_array( $data ) || isset( $data['error'] ) ) {
 		return false;
 	}
-	if ( isset( $data['error'] ) ) {
-		return false;
-	}
+
 	return $data;
 }
 

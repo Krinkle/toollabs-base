@@ -1,7 +1,6 @@
 <?php
 /**
- * HtmlSelect.php
- * Created on March 15, 2011
+ * HtmlSelect class
  *
  * This file is based on MediaWiks' XmlSelect class.
  * https://svn.wikimedia.org/viewvc/mediawiki/trunk/phase3/includes/Xml.php?view=markup&pathrev=82840#l777
@@ -9,8 +8,8 @@
  * Modifications:
  * - Removed dependancy on the Xml class, using Html class instead.
  *
- * @since 0.1
- * @author Krinkle, 2011 - 2012
+ * @since 0.1.0
+ * @author Krinkle, 2011-2012
  * @license Public domain, WTFPL
  * @package toollabs-base
  */

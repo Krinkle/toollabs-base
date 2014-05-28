@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * @since 0.3.0
+ * @author Krinkle, 2012-2014
+ * @license Public domain, WTFPL
+ * @package toollabs-base
+ */
 class KrToolBaseClass {
 
 	protected $settings = array();

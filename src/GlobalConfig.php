@@ -24,7 +24,7 @@ class GlobalConfig {
 	);
 
 	protected $confInitiated = false;
-	protected $debugMode = false;
+	protected $debugMode = null;
 	protected $runlog = '';
 	protected $runlogFlushCount = 0;
 	protected $dbUsername;
@@ -101,7 +101,7 @@ class GlobalConfig {
 	 * Write one or more lines to the debug log
 	 */
 	public function writeDebugLog( $val ) {
-		if ( !$this->debugMode ) {
+		if ( $this->debugMode === false ) {
 			return;
 		}
 

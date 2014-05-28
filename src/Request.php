@@ -61,7 +61,7 @@ class Request {
 	}
 
 	public function getFuzzyBool( $key, $default = false ) {
-		return $this->getBool( $key, $default ) && $this->getVal( $key ) != 'false';
+		return $this->hasKey( $key ) && $this->getVal( $key ) != 'false';
 	}
 
 	/* Utility methods */
@@ -90,16 +90,6 @@ class Request {
 		} else {
 			return 'http';
 		}
-	}
-
-	/** @deprecated */
-	public function exists( $key, $negative = null ) {
-		return $this->hasKey( $key );
-	}
-
-	/** @deprecated */
-	public function getBool( $key, $negative = null ) {
-		return $this->hasKey( $key );
 	}
 
 }

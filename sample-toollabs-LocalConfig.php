@@ -7,15 +7,17 @@ define( 'KR_TSINT_START_INC', '/data/project/intuition/src/Intuition/ToolStart.p
 
 $kgConf->remoteBase = '//tools.wmflabs.org/example/basetool';
 
-// $kgCache->addStore(
-// 	new RedisCacheStore( array(
-// 		'preset' => 'toollabs',
-// 		'prefix' => 'tools.example:',
-// 	) )
-// );
-
-// $kgCache->addStore(
-//         new FileCacheStore( array(
-//                 'dir' => '/data/project/example/cache/objects',
-//         ) )
-// );
+if ( true ) {
+        $kgCache->addStore(
+                new RedisCacheStore( array(
+                        'preset' => 'toollabs',
+                        'prefix' => 'tools.example:',
+                ) )
+         );
+} else {
+        $kgCache->addStore(
+                new FileCacheStore( array(
+                        'dir' => '/data/project/example/cache/objects',
+                ) )
+        );
+}

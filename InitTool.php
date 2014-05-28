@@ -36,6 +36,9 @@ $kgCache = new Cache( array(
 ) );
 $kgCache->enableHarvest();
 
+// Must be after GlobalFunctions and $kgReq
+$kgConf->initConfig();
+
 function kfIncludeMwClasses() {
 	require_once __DIR__ . '/lib/mw/mock.php';
 
@@ -53,9 +56,6 @@ function kfIncludeMwClasses() {
 	require_once __DIR__ . '/lib/mw/Sanitizer.php';
 }
 kfIncludeMwClasses();
-
-// Must be after GlobalFunctions and $kgReq
-$kgConf->initConfig();
 
 // Debug
 if ( $kgConf->isDebugMode() ) {

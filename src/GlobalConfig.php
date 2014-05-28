@@ -90,14 +90,7 @@ class GlobalConfig {
 	 *
 	 * @return bool
 	 */
-	public function isDebugMode() { return (bool)$this->debugMode; }
-
-	/**
-	 * Set the debug mode
-	 */
-	public function setDebugMode( $val ) {
-		$this->debugMode = (bool)$val;
-	}
+	public function isDebugMode() { return $this->debugMode; }
 
 	/**
 	 * Return the run log of everything that happened so far
@@ -108,6 +101,10 @@ class GlobalConfig {
 	 * Write one or more lines to the debug log
 	 */
 	public function writeDebugLog( $val ) {
+		if ( !$this->debugMode ) {
+			return;
+		}
+
 		$this->runlog .= $this->getLogSection() . '> '
 			. $val
 			. "\n";

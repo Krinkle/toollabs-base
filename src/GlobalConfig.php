@@ -49,17 +49,16 @@ class GlobalConfig {
 		// User agent (required to get data from wmf domains)
 		ini_set( 'user_agent', $this->userAgent );
 
-		// Determine debug mode
-		// Does the current request want to change/set the debug mode ?
-		$isDebug = $kgReq->hasKey( 'debug' );
-		if ( !$isDebug ) {
+		// Allow request parameter to toggle debug mode
+		if ( !$kgReq->hasKey( 'debug' ) ) {
 			// If nothing in the request, re-use the setting from the session
 			// This makes it easier to debug in a workflow without having to
-			// append it all the time.
+			// append it to every individual request.
 			$isDebug = isset( $_SESSION['debug'] );
 		} else {
 			// If something in the request, put it in the session to remember it
 			// in the next request
+			$isDebug = $kgReq->getFuzzyBool( 'debug' );
 			$_SESSION['debug'] = $isDebug;
 		}
 		$this->debugMode = $isDebug;

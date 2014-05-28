@@ -19,8 +19,9 @@ class GlobalConfig {
 	// Set by BaseTool
 	public $I18N = null;
 
-	protected $currentLogSection = '(init)';
-	protected $logSectionStack = array();
+	protected $logSectionStack = array(
+		'(init)'
+	);
 
 	protected $confInitiated = false;
 	protected $debugMode = false;
@@ -108,7 +109,7 @@ class GlobalConfig {
 	 * Write one or more lines to the debug log
 	 */
 	public function writeDebugLog( $val ) {
-		$this->runlog .= $this->currentLogSection . '> '
+		$this->runlog .= $this->getLogSection() . '> '
 			. $val
 			. "\n";
 	}
@@ -121,7 +122,7 @@ class GlobalConfig {
 	}
 
 	public function getLogSection() {
-		return $this->currentLogSection;
+		return end( $this->logSectionStack );
 	}
 
 	public function startLogSection( $name ) {

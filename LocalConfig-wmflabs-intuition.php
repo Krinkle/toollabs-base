@@ -1,6 +1,6 @@
 <?php
 /**
- * LocalConfig for BaseTool install in Tool Labs.
+ * LocalConfig for BaseTool install for Intuition in Tool Labs.
  */
 
 define( 'KR_TSINT_START_INC', '/data/project/intuition/src/Intuition/ToolStart.php' );

@@ -1,7 +1,7 @@
 <?php
 use org\bovigo\vfs\vfsStream;
 
-class FileCacheTest extends CacheTestBase {
+class FileCacheStoreTest extends CacheTestCase {
 	protected static $root;
 
 	public static function setUpBeforeClass() {
@@ -11,7 +11,7 @@ class FileCacheTest extends CacheTestBase {
 	protected function setUp() {
 		parent::setUp();
 
-		$this->cache = new FileCacheBackend(array(
+		$this->cache = new FileCacheStore(array(
 			'dir' => vfsStream::url( 'test/cache' )
 		));
 	}

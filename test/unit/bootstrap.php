@@ -1,6 +1,4 @@
 <?php
 
 require_once __DIR__ . '/../../InitTool.php';
-
-class BaseTestCase extends PHPUnit_Framework_TestCase {
-}
+require_once __DIR__ . '/CacheTestCase.php';

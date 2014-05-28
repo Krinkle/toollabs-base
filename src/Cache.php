@@ -11,22 +11,62 @@
  * @package toollabs-base
  */
 
-class Cache implements CacheBackend {
-	protected $backends;
+class Cache implements CacheInterface {
+	protected $frontend;
+	protected $stores;
 
 	/**
-	 * @param array|CacheBackend $backends
+	 * @param CacheInterface[] $stores
 	 */
-	public function __construct( Array $backends ) {
-		$this->backends = $backends;
-		foreach ( $backends as $i => $backend ) {
-			kfLog( "Registered " . get_class( $backend ) );
+	public function __construct( Array $stores ) {
+		$this->stores = $stores;
+
+		foreach ( $stores as $i => $store ) {
+			kfLog( "Registered " . get_class( $store ) );
 		}
 	}
 
-	public function addBackend( CacheBackend $backend ) {
-		$this->backends[] = $backend;
-		kfLog( "Registered " . get_class( $backend ) );
+	/**
+	 * Enable harvest behaviour for the first cache store.
+	 *
+	 * The store marked as "harvester" will receive set() commands
+	 * when a multi-store get() results a miss from this one,
+	 * that way it will be populated for the next request.
+	 *
+	 * Typically this is an instance of MemoryCacheStore.
+	 *
+	 * Example configuration:
+	 *
+	 *     $tmpCache = new MemoryCacheStore();
+	 *     $redisCache = new RedisCacheStore( .. );
+	 *     $cache = new Cache( array( $tmpCache, $redisCache ) );
+	 *
+	 * When a value is stored, it will be in both. Within that
+	 * request it will be retreived from memory only without having
+	 * to hit Redis.
+	 *
+	 * On subsequent requests, though, it would always fallback to
+	 * Redis. Even if it is called multiple times within the
+	 * subsequent request, it never comes back in memory store.
+	 *
+	 *     $cache->enableHarvest();
+	 *
+	 * Enabling harvest behaviour will automatically hold on to the
+	 * value retrieved from Redis, in memory, within the current request.
+	 *
+	 * NB: When a value is harvested, the default expiry will be used (this
+	 * information can generally not be covered from an existing store).
+	 * This is generally not an issue as memory stores just expire at the end
+	 * of the request.
+	 */
+	public function enableHarvest() {
+		$this->frontend = $this->stores[0];
+	}
+
+	public function addStore( CacheInterface $store ) {
+		$this->stores[] = $store;
+
+		kfLog( "Registered " . get_class( $store ) );
 	}
 
 	/**
@@ -34,10 +74,14 @@ class Cache implements CacheBackend {
 	 * @return mixed|bool
 	 */
 	public function get( $key ) {
-		foreach ( $this->backends as $backend ) {
-			$data = $backend->get( $key );
+		foreach ( $this->stores as $store ) {
+			$data = $store->get( $key );
 			if ( $data !== false ) {
-				kfLog( "Cache hit for '$key' in " . get_class( $backend ) );
+				// If we have a frontend and this wasn't from there,
+				// be sure to populate it.
+				if ( $this->frontend && $store !== $this->frontend ) {
+					$this->frontend->set( $key, $data );
+				}
 				return $data;
 			}
 		}
@@ -52,9 +96,9 @@ class Cache implements CacheBackend {
 	 * @return bool
 	 */
 	public function set( $key, $data, $ttl = 0 ) {
-		foreach ( $this->backends as $backend ) {
-			if ( !$backend->set( $key, $data, $ttl ) ) {
-				kLog( "Failed to store value for '$key' in " . get_class( $backend ) );
+		foreach ( $this->stores as $store ) {
+			if ( !$store->set( $key, $data, $ttl ) ) {
+				kLog( "Failed to store value for '$key' in " . get_class( $store ) );
 			}
 		}
 		return true;
@@ -64,13 +108,13 @@ class Cache implements CacheBackend {
 	 * @param string $key
 	 */
 	public function delete( $key ) {
-		foreach ( $this->backends as $backend ) {
-			$backend->delete( $key );
+		foreach ( $this->stores as $store ) {
+			$store->delete( $key );
 		}
 	}
 }
 
-interface CacheBackend {
+interface CacheInterface {
 	/**
 	 * @param string $key
 	 * @return mixed|bool Retreived data or boolean false
@@ -92,7 +136,7 @@ interface CacheBackend {
 	public function delete( $key );
 }
 
-abstract class CacheBackendBase implements CacheBackend {
+abstract class CacheStoreBase implements CacheInterface {
 	/**
 	 * @param int $ttl
 	 * @return int Timestamp in seconds
@@ -123,9 +167,9 @@ abstract class CacheBackendBase implements CacheBackend {
  * Inspired by php-MemoryCache <https://github.com/c9s/php-UniversalCache>
  * Inspired by HashBagOStuff <https://github.com/wikimedia/mediawiki-core>
  */
-class MemoryCacheBackend extends CacheBackendBase {
+class MemoryCacheStore extends CacheStoreBase {
 	/** @var array */
-	protected $store;
+	protected $store = array();
 
 	/**
 	 * @return bool
@@ -184,7 +228,7 @@ class MemoryCacheBackend extends CacheBackendBase {
 	}
 }
 
-class FileCacheBackend extends CacheBackendBase {
+class FileCacheStore extends CacheStoreBase {
 	/** @var string */
 	protected $dir;
 
@@ -277,7 +321,7 @@ class FileCacheBackend extends CacheBackendBase {
 
 }
 
-class RedisCacheBackend extends CacheBackendBase {
+class RedisCacheStore extends CacheStoreBase {
 	/** @var Redis */
 	protected $client;
 

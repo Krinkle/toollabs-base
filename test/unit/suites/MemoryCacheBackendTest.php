@@ -1,10 +1,10 @@
 <?php
 
-class MemoryCacheTest extends CacheTestBase {
+class MemoryCacheStoreTest extends CacheTestCase {
 
 	protected function setUp() {
 		parent::setUp();
-		$this->cache = new MemoryCacheBackend();
+		$this->cache = new MemoryCacheStore();
 	}
 
 	public function testPersistanceGet() {

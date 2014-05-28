@@ -32,8 +32,9 @@ require_once __DIR__ . '/src/LabsDB.php';
 $kgReq = new Request( $_POST + $_GET );
 
 $kgCache = new Cache( array(
-	new MemoryCacheBackend()
+	new MemoryCacheStore()
 ) );
+$kgCache->enableHarvest();
 
 function kfIncludeMwClasses() {
 	require_once __DIR__ . '/lib/mw/mock.php';

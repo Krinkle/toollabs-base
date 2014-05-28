@@ -77,6 +77,7 @@ class Cache implements CacheInterface {
 		foreach ( $this->stores as $store ) {
 			$data = $store->get( $key );
 			if ( $data !== false ) {
+				kfLog( "Cache hit for '$key' in " . get_class( $store ) );
 				// If we have a frontend and this wasn't from there,
 				// be sure to populate it.
 				if ( $this->frontend && $store !== $this->frontend ) {

@@ -12,30 +12,25 @@ require_once __DIR__ . '/GlobalDefinitions.php';
 class GlobalConfig {
 
 	/**
-	 * Variables that are read-only
+	 * Set from LocalConfig
 	 */
-	var $remoteBase = 'http://example.org/tools/foo';
-	var $fullSimpleDatefmt = 'Y-m-d H:i:s';
-	var $fullReadableDatefmt = 'l, j F Y H:i:s';
-	var $userAgent = 'BaseTool/0.3.0 (https://github.com/Krinkle/toollabs-base)';
-	var $selfClosingTags = array( 'link', 'input', 'br', 'img' );
+	public $remoteBase = 'http://example.org/tools/foo';
+	public $userAgent = 'BaseTool/0.3.0 (https://github.com/Krinkle/toollabs-base)';
 
-	var $I18N = null;
-
-	/**
-	 * Variables that are modifiable through set*-functions
-	 */
-	var $confInitiated = false;
-	var $debugMode = false;
-	var $startTime = null;
-	var $startTimeMicro = null;
-	var $runlog = '';
-	var $runlogFlushCount = 0;
-	var $dbUsername = null;
-	var $dbPassword = null;
+	// Set by BaseTool
+	public $I18N = null;
 
 	protected $currentLogSection = '(init)';
 	protected $logSectionStack = array();
+
+	protected $confInitiated = false;
+	protected $startTime = null;
+	protected $startTimeMicro = null;
+	protected $debugMode = false;
+	protected $runlog = '';
+	protected $runlogFlushCount = 0;
+	protected $dbUsername = null;
+	protected $dbPassword = null;
 
 	/**
 	 * Initiated certain configuration variables
@@ -43,7 +38,7 @@ class GlobalConfig {
 	 *
 	 * @return Boolean: True if initiation request was execututed (ie. first call), false on later ones
 	 */
-	public function initConfig(){
+	public function initConfig() {
 		if ( $this->confInitiated ) {
 			return false;
 		}
@@ -78,23 +73,17 @@ class GlobalConfig {
 
 	}
 
-
-	/**
-	 * get*-functions for read-only members
-	 * -------------------------------------------------
-	 */
-
 	/**
 	 * Get remote base
 	 *
-	 * @return String: Remote base path complete from the protocol:// without trailing slash
+	 * @return string Remote base path complete from the protocol:// without trailing slash
 	 */
 	public function getRemoteBase() { return $this->remoteBase; }
 
 	/**
 	 * Get path to home directory
 	 *
-	 * @return String: Home directory of tool user account (eg. /home/username or /data/project/mytool)
+	 * @return string Home directory of tool user account (eg. /home/username or /data/project/mytool)
 	 */
 	public function getLocalHome() {
 		$info = posix_getpwuid(posix_geteuid());
@@ -102,59 +91,31 @@ class GlobalConfig {
 	}
 
 	/**
-	 * A compelete date format in a simple way that is sortable and universal
+	 * Get timestamp in seconds since epoch
 	 *
-	 * @return String: Dateformat for PHP date()
-	 */
-	public function getFullSimpleDatefmt() { return $this->fullSimpleDatefmt; }
-
-	/**
-	 * A complete date format that isn't sortable but more human readable
-	 *
-	 * @return String: Dateformat for PHP date()
-	 */
-	public function getFullReadableDatefmt() { return $this->fullReadableDatefmt; }
-
-	/**
-	 * Timestamp in seconds since epoch
-	 *
-	 * @return Interger
+	 * @return int
 	 */
 	public function getStartTime() { return $this->startTime; }
 
 	/**
-	 * Timestamp in microseconds since epoch
+	 * Get timestamp in microseconds since epoch
 	 *
-	 * @return Interger
+	 * @return int
 	 */
 	public function getStartTimeMicro() { return $this->startTimeMicro; }
 
-
-	/**
-	 * Getters and settes for mutable members
-	 * -------------------------------------------------
-	 */
-
 	/**
 	 * Wether debug mode is enabled
+	 *
 	 * @return bool
 	 */
 	public function isDebugMode() { return (bool)$this->debugMode; }
 
 	/**
-	 * Return the debug mode
-	 * @deprecated since 0.3: Use isDebugMode() instead.
-	 */
-	public function getDebugMode() { return $this->isDebugMode(); }
-
-	/**
 	 * Set the debug mode
-	 *
-	 * @return bool
 	 */
 	public function setDebugMode( $val ) {
 		$this->debugMode = (bool)$val;
-		return true;
 	}
 
 	/**
@@ -205,9 +166,8 @@ class GlobalConfig {
 		$this->dbPassword = $cnf['password'];
 	}
 
-
 	/**
-	 * Returns the database username
+	 * Get the database username
 	 */
 	public function getDbUsername() {
 		$this->fetchDbCredentials();
@@ -215,7 +175,7 @@ class GlobalConfig {
 	}
 
 	/**
-	 * Returns the database password
+	 * Get the database password
 	 */
 	public function getDbPassword() {
 		$this->fetchDbCredentials();

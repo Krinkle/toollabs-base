@@ -37,7 +37,7 @@ class Cache implements CacheBackend {
 		foreach ( $this->backends as $backend ) {
 			$data = $backend->get( $key );
 			if ( $data !== false ) {
-				kfLog( "Cache hit for '$key'" );
+				kfLog( "Cache hit for '$key' in " . get_class( $backend ) );
 				return $data;
 			}
 		}

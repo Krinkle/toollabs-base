@@ -181,12 +181,12 @@ class LabsDB {
 		if ( !isset( self::$dbInfos ) ) {
 			global $kgCache;
 			$key = kfCacheKey( 'base', 'labsdb', 'meta', 'dbinfos' );
-			$dbInfos = $kgCache->get( $key );
-			if ( !$dbInfos ) {
-				$dbInfos = self::fetchAllDbInfos();
-				$kgCache->set( $key, $dbInfos, 3600 * 24 );
+			$value = $kgCache->get( $key );
+			if ( $value === false ) {
+				$value = self::fetchAllDbInfos();
+				$kgCache->set( $key, $value, 3600 * 24 );
 			}
-			self::$dbInfos = $dbInfos;
+			self::$dbInfos = $value;
 		}
 
 		return self::$dbInfos;

@@ -30,22 +30,25 @@ class KrToolBaseClass {
 
 	protected function show() {}
 
-	public function handleException( Exception $e ) {
+	protected function outputException( Exception $e ) {
 		global $kgBaseTool;
-		$kgBaseTool->addOut( $e->getMessage(), 'pre' );
+		$kgBaseTool->addOut( $e->getMessage() , 'pre' );
+	}
+
+	public function handleException( Exception $e ) {
+		$this->outputException( $e );
 		exit( 1 );
 	}
 
 	public function run() {
-		new kfLogSection( get_class( $this ) . '::run' );
+		$section = new kfLogSection( __METHOD__ );
 
 		set_exception_handler( array( $this, 'handleException' ) );
 
 		try {
 			$this->show();
 		} catch ( Exception $e ) {
-			global $kgBaseTool;
-			$kgBaseTool->addOut( $e->getMessage(), 'pre' );
+			$this->outputException( $e );
 		}
 	}
 }

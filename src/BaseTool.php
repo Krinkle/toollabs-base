@@ -58,6 +58,7 @@ class BaseTool {
 
 	public static function newFromArray( $config ) {
 		global $kgConf;
+		$section = new kfLogSection( __METHOD__ );
 
 		$t = new BaseTool();
 

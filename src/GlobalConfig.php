@@ -7,7 +7,6 @@
  * @license Public domain, WTFPL
  * @package toollabs-base
  */
-require_once __DIR__ . '/GlobalDefinitions.php';
 
 class GlobalConfig {
 
@@ -24,13 +23,11 @@ class GlobalConfig {
 	protected $logSectionStack = array();
 
 	protected $confInitiated = false;
-	protected $startTime = null;
-	protected $startTimeMicro = null;
 	protected $debugMode = false;
 	protected $runlog = '';
 	protected $runlogFlushCount = 0;
-	protected $dbUsername = null;
-	protected $dbPassword = null;
+	protected $dbUsername;
+	protected $dbPassword;
 
 	/**
 	 * Initiated certain configuration variables
@@ -47,8 +44,6 @@ class GlobalConfig {
 		global $kgReq;
 		session_start();
 		date_default_timezone_set( 'UTC' );
-		$this->startTime = time();
-		$this->startTimeMicro = microtime( true );
 
 		// User agent (required to get data from wmf domains)
 		ini_set( 'user_agent', $this->userAgent );
@@ -91,20 +86,6 @@ class GlobalConfig {
 	}
 
 	/**
-	 * Get timestamp in seconds since epoch
-	 *
-	 * @return int
-	 */
-	public function getStartTime() { return $this->startTime; }
-
-	/**
-	 * Get timestamp in microseconds since epoch
-	 *
-	 * @return int
-	 */
-	public function getStartTimeMicro() { return $this->startTimeMicro; }
-
-	/**
 	 * Wether debug mode is enabled
 	 *
 	 * @return bool
@@ -127,10 +108,9 @@ class GlobalConfig {
 	 * Write one or more lines to the debug log
 	 */
 	public function writeDebugLog( $val ) {
-		$this->runlog .=
-			number_format( kfTimeSince( KR_MICROSECONDS ), 7 ) . ': '
-			. $this->currentLogSection . '> '
-			. $val;
+		$this->runlog .= $this->currentLogSection . '> '
+			. $val
+			. "\n";
 	}
 
 	/**

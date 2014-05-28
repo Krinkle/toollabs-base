@@ -12,14 +12,14 @@ class LabsDB {
 	protected static $dbConnections = array();
 
 	/**
-	 * @var Array Cache of db information
+	 * @var array
 	 */
-	protected static $dbInfos = array();
+	protected static $dbInfos;
 
 	/**
-	 * @var bool Whether $dbInfos contains everything
+	 * @var array
 	 */
-	protected static $dbInfoHasAll = false;
+	protected static $wikiInfos;
 
 	/**
 	 * Get a database connection by hostname
@@ -152,40 +152,44 @@ class LabsDB {
 	}
 
 	/**
-	 * Get information for all (replicated) open wikis.
-	 *
-	 * See https://wikitech.wikimedia.org/wiki/Nova_Resource:Tools/Help#Metadata_database
 	 * @return Array
 	 */
-	public static function getAllWikiInfos() {
-		static $wikiInfos;
-
-		if ( $wikiInfos !== null ) {
-			return $wikiInfos;
-		}
-
+	protected static function fetchAllDbInfos() {
 		$rows = self::query( self::getMetaDB(),
 			'SELECT dbname, family, url, slice
 			FROM wiki
 			WHERE is_closed = 0
 			ORDER BY url ASC'
 		);
+
+		$dbInfos = array();
 		foreach ( $rows as &$row ) {
-			self::$dbInfos[ $row['dbname'] ] = $row;
+			$dbInfos[ $row['dbname'] ] = $row;
 		}
-		self::$dbInfoHasAll = true;
 
-		$wikiInfos = self::$dbInfos;
-		// Filter out NULL values for url as meta_p.wiki also contains dbname='centralauth'
-		// which has 'url' set to NULL (see wmbug.com/65789)
-		// Could simply be done in SQL, but we want to cache all db infos, so we do both.
-		foreach ( $wikiInfos as $i => &$wikiInfo ) {
-			if ( !$wikiInfo['url'] ) {
-				unset( $wikiInfos[ $i ] );
+		return $dbInfos;
+	}
+
+	/**
+	 * Get information for all (replicated) databases.
+	 *
+	 * See https://wikitech.wikimedia.org/wiki/Nova_Resource:Tools/Help#Metadata_database
+	 *
+	 * @return Array
+	 */
+	public static function getAllDbInfos() {
+		if ( !isset( self::$dbInfos ) ) {
+			global $kgCache;
+			$key = kfCacheKey( 'base', 'labsdb', 'meta', 'dbinfos' );
+			$dbInfos = $kgCache->get( $key );
+			if ( !$dbInfos ) {
+				$dbInfos = self::fetchAllDbInfos();
+				$kgCache->set( $key, $dbInfos, 3600 * 24 );
 			}
+			self::$dbInfos = $dbInfos;
 		}
 
-		return $wikiInfos;
+		return self::$dbInfos;
 	}
 
 	/**
@@ -193,27 +197,38 @@ class LabsDB {
 	 * @return Array
 	 */
 	public static function getDbInfo( $dbname ) {
-		if ( !isset( self::$dbInfos[ $dbname ] ) ) {
-			if ( self::$dbInfoHasAll ) {
-				throw new Exception( "Unable to find '$dbname'" );
-			}
-			$info = self::query(
-				self::getMetaDB(),
-				'SELECT dbname, family, url, slice
-					FROM wiki
-					WHERE is_closed = 0
-					AND dbname = :dbname
-					LIMIT 1',
-				array(
-					':dbname' => $dbname,
-				)
-			);
-			if ( !$info ) {
-				throw new Exception( "Unable to find '$dbname'" );
-			}
-			self::$dbInfos[ $dbname ] = $info;
+		$dbInfos = self::getAllDbInfos();
+
+		if ( !isset( $dbInfos[ $dbname ] ) ) {
+			throw new Exception( "Unable to find '$dbname'" );
 		}
-		return self::$dbInfos[ $dbname ];
+
+		return $dbInfos[ $dbname ];
+	}
+
+	/**
+	 * Like getAllDbInfos, but without databases that aren't wikis.
+	 *
+	 * Because meta_p.wiki also contains dbname='centralauth' we need to
+	 * filter out non-wikis. Do so by removing rows with NULL values for url
+	 * (see wmbug.com/65789). Could simply be done in SQL, but we want to
+	 * cache all db infos, so do here instead.
+	 *
+	 * @return Array
+	 */
+	public static function getAllWikiInfos() {
+		if ( !isset( self::$wikiInfos ) ) {
+			$wikiInfos = self::getAllDbInfos();
+			foreach ( $wikiInfos as $dbname => &$wikiInfo ) {
+				if ( !$wikiInfo['url'] ) {
+					unset( $wikiInfos[ $dbname ] );
+				}
+			}
+
+			self::$wikiInfos = $wikiInfos;
+		}
+
+		return self::$wikiInfos;
 	}
 
 	public static function purgeConnections() {

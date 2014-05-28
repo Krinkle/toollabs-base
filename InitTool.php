@@ -10,6 +10,8 @@
  * @package toollabs-base
  */
 
+global $kgConf, $kgReq, $kgCache;
+
 require_once __DIR__ . '/src/GlobalDefinitions.php';
 require_once __DIR__ . '/src/GlobalConfig.php';
 
@@ -19,11 +21,19 @@ if ( !isset( $kgConf ) || !is_object( $kgConf ) ) {
 	$kgConf = new GlobalConfig();
 }
 
+require_once __DIR__ . '/src/GlobalFunctions.php';
+require_once __DIR__ . '/src/Cache.php';
 require_once __DIR__ . '/src/Request.php';
+require_once __DIR__ . '/src/HtmlSelect.php';
+require_once __DIR__ . '/src/LabsDB.php';
 
 // POST overrides GET data
 // We don't use $_REQUEST here to avoid interference from cookies.
 $kgReq = new Request( $_POST + $_GET );
+
+$kgCache = new Cache( array(
+	new MemoryCacheBackend()
+) );
 
 function kfIncludeMwClasses() {
 	require_once __DIR__ . '/lib/mw/mock.php';
@@ -43,11 +53,7 @@ function kfIncludeMwClasses() {
 }
 kfIncludeMwClasses();
 
-require_once __DIR__ . '/src/HtmlSelect.php';
-require_once __DIR__ . '/src/GlobalFunctions.php';
-require_once __DIR__ . '/src/LabsDB.php';
-
-// Must be after GlobalFunctions
+// Must be after GlobalFunctions and $kgReq
 $kgConf->initConfig();
 
 // Debug

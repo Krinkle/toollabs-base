@@ -7,27 +7,29 @@
  * @license Public domain, WTFPL
  * @package toollabs-base
  */
-require_once __DIR__ . '/GlobalDefinitions.php';
-require_once __DIR__ . '/GlobalConfig.php';
-
-// Never twice, but if not done already, make sure GlobalConfig is initiated
-if ( !is_object( $kgConf ) ) {
-	$kgConf = new GlobalConfig();
-}
 
 /**
  * Debug functions
  * -------------------------------------------------
  */
 
-function kfLogStart( $name ) {
-	global $kgConf;
-	$kgConf->startLogSection( $name );
-}
-
-function kfLogEnd( $name ) {
-	global $kgConf;
-	$kgConf->endLogSection( $name );
+class kfLogSection {
+	protected $name;
+	/**
+	 * Begin section for a function and return an object that ends the section
+	 * when the object is destroyed. As long as the object is not specifically
+	 * inked to other objects, it will automatically be destroyed when the function
+	 * returns (without having to worry about early returns and exceptions).
+	 */
+	public function __construct( $name ) {
+		global $kgConf;
+		$kgConf->startLogSection( $name );
+		$this->name = $name;
+	}
+	function __destruct() {
+		global $kgConf;
+		$kgConf->endLogSection( $this->name );
+	}
 }
 
 function kfLog( $msg ) {
@@ -64,19 +66,6 @@ function kfLogFlush( $echo = KR_LOG_ECHO, $mode = KR_FLUSH_HTMLPRE ) {
 		return true;
 	} else {
 		return $output;
-	}
-}
-
-/**
- * Time since config was initiated
- * @param int $micro One of KR_MICROSECONDS or KR_SECONDS
- */
-function kfTimeSince( $detail = KR_MICROSECONDS ) {
-	global $kgConf;
-	if ( $detail == KR_MICROSECONDS ) {
-		return microtime(true) - $kgConf->getStartTimeMicro();
-	} else {
-		return time() - $kgConf->getStartTime();
 	}
 }
 
@@ -130,13 +119,19 @@ function kfDbPassword() {
 	return $kgConf->getDbPassword();
 }
 
+function kfCacheKey() {
+	$args = func_get_args();
+	$key = 'kf:' . implode( ':', $args );
+	return str_replace( ' ', '_', $key );
+}
+
 /**
  * Other functions
  * -------------------------------------------------
  */
 
 function kfGetAllWikiOptionHtml( $options = array() ) {
-	kfLogStart( __FUNCTION__ );
+	new kfLogSection( __FUNCTION__ );
 
 	// Options
 	$defaultOptions = array(
@@ -184,7 +179,6 @@ function kfGetAllWikiOptionHtml( $options = array() ) {
 		}
 	}
 
-	kfLogEnd( __FUNCTION__ );
 	return $optionsHtml;
 }
 

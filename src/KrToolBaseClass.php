@@ -37,16 +37,15 @@ class KrToolBaseClass {
 	}
 
 	public function run() {
+		new kfLogSection( get_class( $this ) . '::run' );
+
 		set_exception_handler( array( $this, 'handleException' ) );
 
-		$fname = get_class( $this ) . '::run';
-		kfLogStart( $fname );
 		try {
 			$this->show();
 		} catch ( Exception $e ) {
 			global $kgBaseTool;
 			$kgBaseTool->addOut( $e->getMessage(), 'pre' );
 		}
-		kfLogEnd( $fname );
 	}
 }

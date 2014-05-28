@@ -115,7 +115,7 @@ class BaseTool {
 
 		$t->headTitle = $t->displayTitle;
 
-		kfLog( 'Tool "' . $t->displayTitle . '" instantiated.' );
+		kfLog( 'Tool "' . $t->displayTitle . '" instantiated' );
 
 		return $t;
 	}

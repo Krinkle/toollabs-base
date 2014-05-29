@@ -20,7 +20,4 @@ define( 'KR_LOG_RETURN', false );
 define( 'KR_FLUSH_CLEARTEXT', 1 );
 define( 'KR_FLUSH_HTMLPRE', 2 );
 
-define( 'KR_SECONDS', 1 );
-define( 'KR_MICROSECONDS', 2 );
-
 define( 'KR_REGEX_DELIMITER', '/' );

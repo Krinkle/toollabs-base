@@ -33,8 +33,9 @@ class LabsDB {
 		if ( isset( self::$dbConnections[ $hostname ] ) ) {
 			$conn = self::$dbConnections[ $hostname ];
 		} else {
+			$section = new kfLogSection( __METHOD__ );
 			try {
-				$conn = new PDO(
+				$conn = new LoggedPDO(
 					'mysql:host=' . $hostname . ';dbname=' . $dbname . '_p;',
 					kfDbUsername(),
 					kfDbPassword()
@@ -141,6 +142,8 @@ class LabsDB {
 	 * @return array Rows
 	 */
 	public static function query( $conn, $sql, $bindings = null ) {
+		$section = new kfLogSection( __METHOD__ );
+
 		if ( $bindings ) {
 			$m = $conn->prepare( $sql );
 			$m->execute( $bindings );
@@ -235,5 +238,50 @@ class LabsDB {
 		// PDO doesn't have an explicit close method.
 		// Just dereference them.
 		self::$dbConnections = array();
+	}
+}
+
+class LoggedPDO extends PDO {
+	public function __construct( $dsn, $username = null, $password = null ) {
+		parent::__construct( $dsn, $username, $password );
+	}
+
+	public function prepare( $statement, $driver_options = null ) {
+		kfLog( self::generalizeSQL( "query-prepare: $statement" ) );
+		return parent::prepare( $statement );
+	}
+
+	public function query( $statement ) {
+		kfLog( self::generalizeSQL( "query: $statement" ) );
+		return parent::query( $statement );
+	}
+
+	/**
+	 * Remove most variables from an SQL query and replace them with X or N markers.
+	 *
+	 * Based on Database.php of mediawik-core 1.24-alpha
+	 *
+	 * @param string $sql
+	 * @return string
+	 */
+	protected static function generalizeSQL( $sql ) {
+		// This does the same as the regexp below would do, but in such a way
+		// as to avoid crashing php on some large strings.
+		# $sql = preg_replace( "/'([^\\\\']|\\\\.)*'|\"([^\\\\\"]|\\\\.)*\"/", "'X'", $sql );
+
+		$sql = str_replace( "\\\\", '', $sql );
+		$sql = str_replace( "\\'", '', $sql );
+		$sql = str_replace( "\\\"", '', $sql );
+		$sql = preg_replace( "/'.*'/s", "'X'", $sql );
+		$sql = preg_replace( '/".*"/s', "'X'", $sql );
+
+		// All newlines, tabs, etc replaced by single space
+		$sql = preg_replace( '/\s+/', ' ', $sql );
+
+		// All numbers => N
+		$sql = preg_replace( '/-?\d+(,-?\d+)+/s', 'N,...,N', $sql );
+		$sql = preg_replace( '/-?\d+/s', 'N', $sql );
+
+		return $sql;
 	}
 }

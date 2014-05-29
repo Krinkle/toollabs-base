@@ -358,11 +358,14 @@ function kfFormatBytes( $size, $precision = 2 ) {
  * @return array|bool Data from the API response, or boolean false
  */
 function kfApiRequest( $url, $params ) {
+	$section = new kfLogSection( __METHOD__ );
+
 	$params['format'] = 'json';
 	if ( !isset( $params['action'] ) ) {
 		$params['action'] = 'query';
 	}
 
+	kfLog( "request: GET $url/w/api.php" );
 	$response = file_get_contents( $url . '/w/api.php?' . http_build_query( $params ) );
 	if ( !$response ) {
 		return false;
@@ -377,11 +380,11 @@ function kfApiRequest( $url, $params ) {
 }
 
 // php.net/http_response_code
-if (!function_exists('http_response_code')) {
-	function http_response_code($code = null) {
+if ( !function_exists( 'http_response_code' ) ) {
+	function http_response_code( $code = null ) {
 
-		if ($code !== null) {
-			switch ($code) {
+		if ( $code !== null ) {
+			switch ( $code ) {
 				case 100: $text = 'Continue'; break;
 				case 101: $text = 'Switching Protocols'; break;
 				case 200: $text = 'OK'; break;
@@ -425,14 +428,14 @@ if (!function_exists('http_response_code')) {
 				break;
 			}
 
-			$protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
+			$protocol = ( isset( $_SERVER['SERVER_PROTOCOL'] ) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0' );
 
-			header($protocol . ' ' . $code . ' ' . $text);
+			header( $protocol . ' ' . $code . ' ' . $text );
 
 			$GLOBALS['http_response_code'] = $code;
 
 		} else {
-			$code = (isset($GLOBALS['http_response_code']) ? $GLOBALS['http_response_code'] : 200);
+			$code = ( isset( $GLOBALS['http_response_code'] ) ? $GLOBALS['http_response_code'] : 200 );
 		}
 
 		return $code;

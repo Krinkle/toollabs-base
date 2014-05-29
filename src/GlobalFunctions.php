@@ -9,7 +9,7 @@
  */
 
 /**
- * Debug functions
+ * Logging
  * -------------------------------------------------
  */
 
@@ -70,7 +70,7 @@ function kfLogFlush( $echo = KR_LOG_ECHO, $mode = KR_FLUSH_HTMLPRE ) {
 }
 
 /**
- * String & integer functions
+ * String utilities
  * -------------------------------------------------
  */
 
@@ -83,7 +83,33 @@ function kfStrLastReplace( $search, $replace, $subject ) {
 }
 
 /**
- * Twitter Bootstrap utilities
+ * Database
+ * -------------------------------------------------
+ */
+
+function kfDbUsername() {
+	global $kgConf;
+	return $kgConf->getDbUsername();
+}
+
+function kfDbPassword() {
+	global $kgConf;
+	return $kgConf->getDbPassword();
+}
+
+/**
+ * Cache
+ * -------------------------------------------------
+ */
+
+function kfCacheKey() {
+	$args = func_get_args();
+	$key = 'kf:' . implode( ':', $args );
+	return str_replace( ' ', '_', $key );
+}
+
+/**
+ * HTML templates
  * -------------------------------------------------
  */
 
@@ -103,32 +129,6 @@ function kfAlertHtml( $type, $html ) {
 	$class .= $type ? ' alert-' . $type : ' alert-default';
 	return Html::rawElement( 'div', array( 'class' => $class ), $html );
 }
-
-/**
- * Database related functions
- * -------------------------------------------------
- */
-
-function kfDbUsername() {
-	global $kgConf;
-	return $kgConf->getDbUsername();
-}
-
-function kfDbPassword() {
-	global $kgConf;
-	return $kgConf->getDbPassword();
-}
-
-function kfCacheKey() {
-	$args = func_get_args();
-	$key = 'kf:' . implode( ':', $args );
-	return str_replace( ' ', '_', $key );
-}
-
-/**
- * Other functions
- * -------------------------------------------------
- */
 
 function kfGetAllWikiOptionHtml( $options = array() ) {
 	new kfLogSection( __FUNCTION__ );
@@ -182,16 +182,26 @@ function kfGetAllWikiOptionHtml( $options = array() ) {
 	return $optionsHtml;
 }
 
-// Sanatize callback
+/**
+ * API Builder
+ * -------------------------------------------------
+ */
+
+/**
+ * Sanatize callback
+ *
+ * @param string $str
+ * @return string
+ */
 function kfSanatizeJsCallback( $str ) {
 	// Valid: foo.bar_Baz["quux"]['01']
 	return preg_replace( "/[^a-zA-Z0-9_\.\]\[\'\"]/", '', $str );
 }
 
 /**
- * Function for API modules
+ * Build API response
  *
- * @param $specialFormat string If $format is set to this format this function will not output
+ * @param string $specialFormat If $format is set to this format this function will not output
  *  anything and return true. This can be used for a GUI front-end.
  */
 function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '', $callback = null, $specialFormat = '' ) {
@@ -261,14 +271,19 @@ function kfApiFormats() {
 }
 
 /**
- * @param Array $options (optional):
+ * Version control
+ * -------------------------------------------------
+ */
+
+/**
+ * @param array $options (optional):
  * - string dir: Full path to where the git repository is.
  *    By default it will assume the current directory is already the git repository.
  * - string checkout: Will be checked out and reset to its HEAD. Otherwise stays in
  *    the current branch and resets to its head.
  * - unlock: Whether or not it should ensure there is no lock.
  *
- * @return bool|string: Boolean false on failure, or a string
+ * @return bool|string Boolean false on failure, or a string
  * with the output of the commands.
  */
 function kfGitCleanReset( $options = array() ) {
@@ -307,6 +322,11 @@ function kfGitCleanReset( $options = array() ) {
 	return $out;
 }
 
+/**
+ * Shell
+ * -------------------------------------------------
+ */
+
 function kfShellExec( $cmd ) {
 	$retval = null;
 
@@ -340,6 +360,11 @@ function kfFormatBytes( $size, $precision = 2 ) {
 }
 
 /**
+ * HTTP
+ * -------------------------------------------------
+ */
+
+/**
  * Get data from MediaWiki API.
  * *
  * @param string $url Base url for wiki (from LabsDb::getDbInfo).
@@ -354,8 +379,9 @@ function kfApiRequest( $url, $params ) {
 		$params['action'] = 'query';
 	}
 
-	kfLog( "request: GET $url/w/api.php" );
-	$response = file_get_contents( $url . '/w/api.php?' . http_build_query( $params ) );
+	$apiUrl = "$url/w/api.php";
+	kfLog( "request: GET $apiUrl" );
+	$response = file_get_contents( $apiUrl . '?' . http_build_query( $params ) );
 	if ( !$response ) {
 		return false;
 	}

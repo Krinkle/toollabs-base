@@ -12,6 +12,38 @@
     display: block;
 }
 
+/* Tables */
+
+@media (max-width: 768px) {
+    .table-xs-stack {
+        table-layout: fixed;
+        width: 100%;
+        border-left: 0;
+        border-right: 0;
+    }
+
+    .table-xs-stack colgroup,
+    .table-xs-stack th,
+    .table-xs-stack td {
+        display: block;
+        width: 100%;
+    }
+
+    .table-xs-stack tr {
+        display: block;
+    }
+
+    /* Undo double borders (top and bottom) */
+    .table-xs-stack > tbody > tr > td {
+        border-bottom: 0;
+    }
+
+    .table-xs-stack tbody tr {
+        margin-top: 10px; /* paragraph margin */
+        border-bottom: 1px solid #ddd; /* @table-border-color */
+    }
+}
+
 /* Top nav */
 
 .usage-nav {

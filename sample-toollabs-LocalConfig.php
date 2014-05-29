@@ -6,6 +6,7 @@
 define( 'KR_TSINT_START_INC', '/data/project/intuition/src/Intuition/ToolStart.php' );
 
 $kgConf->remoteBase = '//tools.wmflabs.org/example/basetool';
+$kgConf->cookiePrefix = 'example_';
 
 if ( true ) {
         $kgCache->addStore(

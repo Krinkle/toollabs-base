@@ -13,18 +13,20 @@
  */
 
 class Request {
+	/** @var Array */
+	protected $raw;
 
-	/* Initialize */
-	function __construct( $raw ) {
+	function __construct( Array $raw ) {
 		$this->raw = $raw;
 	}
-
-	/* Simple getters */
 
 	public function getRawVal( $arr, $key, $default ) {
 		return isset( $arr[$key] ) ? $arr[$key] : $default;
 	}
 
+	/**
+	 * @return string|null
+	 */
 	public function getVal( $key, $default = null ) {
 		$val = $this->getRawVal( $this->raw, $key, $default );
 		if ( is_array( $val ) ) {
@@ -37,7 +39,9 @@ class Request {
 		}
 	}
 
-	/** @return array|null */
+	/**
+	 * @return array|null
+	 */
 	public function getArray( $name, $default = null ) {
 		$val = $this->getRawVal( $this->raw, $name, $default );
 		if ( is_null( $val ) ) {
@@ -55,22 +59,89 @@ class Request {
 		return array_key_exists( $key, $this->raw );
 	}
 
-	/** @return int */
+	/**
+	 * @return int
+	 */
 	public function getInt( $key, $default = 0 ) {
 		return intval( $this->getVal( $key, $default ) );
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function getFuzzyBool( $key, $default = false ) {
-		return $this->hasKey( $key ) && $this->getVal( $key ) != 'false';
+		return $this->hasKey( $key ) && $this->getVal( $key ) !== 'false';
 	}
 
-	/* Utility methods */
+	public function getCookie( $key, $default = null ) {
+		global $kgConf;
+		return $this->getRawVal( $_COOKIE, $kgConf->getCookiePrefix() . $key, $default );
+	}
 
-	/** @return bool */
+	public function setCookie( $key, $value, $expire = 0 ) {
+		global $kgConf;
+
+		if ( $value === null && $expire === 0 ) {
+			// Delete cookie
+			$expire = -1;
+		}
+
+		$options = is_array( $expire ) ? $expire : array( 'expire' => $expire );
+		$options += array(
+			'expire' => 0,
+			'path' => '/',
+			'domain' => '',
+			'secure' => false,
+			// By default disallow access by JavaScript to cookies set here
+			'httpOnly' => true,
+		);
+		// http://www.php.net/setcookie
+		return setcookie(
+			$kgConf->getCookiePrefix() . $key,
+			$value,
+			$options['expire'],
+			$options['path'],
+			$options['domain'],
+			$options['secure'],
+			$options['httpOnly']
+		);
+	}
+
+	/**
+	 * Get data from session
+	 *
+	 * @param string $key
+	 * @return mixed
+	 */
+	public function getSessionData( $key ) {
+		self::ensureSession();
+		if ( !isset( $_SESSION[ $key ] ) ) {
+			return null;
+		}
+		return $_SESSION[$key];
+	}
+
+	/**
+	 * Set session data
+	 *
+	 * @param string $key
+	 * @param mixed $data
+	 */
+	public function setSessionData( $key, $data ) {
+		self::ensureSession();
+		$_SESSION[ $key ] = $data;
+	}
+
+	/**
+	 * @return bool
+	 */
 	public function wasPosted() {
 		return isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'POST';
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getQueryString(){
 		return http_build_query( $this->raw );
 	}
@@ -90,6 +161,18 @@ class Request {
 		} else {
 			return 'http';
 		}
+	}
+
+	/**
+	 * Lazy-initialise the session
+	 */
+	protected static function ensureSession() {
+		// If the cookie or session id is already set we already have a session and should abort
+		if ( isset( $_COOKIE[session_name()] ) || session_id() ) {
+			return;
+		}
+
+		session_start();
 	}
 
 }

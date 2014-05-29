@@ -15,6 +15,7 @@ class GlobalConfig {
 	 */
 	public $remoteBase = 'http://example.org/tools/foo';
 	public $userAgent = 'BaseTool/0.3.0 (https://github.com/Krinkle/toollabs-base)';
+	public $cookiePrefix = '';
 
 	// Set by BaseTool
 	public $I18N = null;
@@ -41,31 +42,29 @@ class GlobalConfig {
 			return false;
 		}
 
-		// Session and time
 		global $kgReq;
-		session_start();
 		date_default_timezone_set( 'UTC' );
 
 		// User agent (required to get data from wmf domains)
 		ini_set( 'user_agent', $this->userAgent );
 
 		// Allow request parameter to toggle debug mode
-		if ( !$kgReq->hasKey( 'debug' ) ) {
-			// If nothing in the request, re-use the setting from the session
-			// This makes it easier to debug in a workflow without having to
-			// append it to every individual request.
-			$isDebug = isset( $_SESSION['debug'] );
-		} else {
-			// If something in the request, put it in the session to remember it
-			// in the next request
+		if ( $kgReq->hasKey( 'debug' ) ) {
 			$isDebug = $kgReq->getFuzzyBool( 'debug' );
-			$_SESSION['debug'] = $isDebug;
+
+			// Set cookie to remember it in the next request.
+			// Also makes it easier to debug by not having to append it to every
+			// individual request.
+			$kgReq->setCookie( 'debug', $isDebug ? '1' : null );
+		} else {
+			$isDebug = $kgReq->getCookie( 'debug' ) === '1';
 		}
+
 		$this->debugMode = $isDebug;
 
 		$this->confInitiated = true;
-		return true;
 
+		return true;
 	}
 
 	/**
@@ -74,6 +73,13 @@ class GlobalConfig {
 	 * @return string Remote base path complete from the protocol:// without trailing slash
 	 */
 	public function getRemoteBase() { return $this->remoteBase; }
+
+	/**
+	 * Get cookie prefix
+	 *
+	 * @return string
+	 */
+	public function getCookiePrefix() { return $this->cookiePrefix; }
 
 	/**
 	 * Get path to home directory

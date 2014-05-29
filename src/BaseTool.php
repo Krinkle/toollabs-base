@@ -47,7 +47,6 @@ class BaseTool {
 	protected $requireJS = false;
 
 	var $headTitle = '';
-	var $sessionNamespace = 'default';
 	var $I18N = null;
 
 	/**
@@ -73,7 +72,6 @@ class BaseTool {
 		$kgConf->I18N = isset( $config['I18N'] ) ? $config['I18N'] : null;
 
 		$t->displayTitle = isset( $config['displayTitle'] ) ? $config['displayTitle'] : '';
-		$t->sessionNamespace = isset( $config['sessionNamespace'] ) ? $config['sessionNamespace'] : 'default';
 		$t->revisionId = isset( $config['revisionId'] ) ? $config['revisionId'] : '';
 
 		$t->styles = array(
@@ -203,15 +201,6 @@ class BaseTool {
 		} else {
 			return false;
 		}
-	}
-
-	public function setSessionVar( $key, $val ) {
-		@$_SESSION['KrinkleTools'][$this->sessionNamespace][$key] = $val;
-		return true;
-	}
-
-	public function getSessionVar( $key ) {
-		return @$_SESSION['KrinkleTools'][$this->sessionNamespace][$key];
 	}
 
 	public function expandURL( $url, $protocolRelativeOK = true ) {

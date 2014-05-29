@@ -36,7 +36,13 @@ $kgCache = new Cache( array(
 ) );
 $kgCache->enableHarvest();
 
-// Must be after GlobalFunctions and $kgReq
+// Local settings
+if ( file_exists(  __DIR__ . '/LocalConfig.php' ) ) {
+	require_once __DIR__ . '/LocalConfig.php';
+}
+
+// Config init must have access to GlobalFunctions, $kgReq, and $kgCache.
+// And must run after LocalConfig.
 $kgConf->initConfig();
 
 function kfIncludeMwClasses() {
@@ -61,11 +67,6 @@ kfIncludeMwClasses();
 if ( $kgConf->isDebugMode() ) {
 	error_reporting( E_ALL );
 	ini_set( 'display_errors', 1 );
-}
-
-// Local settings
-if ( file_exists(  __DIR__ . '/LocalConfig.php' ) ) {
-	require_once __DIR__ . '/LocalConfig.php';
 }
 
 require_once __DIR__ . '/src/BaseTool.php';

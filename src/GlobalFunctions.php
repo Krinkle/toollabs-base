@@ -260,17 +260,6 @@ function kfApiFormats() {
 	return array( 'php', 'json', 'dump', 'print' );
 }
 
-function kfApiFormatHTML( $text ) {
-
-	// Escape everything first for full coverage
-	$text = htmlspecialchars( $text );
-
-	// encode all comments or tags as safe blue strings
-	$text = preg_replace( '/\&lt;(!--.*?--|.*?)\&gt;/', '<span style="color: blue;">&lt;\1&gt;</span>', $text );
-
-	return $text;
-}
-
 /**
  * @param Array $options (optional):
  * - string dir: Full path to where the git repository is.

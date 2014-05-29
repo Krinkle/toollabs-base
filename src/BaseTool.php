@@ -173,16 +173,6 @@ class BaseTool {
 		return $expanded;
 	}
 
-	/** @deprecated */
-	public function getStyles( $custom = array() ) {
-		return $this->expandUrlArray( $custom );
-	}
-
-	/** @deprecated */
-	public function getScripts( $custom = array() ) {
-		return $this->expandUrlArray( $custom );
-	}
-
 	public function addStyles( $style ) {
 		// Allow arrays for multiple styles
 		if ( is_array( $style ) ) {

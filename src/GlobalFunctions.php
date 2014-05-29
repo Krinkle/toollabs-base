@@ -369,7 +369,7 @@ function kfFormatBytes( $size, $precision = 2 ) {
  * *
  * @param string $url Base url for wiki (from LabsDb::getDbInfo).
  * @param array $params Query parameters for MediaWiki API
- * @return array|bool Data from the API response, or boolean false
+ * @return object|bool Data from the API response, or boolean false
  */
 function kfApiRequest( $url, $params ) {
 	$section = new kfLogSection( __METHOD__ );
@@ -386,8 +386,8 @@ function kfApiRequest( $url, $params ) {
 		return false;
 	}
 
-	$data = json_decode( $response, /* $assoc */ true );
-	if ( !is_array( $data ) || isset( $data['error'] ) ) {
+	$data = json_decode( $response );
+	if ( !is_object( $data ) || isset( $data->error ) ) {
 		return false;
 	}
 

@@ -6,3 +6,9 @@
 define( 'KR_TSINT_START_INC', dirname( dirname( dirname( __DIR__ ) ) ) . '/intuition/ToolStart.php' );
 
 $kgConf->remoteBase = '//localhost.dev/basetool/public_html';
+
+$kgCache->addStore(
+        new FileCacheStore( array(
+                'dir' => __DIR__ . '/cache',
+        ) )
+);

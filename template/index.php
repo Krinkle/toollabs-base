@@ -26,14 +26,12 @@ $kgTool = new Example();
 
 $I18N = new Intuition( 'example' );
 
-$toolConfig = array(
+$kgBaseTool = BaseTool::newFromArray( array(
 	'displayTitle' => 'Example',
 	'remoteBasePath' => dirname( $kgConf->getRemoteBase() ). '/',
 	'revisionId' => '0.0.0',
 	'I18N' => $I18N,
-);
-
-$kgBaseTool = BaseTool::newFromArray( $toolConfig );
+) );
 $kgBaseTool->setSourceInfoGithub( 'Krinkle', 'mw-tool-example', dirname( __DIR__ ) );
 
 /**

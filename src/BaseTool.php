@@ -88,7 +88,7 @@ class BaseTool {
 			$t->authors = $config['authors'];
 		}
 		if ( isset( $config['licenses'] ) ) {
-			$t->authors = $config['licenses'];
+			$t->licenses = $config['licenses'];
 		}
 		if ( isset( $config['layout'] ) ) {
 			$t->layout = array_merge( $t->layout, $config['layout'] );

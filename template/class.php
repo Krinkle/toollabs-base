@@ -30,6 +30,6 @@ class Example extends KrToolBaseClass {
 		// kfCacheKey( 'example', .. )
 
 		// Close wrapping container
-		$kgBaseTool->addOut( '</div></div>' );
+		$kgBaseTool->addOut( '</div>' );
 	}
 }

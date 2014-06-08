@@ -13,23 +13,23 @@ class Example extends KrToolBaseClass {
 	);
 
 	protected function show() {
-		global $kgBaseTool;
+		global $kgBase;
 
-		$kgBaseTool->setHeadTitle( 'Home' );
-		$kgBaseTool->setLayout( 'header', array(
+		$kgBase->setHeadTitle( 'Home' );
+		$kgBase->setLayout( 'header', array(
 			'titleText' => 'Welcome',
 			'captionHtml' => 'Some text here',
 		) );
 
-		$kgBaseTool->addOut( '<div class="container">' );
+		$kgBase->addOut( '<div class="container">' );
 
-		$kgBaseTool->addOut( kfAlertHtml( 'info', '<strong>Welcome!</strong> Hello there.' ) );
+		$kgBase->addOut( kfAlertHtml( 'info', '<strong>Welcome!</strong> Hello there.' ) );
 
-		$kgBaseTool->addOut( 'Hello world' );
+		$kgBase->addOut( 'Hello world' );
 
 		// kfCacheKey( 'example', .. )
 
 		// Close wrapping container
-		$kgBaseTool->addOut( '</div>' );
+		$kgBase->addOut( '</div>' );
 	}
 }

@@ -15,6 +15,7 @@
 
 class kfLogSection {
 	protected $name;
+	protected $conf;
 	/**
 	 * Begin section for a function and return an object that ends the section
 	 * when the object is destroyed. As long as the object is not specifically
@@ -25,10 +26,10 @@ class kfLogSection {
 		global $kgConf;
 		$kgConf->startLogSection( $name );
 		$this->name = $name;
+		$this->conf = $kgConf;
 	}
 	function __destruct() {
-		global $kgConf;
-		$kgConf->endLogSection( $this->name );
+		$this->conf->endLogSection( $this->name );
 	}
 }
 

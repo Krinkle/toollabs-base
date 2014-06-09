@@ -35,6 +35,19 @@ class WikiTest extends PHPUnit_Framework_TestCase {
 			$wiki->getUrl( array( 'curid' => 123, 'action' => 'delete' ) )
 		);
 	}
+
+	public function testGetNamespaces() {
+		$wiki = WikiMock::byDbname( 'foo' );
+		$namespaces = $wiki->getNamespaces();
+		$this->assertEquals( array(
+			'-1' => 'Special',
+			'0' => '',
+			'1' => 'Talk',
+			'2' => 'User',
+		), $namespaces );
+
+		$this->assertEquals( 'User', $namespaces[ Wiki::NS_USER ] );
+	}
 }
 
 class WikiMock extends Wiki {
@@ -63,21 +76,28 @@ class WikiMock extends Wiki {
 					'id' => -1,
 					'case' => 'first-letter',
 					'*' => 'Special',
-					'canonical' => 'Special'
+					'canonical' => 'Special',
 				),
 				'0' => (object) array(
 					'id' => 0,
 					'case' => 'first-letter',
 					'*' => '',
 					'subpages' => '',
-					'content' => ''
+					'content' => '',
 				),
 				'1' => (object) array(
 					'id' => 1,
 					'case' => 'first-letter',
 					'*' => 'Talk',
 					'subpages' => '',
-					'canonical' => 'Talk'
+					'canonical' => 'Talk',
+				),
+				'2' => (object) array(
+					'id' => 2,
+					'case' => 'first-letter',
+					'*' => 'User',
+					'subpages' => '',
+					'canonical' => 'User',
 				),
 			),
 		);

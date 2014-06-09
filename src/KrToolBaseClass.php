@@ -31,8 +31,8 @@ class KrToolBaseClass {
 	protected function show() {}
 
 	protected function outputException( Exception $e ) {
-		global $kgBaseTool;
-		$kgBaseTool->addOut( $e->getMessage() , 'pre' );
+		global $kgBase;
+		$kgBase->addOut( $e->getMessage() , 'pre' );
 	}
 
 	public function handleException( Exception $e ) {

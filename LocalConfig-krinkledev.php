@@ -9,7 +9,7 @@ $kgCache->set(
 	kfCacheKey( 'base', 'labsdb', 'meta', 'dbinfos' ),
 	array(
 		'krinklewiki' => array(
-			'url' => 'http://alpha.wikipedia.krinkle.dev/',
+			'url' => 'http://alpha.wikipedia.krinkle.dev',
 		)
 	)
 );

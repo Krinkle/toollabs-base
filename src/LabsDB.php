@@ -155,7 +155,7 @@ class LabsDB {
 	}
 
 	/**
-	 * @return Array
+	 * @return array
 	 */
 	protected static function fetchAllDbInfos() {
 		$rows = self::query( self::getMetaDB(),
@@ -178,7 +178,7 @@ class LabsDB {
 	 *
 	 * See https://wikitech.wikimedia.org/wiki/Nova_Resource:Tools/Help#Metadata_database
 	 *
-	 * @return Array
+	 * @return array
 	 */
 	public static function getAllDbInfos() {
 		if ( !isset( self::$dbInfos ) ) {

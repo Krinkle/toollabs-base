@@ -1,8 +1,7 @@
-## Tool Labs Base 0.5
-
+## v0.5.0-pre
 THIS IS NOT A RELEASE YET
 
-### New features since 0.4
+### New features
 * Request: Add `getProtocol` method.
 * page: Update jQuery from v1.7.2 to v1.11.1.
 * page: Rewrite using Bootstrap 3.
@@ -15,7 +14,7 @@ THIS IS NOT A RELEASE YET
   Automatically resolves dbnames to mysql shards and re-uses connections.
 * Html: Update to version from MediaWiki 1.24.
 
-### Other changes since 0.4
+### Other changes
 * page: Load jQuery from code.jquery.com instead of ajax.googleapis.com.
 * page: Remove legacy JS (jquery-placeholder, jquery-makeCollapsible).
 * page: Remove legacy CSS.
@@ -42,10 +41,10 @@ THIS IS NOT A RELEASE YET
 * GlobalConfig: Remove 'fullSimpleDatefmt' (unused).
 * GlobalConfig: Remove 'fullReadableDatefmt' (unused).
 
-## Tool Labs Base 0.4
+## v0.4.0
 2014-04-29
 
-### Changes since 0.3
+### Changes
 * Moved repository from https://github.com/Krinkle/ts-krinkle-basetool
   to https://github.com/Krinkle/toollabs-base (with redirect).
 * BaseTool: Remove deprecated 'simplePath' option.
@@ -59,10 +58,10 @@ THIS IS NOT A RELEASE YET
 * GlobalFunctions: kfDbUsername/kfDbPassword now use replica.my.cnf (name of file provided by Tool Labs).
 * GlobalFunctions: Use JSON instead of serialised PHP in kfQueryWMFAPI.
 
-## Tool Labs Base 0.3
+## v0.3.0
 2014-04-28
 
-### Changes since 0.2
+### Changes
 * page: Use Intuition to determine `<html dir>` and `<html lang>`.
 * page: Drop default attributes for `<link>` and `<script>` per HTML5 style.
 * page: Use protocol-relative urls.
@@ -92,16 +91,16 @@ THIS IS NOT A RELEASE YET
 * GitInfo: Update to version from MediaWiki 1.21.
 * GlobalFunctions: Add `http_response_code` polyfil for PHP 5.3.
 
-## Krinkle BaseTool 0.2
+## v0.2.0
 2012-01-29
 
-### Changes since 0.1
+### Changes
 * Add GlobalConfig.
 * Add Html, HtmlSelect, Request. Based on MediaWiki.
 * First published in Krinkle's Toolserver SVN repository under [krinkle]/trunk/common.
   https://svn.toolserver.org/svnroot/krinkle/trunk/common
 
-## Krinkle BaseTool 0.1
+## v0.1.0
 2011-01-15
 
 Initial version checked into Subversion as of 2011-01-15.

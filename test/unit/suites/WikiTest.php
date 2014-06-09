@@ -48,6 +48,13 @@ class WikiTest extends PHPUnit_Framework_TestCase {
 
 		$this->assertEquals( 'User', $namespaces[ Wiki::NS_USER ] );
 	}
+
+	public function testGetPageName() {
+		$wiki = WikiMock::byDbname( 'foo' );
+		$this->assertEquals( 'Sandbox', $wiki->getPageName( Wiki::NS_MAIN, 'Sandbox' ) );
+		$this->assertEquals( 'Talk:Sandbox', $wiki->getPageName( Wiki::NS_TALK, 'Sandbox' ) );
+		$this->assertEquals( 'User:Sandbox', $wiki->getPageName( Wiki::NS_USER, 'Sandbox' ) );
+	}
 }
 
 class WikiMock extends Wiki {

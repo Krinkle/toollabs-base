@@ -153,6 +153,23 @@ class Wiki {
 	}
 
 	/**
+	 * @param int $namespaceId
+	 * @param string $pageTitle
+	 * @return string
+	 */
+	public function getPageName( $namespaceId, $pageTitle ) {
+		if ( $namespaceId === Wiki::NS_MAIN ) {
+			return $pageTitle;
+		}
+		$namespaces = $this->getNamespaces();
+		if ( !isset( $namespaces[ $namespaceId ] ) ) {
+			throw new Exception( "Unknown namespace id: $namespaceId" );
+		}
+
+		return $namespaces[ $namespaceId ] . ":$pageTitle";
+	}
+
+	/**
 	 * @param string $pageName
 	 * @param array $query [optional]
 	 * @return string URI

@@ -80,8 +80,7 @@ class BaseTool {
 		);
 		$t->scripts = array(
 			'//code.jquery.com/jquery-1.11.1.min.js',
-			'//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js',
-			$kgConf->remoteBase . '/main.js',
+			'//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js'
 		);
 
 		if ( isset( $config['authors'] ) ) {

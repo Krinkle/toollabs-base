@@ -32,7 +32,7 @@ class KrToolBaseClass {
 
 	protected function outputException( Exception $e ) {
 		global $kgBase;
-		$kgBase->addOut( $e->getMessage() , 'pre' );
+		$kgBase->addOut( $e->getMessage() . "\n" . $e->getTraceAsString() , 'pre' );
 	}
 
 	public function handleException( Exception $e ) {

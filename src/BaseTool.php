@@ -285,7 +285,7 @@ class BaseTool {
 		$toolnav = '<li>' . implode( '</li><li>', $toolnav ) . '</li>';
 
 		$html = <<<HTML
-<header class="navbar navbar-static-top usage-nav" id="top">
+<header class="navbar navbar-static-top base-nav" id="top">
 	<div class="container">
 		<div class="navbar-header">
 			<a class="navbar-brand" href="{$this->remoteBasePath}">{$titleVal}</a>
@@ -323,7 +323,7 @@ HTML;
 		}
 
 		$html = <<<HTML
-<div class="usage-header" id="header"><div class="container">
+<div class="base-header" id="header"><div class="container">
 	$htmlContent
 </div></div>
 HTML;
@@ -419,11 +419,11 @@ HTML;
 		}
 
 		$html = <<<HTML
-<footer class="usage-footer" role="contentinfo">
+<footer class="base-footer" role="contentinfo">
 	<div class="container">
 		<p>Built by $authors.</p>
 		<p>Code licensed under $licenses.</p>
-		<ul class="usage-footer-links muted">
+		<ul class="base-footer-links muted">
 		$toolnav
 		</ul>
 	</div>

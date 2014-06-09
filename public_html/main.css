@@ -46,7 +46,7 @@
 
 /* Top nav */
 
-.usage-nav {
+.base-nav {
     margin-bottom: 0;
     background-color: #fff;
     border-bottom: 0
@@ -54,7 +54,7 @@
 
 /* Header */
 
-.usage-header {
+.base-header {
     position: relative;
     padding: 30px 15px;
     color: #cdbfe3;
@@ -69,40 +69,40 @@
     font-size: 20px
 }
 
-.usage-header h1 {
+.base-header h1 {
     margin-top: 0;
     color: #fff
 }
 
-.usage-header p {
+.base-header p {
     margin-bottom: 0;
     font-weight: 300;
     line-height: 1.4
 }
 
 @media (min-width: 768px) {
-    .usage-header {
+    .base-header {
         padding-top: 60px;
         padding-bottom: 60px;
         font-size: 24px;
         text-align: left
     }
 
-    .usage-header h1 {
+    .base-header h1 {
         font-size: 60px;
         line-height: 1
     }
 }
 
 @media (min-width: 992px) {
-    .usage-header h1,.usage-header p {
+    .base-header h1,.base-header p {
         margin-right: 380px
     }
 }
 
 /* Footer */
 
-.usage-footer {
+.base-footer {
     padding-top: 40px;
     padding-bottom: 40px;
     margin-top: 100px;
@@ -111,23 +111,23 @@
     border-top: 1px solid #e5e5e5
 }
 
-.usage-footer-links {
+.base-footer-links {
     margin-top: 20px;
     padding-left: 0;
     color: #999
 }
 
-.usage-footer-links li {
+.base-footer-links li {
     display: inline;
     padding: 0 2px
 }
 
-.usage-footer-links li:first-child {
+.base-footer-links li:first-child {
     padding-left: 0
 }
 
 @media (min-width: 768px) {
-    .usage-footer p {
+    .base-footer p {
         margin-bottom:0
     }
 }

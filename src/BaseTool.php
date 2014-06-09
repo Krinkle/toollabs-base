@@ -128,6 +128,8 @@ class BaseTool {
 	}
 
 	public function setSourceInfoGithub( $owner, $repo, $repoDir = null ) {
+		$section = new kfLogSection( __METHOD__ );
+
 		$this->sourceInfo = array(
 			'issueTrackerUrl' => "https://github.com/$owner/$repo/issues",
 			'repoViewUrl' => "https://github.com/$owner/$repo",

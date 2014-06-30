@@ -13,13 +13,13 @@
  */
 
 // BaseTool & Localization
-#require_once __DIR__ . '/../lib/basetool/InitTool.php';
+#require_once __DIR__ . '/../lib/base/InitTool.php';
 require_once __DIR__ . '/../../InitTool.php';
 require_once KR_TSINT_START_INC;
 
 // Class for this tool
 require_once __DIR__ . '/../class.php';
-$tool = new Example();
+$tool = new ExampleTool();
 
 // Local settings
 #require_once __DIR__ . '/config.php';

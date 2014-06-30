@@ -6,7 +6,7 @@
 $devDir = dirname( dirname( dirname( __DIR__ ) ) );
 require_once $devDir . '/toollabs-base/LocalConfig-krinkledev.php';
 
-$kgConf->remoteBase = '//krinkle.dev/Krinkle/mw-tool-example/public_html/basetool';
+$kgConf->remoteBase = '//krinkle.dev/Krinkle/mw-tool-example/public_html/base';
 
 $kgCache->addStore(
         new FileCacheStore( array(

@@ -255,7 +255,33 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = 'du
 }
 
 function kfApiFormats() {
-	return array( 'php', 'json', 'dump' );
+	return array(
+		'json' => array(
+			'params' => array(
+				'format' => 'json',
+			),
+			'label' => 'JSON'
+		),
+		'jsonp' => array(
+			'params' => array(
+				'format' => 'jsonp',
+				'callback' => 'example',
+			),
+			'label' => 'JSON-P'
+		),
+		'php' => array(
+			'params' => array(
+				'format' => 'php',
+			),
+			'label' => 'Serialized PHP'
+		),
+		'dump' => array(
+			'params' => array(
+				'format' => 'dump',
+			),
+			'label' => 'Dump'
+		),
+	);
 }
 
 /**

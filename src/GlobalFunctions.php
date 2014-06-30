@@ -205,20 +205,17 @@ function kfSanatizeJsCallback( $str ) {
  * @param string $specialFormat If $format is set to this format this function will not output
  *  anything and return true. This can be used for a GUI front-end.
  */
-function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '', $callback = null, $specialFormat = '' ) {
+function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = 'dump', $callback = null, $specialFormat = null ) {
 
-	if ( $format == $specialFormat ) {
+	if ( $specialFormat !== null && $format === $specialFormat ) {
 		return true;
-	}
-
-	if ( empty( $format ) ) {
-		$format = 'php_print';
 	}
 
 	switch ( $format ) {
 		case 'php':
-			header( 'Content-Type: application/vnd.php.serialized; charset=utf-8', /*replace=*/true );
-			die( serialize( $data ) );
+			header( 'Content-Type: application/vnd.php.serialized; charset=utf-8', /* replace = */ true );
+			echo serialize( $data );
+			die;
 			break;
 
 		case 'json':
@@ -226,11 +223,11 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 
 			// Serve as AJAX object object or JSONP callback
 			if ( $callback === null ) {
-				header( 'Content-Type: application/json; charset=utf-8', /*replace=*/true );
+				header( 'Content-Type: application/json; charset=utf-8', /* replace = */ true );
 				echo json_encode( $data );
 				die;
 			} else {
-				header( 'Content-Type: text/javascript; charset=utf-8', /*replace=*/true );
+				header( 'Content-Type: text/javascript; charset=utf-8', /* replace = */ true );
 
 				// Sanatize callback
 				$callback = kfSanatizeJsCallback( $callback );
@@ -240,27 +237,17 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 			break;
 
 		case 'dump':
-		case 'php_dump':
 
-			// No text/html due to IE7 bug
-			header( 'Content-Type: text/text; charset=utf-8', /*replace=*/true );
+			// No text/plain due to IE7 mime-type sniff bug causing html parsing
+			header( 'Content-Type: text/text; charset=utf-8', /* replace = */ true );
 			var_dump( $data );
-			die;
-			break;
-
-		case 'text': // for compatiblity with MediaWiki
-		case 'print':
-		case 'php_print':
-
-			header( 'Content-Type: text/html; charset=utf-8', /*replace=*/true );
-			echo '<pre>' . htmlspecialchars( print_r( $data, true ) ) . '</pre>';
 			die;
 			break;
 
 		default:
 			// HTTP 400 Bad Request
 			http_response_code( 400 );
-			header( 'Content-Type: text/plain; charset=utf-8', /*replace=*/true );
+			header( 'Content-Type: text/plain; charset=utf-8', /* replace = */ true );
 			echo 'Invalid format.';
 			exit;
 	}
@@ -268,7 +255,7 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = '',
 }
 
 function kfApiFormats() {
-	return array( 'php', 'json', 'dump', 'print' );
+	return array( 'php', 'json', 'dump' );
 }
 
 /**

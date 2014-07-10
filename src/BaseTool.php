@@ -150,7 +150,7 @@ class BaseTool {
 
 	public function getSourceInfo() {
 		$sourceInfo = array(
-			'issueTrackerUrl' => 'https://jira.toolserver.org/browse/KRINKLE',
+			'issueTrackerUrl' => false,
 			'repoViewUrl' => false,
 			'repoDir' => false,
 			'repoCommitID' => false,

@@ -40,6 +40,8 @@ THIS IS NOT A RELEASE YET
 * GlobalConfig: Remove deprecated 'getDebugMode' method.
 * GlobalConfig: Remove 'fullSimpleDatefmt' (unused).
 * GlobalConfig: Remove 'fullReadableDatefmt' (unused).
+* Request: Remove deprecated 'exists' method.
+* Request: Remove deprecated 'getBool' method.
 
 ## v0.4.0
 2014-04-29
@@ -57,6 +59,7 @@ THIS IS NOT A RELEASE YET
 * GlobalFunctions: Remove obsolete 'kfConnectToolserverDB' function.
 * GlobalFunctions: kfDbUsername/kfDbPassword now use replica.my.cnf (name of file provided by Tool Labs).
 * GlobalFunctions: Use JSON instead of serialised PHP in kfQueryWMFAPI.
+* Request: Deprecate `getBool` method. Use `hasKey` instead.
 
 ## v0.3.0
 2014-04-28

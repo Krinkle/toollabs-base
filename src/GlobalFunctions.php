@@ -395,7 +395,7 @@ function kfApiRequest( $url, $params ) {
 
 	$apiUrl = "$url/w/api.php";
 	kfLog( "request: GET $apiUrl" );
-	$response = file_get_contents( $apiUrl . '?' . http_build_query( $params ) );
+	$response = HttpRequest::get( $apiUrl . '?' . http_build_query( $params ) );
 	if ( !$response ) {
 		return false;
 	}

@@ -25,6 +25,7 @@ require_once __DIR__ . '/src/GlobalFunctions.php';
 
 require_once __DIR__ . '/src/Cache.php';
 require_once __DIR__ . '/src/HtmlSelect.php';
+require_once __DIR__ . '/src/HttpRequest.php';
 require_once __DIR__ . '/src/LabsDB.php';
 require_once __DIR__ . '/src/Request.php';
 require_once __DIR__ . '/src/Wiki.php';

@@ -2,12 +2,10 @@ language: php
 php:
   - "5.4"
   - "5.3"
-before_install:
-  - composer self-update
 install:
   - composer install
 script:
-  - ./test/run
+  - composer test
 notifications:
   irc:
     channels:

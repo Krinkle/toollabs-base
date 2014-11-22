@@ -29,7 +29,7 @@ abstract class CacheTestCase extends PHPUnit_Framework_TestCase {
 	}
 
 	public function testPersistanceSet() {
-		$this->cache->set( 'keep', 'remember' );
+		$this->assertTrue( $this->cache->set( 'keep', 'remember' ) );
 	}
 
 	public function testPersistanceGet() {

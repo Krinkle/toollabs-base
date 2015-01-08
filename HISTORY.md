@@ -1,18 +1,19 @@
-## v0.5.0-pre
-THIS IS NOT A RELEASE YET
+## v0.5.0
+2015-01-08
 
 ### New features
 * Request: Add `getProtocol` method.
+* GlobalFunctions: Add kfAlertText and kfAlertHtml for Bootstrap-style alerts.
+* BaseTool: Add 'requireJS' option.
+* New Sanitizer class (from MediaWiki).
+* New LabsDB class. For interacting with the labsdb servers in Wikimedia Labs.
+  Automatically resolves dbnames to mysql shards and re-uses connections.
+* New HttpRequest class.
+* Html: Update to version from MediaWiki 1.24.
 * page: Update jQuery from v1.7.2 to v1.11.1.
 * page: Rewrite using Bootstrap 3.
 * page: New layout, header and footer generators for quick page creation
   (enabled by default, can be configured using the setLayout method).
-* Add MediaWiki's Sanitizer.php.
-* GlobalFunctions: Add kfAlertText and kfAlertHtml for Bootstrap-style alerts.
-* BaseTool: New 'requireJS' option.
-* New LabsDB class for interacting with the labsdb servers in Wikimedia Labs.
-  Automatically resolves dbnames to mysql shards and re-uses connections.
-* Html: Update to version from MediaWiki 1.24.
 
 ### Other changes
 * page: Load jQuery from code.jquery.com instead of ajax.googleapis.com.

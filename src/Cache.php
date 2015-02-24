@@ -99,7 +99,7 @@ class Cache implements CacheInterface {
 	public function set( $key, $data, $ttl = 0 ) {
 		foreach ( $this->stores as $store ) {
 			if ( !$store->set( $key, $data, $ttl ) ) {
-				kLog( "Failed to store value for '$key' in " . get_class( $store ) );
+				kfLog( "Failed to store value for '$key' in " . get_class( $store ) );
 			}
 		}
 		return true;

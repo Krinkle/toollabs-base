@@ -75,12 +75,12 @@ class BaseTool {
 		$t->revisionId = isset( $config['revisionId'] ) ? $config['revisionId'] : '';
 
 		$t->styles = array(
-			'//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css',
+			'//netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css',
 			$kgConf->remoteBase . '/main.css',
 		);
 		$t->scripts = array(
-			'//code.jquery.com/jquery-1.11.1.min.js',
-			'//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js'
+			'//code.jquery.com/jquery-1.11.2.min.js',
+			'//netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'
 		);
 
 		if ( isset( $config['authors'] ) ) {

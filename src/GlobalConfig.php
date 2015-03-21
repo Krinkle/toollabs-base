@@ -140,10 +140,13 @@ class GlobalConfig {
 
 	protected function fetchDbCredentials() {
 		// Read and cache in-class
-		$cnf = parse_ini_file( $this->getLocalHome() . '/replica.my.cnf' );
+		$file = $this->getLocalHome() . '/replica.my.cnf';
+		if ( !is_readable( $file ) || !is_file( $file ) ) {
+			throw new Exception( 'Failed to fetch credentials from replica.my.cnf' );
+		}
+		$cnf = parse_ini_file( $file );
 		if ( !$cnf || !$cnf['user'] || !$cnf['password'] ) {
 			throw new Exception( 'Failed to fetch credentials from replica.my.cnf' );
-			return;
 		}
 		$this->dbUsername = $cnf['user'];
 		$this->dbPassword = $cnf['password'];

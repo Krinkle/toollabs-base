@@ -1,3 +1,8 @@
+## v0.6.0
+
+### New features
+* Request: Add `getAllHeaders` and `getHeader` methods.
+
 ## v0.5.0
 2015-01-08
 

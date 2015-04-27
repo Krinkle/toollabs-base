@@ -16,6 +16,9 @@ class Request {
 	/** @var Array */
 	protected $raw;
 
+	/** @var Array */
+	protected $headers;
+
 	function __construct( Array $raw ) {
 		$this->raw = $raw;
 	}
@@ -173,6 +176,56 @@ class Request {
 		}
 
 		session_start();
+	}
+
+	/**
+	 * Initialise the header list
+	 */
+	private function initHeaders() {
+		if ( count( $this->headers ) ) {
+			return;
+		}
+
+		$apacheHeaders = function_exists( 'apache_request_headers' ) ? apache_request_headers() : false;
+		if ( $apacheHeaders ) {
+			foreach ( $apacheHeaders as $key => $val ) {
+				$this->headers[strtoupper( $key )] = $val;
+			}
+		} else {
+			foreach ( $_SERVER as $name => $value ) {
+				if ( substr( $name, 0, 5 ) === 'HTTP_' ) {
+					$name = str_replace( '_', '-', substr( $name, 5 ) );
+					$this->headers[$name] = $value;
+				} elseif ( $name === 'CONTENT_LENGTH' ) {
+					$this->headers['CONTENT-LENGTH'] = $value;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get an array containing all request headers
+	 *
+	 * @return array Headers keyed by name (normalised to upper case)
+	 */
+	public function getAllHeaders() {
+		$this->initHeaders();
+		return $this->headers;
+	}
+
+	/**
+	 * Get a request header, or false if it isn't set
+	 *
+	 * @param string $name Case-insensitive header name
+	 * @return string|bool False on failure
+	 */
+	public function getHeader( $name ) {
+		$this->initHeaders();
+		$name = strtoupper( $name );
+		if ( !isset( $this->headers[$name] ) ) {
+			return false;
+		}
+		return $this->headers[$name];
 	}
 
 }

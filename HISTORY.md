@@ -1,7 +1,8 @@
 ## v0.6.0
 
 ### New features
-* Request: Add `getAllHeaders` and `getHeader` methods.
+* Request: Add `getAllHeaders`, `getHeader` and `setHeader` methods.
+* Request: Add `tryLastModified` method.
 
 ## v0.5.0
 2015-01-08

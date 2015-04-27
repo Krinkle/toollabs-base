@@ -228,4 +228,34 @@ class Request {
 		return $this->headers[$name];
 	}
 
+	/**
+	 * Respond with 304 Last Modified if appropiate
+	 *
+	 * @param int $modifiedTime
+	 * @return bool True if 304 header was sent
+	 */
+	public function tryLastModified( $modifiedTime ) {
+		$clientCache = $this->getHeader( 'If-Modified-Since' );
+		if ( $clientCache !== false ) {
+			# IE sends sizes after the date like "Wed, 20 Aug 2003 06:51:19 GMT; length=5202"
+			# which would break strtotime() parsing.
+			$clientCache = preg_replace( '/;.*$/', '', $clientCache );
+			$clientCacheTime = @strtotime( $clientCache );
+			if ( $modifiedTime <= $clientCacheTime ) {
+				header( 'Status: 304 Not Modified', true, 304 );
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Output a HTTP header, wrapper for PHP's header()
+	 * @param string $key Header name
+	 * @param string $value Header value
+	 * @param bool $replace Replace current similar header
+	 */
+	public function setHeader( $key, $value, $replace = true ) {
+		header( strtolower( $key ) . ": $value", $replace );
+	}
 }

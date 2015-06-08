@@ -1,5 +1,5 @@
 <?php
-$kgTool->setSettings(array(
+$tool->setSettings(array(
 
 	// Foo should be ...
 	'foo' => 'example',

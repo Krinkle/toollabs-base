@@ -22,7 +22,7 @@ require_once __DIR__ . '/../class.php';
 $tool = new ExampleTool();
 
 // Local settings
-#require_once __DIR__ . '/config.php';
+#require_once __DIR__ . '/../config.php';
 
 $I18N = new Intuition( 'example' );
 

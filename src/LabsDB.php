@@ -36,7 +36,7 @@ class LabsDB {
 			$section = new kfLogSection( __METHOD__ );
 			try {
 				$conn = new LoggedPDO(
-					'mysql:host=' . $hostname . ';dbname=' . $dbname . '_p;',
+					'mysql:host=' . $hostname . ';dbname=' . $dbname . '_p;charset=utf8',
 					kfDbUsername(),
 					kfDbPassword()
 				);

@@ -224,7 +224,7 @@ function kfApiExport( $data = array( 'krApiExport' => 'Example' ), $format = 'du
 			// Serve as AJAX object object or JSONP callback
 			if ( $callback === null ) {
 				header( 'Content-Type: application/json; charset=utf-8', /* replace = */ true );
-				echo json_encode( $data );
+				echo json_encode( $data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
 				die;
 			} else {
 				header( 'Content-Type: text/javascript; charset=utf-8', /* replace = */ true );

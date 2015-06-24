@@ -95,6 +95,7 @@ class HttpRequest {
 			CURLOPT_WRITEFUNCTION => array( $this, 'read' ),
 			CURLOPT_HEADERFUNCTION => array( $this, 'readHeader' ),
 			CURLOPT_MAXREDIRS => 2,
+			CURLOPT_FOLLOWLOCATION => true,
 			CURLOPT_ENCODING => '', // All supported encodings
 			CURLOPT_USERAGENT => self::getUserAgent(),
 			CURLOPT_SSL_VERIFYHOST => 2,

@@ -1,13 +1,24 @@
 ## v0.6.0
+2015-07-03
 
-### New features
+### Enhancements
 * Request: Add `getAllHeaders`, `getHeader` and `setHeader` methods.
 * Request: Add `tryLastModified` method.
+* page: Update jQuery to v1.11.2.
+* page: Upgrade Bootstrap to v3.3.4.
+
+### Bug fixes
+* LabsDB: Ensure charset=utf8 is set in MySQL connection.
+* HttpRequest: Set followRedirect=true.
+* page: Return HTTP 500 on the exception page.
+
+### Maintenance
+* BaseTool: Load jQuery and Bootstrap from tools-static.wmflabs.org.
 
 ## v0.5.0
 2015-01-08
 
-### New features
+### Enhancements
 * Request: Add `getProtocol` method.
 * GlobalFunctions: Add kfAlertText and kfAlertHtml for Bootstrap-style alerts.
 * BaseTool: Add 'requireJS' option.

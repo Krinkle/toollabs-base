@@ -1,3 +1,12 @@
+## v0.7.0
+2015-07-05
+
+Installation as git submodule is no longer supported.
+Use [Composer](https://getcomposer.org/) to install krinkle/toollabs-base.
+
+### Maintenance
+* Loading vendor/autoload.php will automatically load InitTool.php.
+
 ## v0.6.0
 2015-07-03
 

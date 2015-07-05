@@ -2,10 +2,10 @@
 /**
  * Main class
  *
- * @since 0.1.0
- * @author Krinkle, 2010-2014
- * @license Public domain, WTFPL
+ * @author Timo Tijhof, 2015
+ * @license Public domain
  * @package toollabs-base
+ * @since v0.1.0
  */
 
 /**

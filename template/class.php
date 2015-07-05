@@ -4,6 +4,7 @@
  *
  * @package mw-tool-example
  */
+
 class ExampleTool extends KrToolBaseClass {
 
 	protected $settingsKeys = array(

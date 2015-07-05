@@ -52,3 +52,16 @@ function wfUrlProtocols( $includeProtocolRelative = false ) {
 }
 
 function wfRunHooks( $event = null, $args = null, $deprecatedVersion = null ) {}
+
+// Patched to remove:
+// - Html::htmlHeader()
+require_once __DIR__ . '/mw/Html.php';
+
+require_once __DIR__ . '/mw/GitInfo.php';
+
+// Patched to remove:
+// - Sanitizer::decodeCharReferencesAndNormalize ($wgContLang)
+// - Sanitizer::stripAllTags (StringUtils)
+// Patches to change:
+// - Sanitizer::validateEmail (wfRunHooks)
+require_once __DIR__ . '/mw/Sanitizer.php';

@@ -1,4 +1,10 @@
 <?php
+/**
+ * @author Timo Tijhof, 2015
+ * @license Public domain
+ * @package toollabs-base
+ * @since v0.5.0
+ */
 
 class Wiki {
 	const NS_MAIN = 0;

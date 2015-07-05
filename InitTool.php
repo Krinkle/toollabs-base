@@ -1,13 +1,11 @@
 <?php
 /**
- * Main initialization file
+ * Initialize global context for web tools.
  *
- * This is the one file individual tools should include.
- *
- * @since 0.1.0
- * @author Krinkle, 2010-2014
- * @license Public domain, WTFPL
+ * @author Timo Tijhof, 2015
+ * @license Public domain
  * @package toollabs-base
+ * @since v0.1.0
  */
 
 global $kgConf, $kgReq, $kgCache;
@@ -49,20 +47,7 @@ if ( file_exists(  __DIR__ . '/LocalConfig.php' ) ) {
 $kgConf->initConfig();
 
 function kfIncludeMwClasses() {
-	require_once __DIR__ . '/lib/mw/mock.php';
-
-	// Patched to remove:
-	// - Html::htmlHeader()
-	require_once __DIR__ . '/lib/mw/Html.php';
-
-	require_once __DIR__ . '/lib/mw/GitInfo.php';
-
-	// Patched to remove:
-	// - Sanitizer::decodeCharReferencesAndNormalize ($wgContLang)
-	// - Sanitizer::stripAllTags (StringUtils)
-	// Patches to change:
-	// - Sanitizer::validateEmail (wfRunHooks)
-	require_once __DIR__ . '/lib/mw/Sanitizer.php';
+	require_once __DIR__ . '/lib/mw-mock.php';
 }
 kfIncludeMwClasses();
 

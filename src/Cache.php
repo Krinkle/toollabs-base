@@ -5,10 +5,10 @@
  * Inspired by php-UniversalCache <https://github.com/c9s/php-UniversalCache>
  * Inspired by ObjectCache and BagOStuff <https://github.com/wikimedia/mediawiki-core>
  *
- * @since 0.5.0
- * @author Krinkle, 2014
- * @license Public domain, WTFPL
+ * @author Timo Tijhof, 2015
+ * @license Public domain
  * @package toollabs-base
+ * @since v0.5.0
  */
 
 class Cache implements CacheInterface {

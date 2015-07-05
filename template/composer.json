@@ -1,0 +1,5 @@
+{
+	"require": {
+		"Krinkle/toollabs-base": "^0.7.0"
+	}
+}

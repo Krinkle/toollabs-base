@@ -1,5 +1,4 @@
 <?php
-
 class MemoryCacheStoreTest extends CacheTestCase {
 
 	protected function setUp() {

@@ -2,16 +2,13 @@
 /**
  * HtmlSelect class
  *
- * This file is based on MediaWiks' XmlSelect class.
- * https://svn.wikimedia.org/viewvc/mediawiki/trunk/phase3/includes/Xml.php?view=markup&pathrev=82840#l777
+ * This file is inspired by MediaWiki's XmlSelect class.
+ * https://svn.wikimedia.org/viewvc/mediawiki/trunk/phase3/includes/Xml.php?view=markup&pathrev=82840
  *
- * Modifications:
- * - Removed dependancy on the Xml class, using Html class instead.
- *
- * @since 0.1.0
- * @author Krinkle, 2011-2012
- * @license Public domain, WTFPL
+ * @author Timo Tijhof, 2012
+ * @license Public domain
  * @package toollabs-base
+ * @since v0.1.0
  */
 
 define( 'HTMLSELECT_OPTION_NORMAL', 1 );

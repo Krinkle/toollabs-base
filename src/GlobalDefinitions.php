@@ -4,10 +4,10 @@
  *
  * Mostly boolean and integer substitues for better readability.
  *
- * @since 0.1.0
- * @author Krinkle, 2010-2014
- * @license Public domain, WTFPL
+ * @author Timo Tijhof, 2015
+ * @license Public domain
  * @package toollabs-base
+ * @since v0.1.0
  */
 
 define( 'KR_OUTPUT_BROWSER_HTML5', 1 );

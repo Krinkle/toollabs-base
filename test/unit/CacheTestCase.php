@@ -1,5 +1,4 @@
 <?php
-
 abstract class CacheTestCase extends PHPUnit_Framework_TestCase {
 
 	public static function provideValues() {

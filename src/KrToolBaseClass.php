@@ -1,10 +1,11 @@
 <?php
 /**
- * @since 0.3.0
- * @author Krinkle, 2012-2014
- * @license Public domain, WTFPL
+ * @author Timo Tijhof, 2014
+ * @license Public domain
  * @package toollabs-base
+ * @since v0.3.0
  */
+
 class KrToolBaseClass {
 
 	protected $settings = array();

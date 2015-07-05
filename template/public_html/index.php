@@ -2,7 +2,7 @@
 /**
  * Main index
  *
- * @author Timo Tijhof, 2014
+ * @author Timo Tijhof, 2015
  * @license http://krinkle.mit-license.org/
  * @package mw-tool-example
  */
@@ -13,8 +13,7 @@
  */
 
 // BaseTool & Localization
-#require_once __DIR__ . '/../lib/base/InitTool.php';
-require_once __DIR__ . '/../../InitTool.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 require_once KR_TSINT_START_INC;
 
 // Class for this tool

@@ -1,10 +1,11 @@
 <?php
 /**
- * @since 0.5.0
- * @author Krinkle, 2014
- * @license Public domain, WTFPL
+ * @author Timo Tijhof, 2015
+ * @license Public domain
  * @package toollabs-base
+ * @since v0.5.0
  */
+
 class LabsDB {
 	/**
 	 * @var array PDO objects keyed by hostname

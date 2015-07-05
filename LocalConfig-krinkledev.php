@@ -13,6 +13,12 @@ $kgCache->set(
 			'family' => 'wikipedia',
 			'url' => 'http://alpha.wikipedia.krinkle.dev',
 			'slice' => 's0.local'
+		),
+		'metawiki' => array(
+			'dbname' => 'metawiki',
+			'family' => 'special',
+			'url' => 'https://meta.wikimedia.org',
+			'slice' => 's0.local'
 		)
 	)
 );

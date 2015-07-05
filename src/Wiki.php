@@ -94,9 +94,6 @@ class Wiki {
 			'meta' => 'siteinfo',
 			'siprop' => implode( '|', self::$siprops ),
 		) );
-		if ( !$data || isset( $data->error ) || !isset( $data->query ) ) {
-			return false;
-		}
 		foreach ( self::$siprops as $siprop ) {
 			if ( !isset( $data->query->$siprop ) ) {
 				return false;
@@ -137,7 +134,7 @@ class Wiki {
 			}
 		}
 		if ( $value === null ) {
-			throw new Exception( 'Fetch site info failed' );
+			throw new Exception( 'Fetch siteinfo failed' );
 		}
 		return $value;
 	}

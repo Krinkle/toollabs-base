@@ -132,7 +132,7 @@ class HttpRequest {
 			$this->error = 'Fetching url timed out: ' . $this->url;
 			return false;
 		} elseif ( $curlRes === false ) {
-			$this->error = 'Error fetching url. ' . curl_error( $curlHandle );
+			$this->error = 'cURL Error: ' . curl_error( $curlHandle );
 			return false;
 		} else {
 			$this->headerList = explode( "\r\n", $this->respHeaderText );

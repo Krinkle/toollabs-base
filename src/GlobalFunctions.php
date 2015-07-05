@@ -393,9 +393,9 @@ function kfApiRequest( $url, $params ) {
 		$params['action'] = 'query';
 	}
 
-	$apiUrl = "$url/w/api.php";
+	$apiUrl = "$url/w/api.php?" . http_build_query( $params );
 	kfLog( "request: GET $apiUrl" );
-	$response = HttpRequest::get( $apiUrl . '?' . http_build_query( $params ) );
+	$response = HttpRequest::get( $apiUrl );
 	if ( !$response ) {
 		return false;
 	}

@@ -480,7 +480,7 @@ HTML;
 				$resourcesBody = '';
 				if ( is_array( $this->scripts ) ) {
 					foreach( $this->scripts as $script ) {
-						$resourcesBody .= '<script src="' . htmlspecialchars( $script ) . '"></script>' . "\n";
+						$resourcesBody .= '<script defer src="' . htmlspecialchars( $script ) . '"></script>' . "\n";
 					}
 				}
 

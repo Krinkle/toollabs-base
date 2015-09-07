@@ -1,7 +1,12 @@
 <?php
+/**
+ * Example configuration for template
+ */
+
+$kgConf->remoteBase = '//localhost/toollabs-base/template/public_html/base';
+
 $tool->setSettings(array(
-
-	// Foo should be ...
 	'foo' => 'example',
-
+	'bar' => 'example',
+	'baz' => 'example',
 ));

@@ -3,7 +3,7 @@
 	"description": "Framework for web apps in Wikimedia's Tool Labs environment.",
 	"license": "Unlicense",
 	"require": {
-		"php": ">=5.3.3"
+		"php": ">=5.5"
 	},
 	"require-dev": {
 		"jakub-onderka/php-parallel-lint": "0.8.*",

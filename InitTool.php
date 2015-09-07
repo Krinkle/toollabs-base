@@ -37,7 +37,8 @@ $kgCache = new Cache( array(
 ) );
 $kgCache->enableHarvest();
 
-// Local settings
+// Backward compatibility: Deprecated, use composer instead and set config
+// from consumer application instead.
 if ( file_exists(  __DIR__ . '/LocalConfig.php' ) ) {
 	require_once __DIR__ . '/LocalConfig.php';
 }

@@ -12,23 +12,20 @@
  * -------------------------------------------------
  */
 
-// BaseTool & Localization
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once KR_TSINT_START_INC;
-
-// Class for this tool
 require_once __DIR__ . '/../class.php';
 $tool = new ExampleTool();
 
 // Local settings
-#require_once __DIR__ . '/../config.php';
+// require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../sample-config.php';
 
 $I18N = new Intuition( 'example' );
 
 $kgBase = BaseTool::newFromArray( array(
 	'displayTitle' => 'Example',
-	'remoteBasePath' => dirname( $kgConf->getRemoteBase() ). '/',
 	'revisionId' => '0.0.0',
+	'remoteBasePath' => dirname( $kgConf->getRemoteBase() ). '/',
 	'I18N' => $I18N,
 ) );
 $kgBase->setSourceInfoGithub( 'Krinkle', 'mw-tool-example', dirname( __DIR__ ) );

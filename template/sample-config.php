@@ -1,12 +1,10 @@
 <?php
 /**
- * Example configuration for template
+ * Tool configuration
  */
 
-$kgConf->remoteBase = '//localhost/toollabs-base/template/public_html/base';
+$kgConf->remoteBase = '//localhost/mw-tool-example/public_html/base';
 
 $tool->setSettings(array(
 	'foo' => 'example',
-	'bar' => 'example',
-	'baz' => 'example',
 ));

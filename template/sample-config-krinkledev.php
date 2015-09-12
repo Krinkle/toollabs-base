@@ -1,13 +1,13 @@
 <?php
 /**
- * Example configuration
+ * Tool configuration (example for localhost development)
  */
 
-$devDir = '/Users/' . get_current_user() . '/Development';
-define( 'KR_TSINT_START_INC', $devDir. '/intuition/ToolStart.php' );
+$kgConf->remoteBase = '//localhost/mw-tool-example/public_html/base';
 
-$kgConf->remoteBase = '//krinkle.dev/toollabs-base/template/public_html/base';
-#$kgConf->remoteBase = '//krinkle.dev/mw-tool-example/public_html/base';
+$tool->setSettings(array(
+	'foo' => 'example',
+));
 
 $kgCache->set(
 	kfCacheKey( 'base', 'labsdb', 'meta', 'dbinfos' ),
@@ -25,10 +25,4 @@ $kgCache->set(
 			'slice' => 's0.local'
 		)
 	)
-);
-
-$kgCache->addStore(
-        new FileCacheStore( array(
-                'dir' => __DIR__ . '/cache',
-        ) )
 );

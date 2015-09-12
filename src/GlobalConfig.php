@@ -13,7 +13,7 @@ class GlobalConfig {
 	/**
 	 * Set from LocalConfig
 	 */
-	public $remoteBase = 'http://example.org/tools/foo';
+	public $remoteBase = './base';
 	public $userAgent = 'BaseTool/0.3.0 (https://github.com/Krinkle/toollabs-base)';
 	public $cookiePrefix = '';
 

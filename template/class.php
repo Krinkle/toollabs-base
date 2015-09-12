@@ -9,8 +9,6 @@ class ExampleTool extends KrToolBaseClass {
 
 	protected $settingsKeys = array(
 		'foo',
-		'bar',
-		'baz',
 	);
 
 	protected function show() {

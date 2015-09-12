@@ -14,12 +14,9 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../class.php';
-$tool = new ExampleTool();
-
-// Local settings
 // require_once __DIR__ . '/../config.php';
-require_once __DIR__ . '/../sample-config.php';
 
+$tool = new ExampleTool();
 $I18N = new Intuition( 'example' );
 
 $kgBase = BaseTool::newFromArray( array(

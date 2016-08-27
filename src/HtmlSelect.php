@@ -2,91 +2,80 @@
 /**
  * HtmlSelect class
  *
- * This file is inspired by MediaWiki's XmlSelect class.
- * https://svn.wikimedia.org/viewvc/mediawiki/trunk/phase3/includes/Xml.php?view=markup&pathrev=82840
- *
- * @author Timo Tijhof, 2012
+ * @author Timo Tijhof, 2016
  * @license Public domain
  * @package toollabs-base
- * @since v0.1.0
+ * @since v0.8.0
  */
 
-define( 'HTMLSELECT_OPTION_NORMAL', 1 );
-define( 'HTMLSELECT_OPTION_RAW', 2 );
-
 class HtmlSelect {
+	protected $default = null;
 	protected $options = array();
-	protected $default = false;
 	protected $attributes = array();
 
-	public function __construct( $name = false, $id = false, $default = false ) {
-		if ( $name ) {
-			$this->setAttribute( 'name', $name );
-		}
-		if ( $id ) {
-			$this->setAttribute( 'id', $id );
-		}
-		if ( $default !== false ) {
-			$this->default = $default;
-		}
-	}
-
-	public function setDefault( $default ) {
-		$this->default = $default;
+	public function __construct( array $options = [] ) {
+		$this->addOptions( $options );
 	}
 
 	public function setAttribute( $name, $value ) {
 		$this->attributes[$name] = $value;
 	}
 
-	public function getAttribute( $name ) {
-		if ( isset($this->attributes[$name]) ) {
-			return $this->attributes[$name];
-		} else {
-			return null;
-		}
+	public function setName( $value ) {
+		$this->setAttribute( 'name', $value );
 	}
 
-	public function addOption( $value, $text = false, $return = HTMLSELECT_OPTION_NORMAL ) {
+	public function setDefault( $default ) {
+		$this->default = $default;
+	}
+
+	public function addOption( $value, $text = null ) {
 		$attribs = array( 'value' => $value );
+		$text = ($text !== null) ? $text : $value;
 
-		// Shortcut
-		$text = ($text !== false) ? $text : $value;
-
-		// Selected ?
-		if ( $value === $this->default ) {
-			$attribs['selected'] = 'selected';
-		}
-
-		$html = Html::element( 'option', $attribs, $text );
-		if ( $return === HTMLSELECT_OPTION_RAW ) {
-			return $html;
-		}
-		$this->options[] = $html;
+		$this->options[$value] = $text;
 	}
 
-	// This accepts an array of form
-	// value => text
-	// optgrouplabel => ( value => text, value => text )
+	/**
+	 * Example:
+	 *
+	 *  $select->addOptions([
+	 *      'foo1' => 'Foo One'
+	 *  ]);
+	 *  $select->addOptions([
+	 *      'foo1'
+	 *  ]);
+	 *  $select->addOptions([
+	 *      'foo1' => 'foo1'
+	 *  ]);
+	 *
+	 * @param string|array $options
+	 */
 	public function addOptions( $options ) {
-		$this->options[] = trim(self::formatOptions( $options ));
-	}
-	public function formatOptions( $options ) {
-		$data = '';
-		foreach( $options as $value => $text ) {
-			if ( is_array( $text ) ) {
-				$contents = self::addOptions( $text );
-				$data .= Html::rawElement( 'optgroup', array( 'label' => $label ), $contents ) . "\n";
+		foreach ( $options as $key => $option ) {
+			if ( is_int( $key ) ) {
+				$this->addOption( $option );
 			} else {
-				$data .= self::addOption( $value, $text, HTMLSELECT_OPTION_RAW ) . "\n";
+				$this->addOption( $key, $option );
 			}
+		}
+	}
+
+	private function formatOptions() {
+		$data = '';
+		foreach( $this->options as $value => $text ) {
+			$attribs = array( 'value' => $value );
+			if ( $value === $this->default ) {
+				$attribs['selected'] = true;
+			}
+			$data .= Html::element( 'option', $attribs, $text );
 		}
 
 		return $data;
 	}
 
 	public function getHTML() {
-		return Html::rawElement( 'select', $this->attributes, implode( "\n", $this->options ) );
+		return Html::rawElement( 'select', $this->attributes, $this->formatOptions() );
 	}
 
 }

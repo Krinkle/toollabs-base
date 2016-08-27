@@ -1,3 +1,9 @@
+## v0.8.0
+2016-08-26
+
+### Enhancements
+* [BREAKING CHANGE] HtmlSelect: Replaced with a different implementation.
+
 ## v0.7.0
 2015-07-05
 

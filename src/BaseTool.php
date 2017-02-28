@@ -23,7 +23,7 @@ class BaseTool {
 	/* Accessing these outside the class is discouraged, use or create get/setters instead */
 	var $displayTitle = '';
 	var $remoteBasePath = '';
-	var $revisionId = '0.0.0';
+	var $revisionId = '';
 	var $styles = array();
 	var $scripts = array();
 	var $scriptsHead = array();
@@ -371,7 +371,7 @@ HTML;
 
 		$sourceInfo = $this->getSourceInfo();
 
-		$version = $this->revisionId;
+		$version = $this->revisionId ? "v{$this->revisionId}" : '';
 		if ( $sourceInfo['repoCommitID'] ) {
 			$sourceVersion = $sourceInfo['repoCommitID'];
 			if ( $sourceInfo['repoCommitUrl'] ) {
@@ -388,7 +388,7 @@ HTML;
 			}
 			$version .= " ($sourceVersion)";
 		}
-		$items[] = "Currently v$version";
+		$items[] = "Currently $version";
 
 		if ( $sourceInfo['repoViewUrl'] ) {
 			$items[] = Html::element( 'a', array(

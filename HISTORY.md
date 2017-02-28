@@ -1,3 +1,11 @@
+## v0.8.1
+2017-02-27
+
+### Bug fixes
+* BaseTool: Make `revisionId` parameter optional. Prevent "Version: v" from
+  being displayed on the page if there is no manual version set. Information
+  from `setSourceInfoGithub` is not affected.
+
 ## v0.8.0
 2016-08-26
 

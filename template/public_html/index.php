@@ -3,7 +3,7 @@
  * Main index
  *
  * @author Timo Tijhof, 2015
- * @license http://krinkle.mit-license.org/
+ * @license https://krinkle.mit-license.org/
  * @package mw-tool-example
  */
 

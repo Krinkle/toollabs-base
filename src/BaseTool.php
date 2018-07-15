@@ -73,12 +73,12 @@ class BaseTool {
 		$t->revisionId = isset( $config['revisionId'] ) ? $config['revisionId'] : '';
 
 		$t->styles = array(
-			'//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css',
+			'//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css',
 			$kgConf->remoteBase . '/main.css',
 		);
 		$t->scripts = array(
 			'//tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/1.11.3/jquery.min.js',
-			'//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.4/js/bootstrap.min.js',
+			'//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js',
 		);
 
 		if ( isset( $config['authors'] ) ) {

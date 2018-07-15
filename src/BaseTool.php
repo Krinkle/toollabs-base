@@ -30,7 +30,7 @@ class BaseTool {
 		'@Krinkle' => 'https://github.com/Krinkle',
 	);
 	var $licenses = array(
-		'MIT' => 'http://krinkle.mit-license.org/',
+		'MIT' => 'https://krinkle.mit-license.org/',
 	);
 	var $layout = array(
 		'top' => true,

@@ -11,8 +11,6 @@ class GlobalConfig {
 	/**
 	 * Set from LocalConfig
 	 */
-	public $remoteBase = './base';
-	public $userAgent = 'BaseTool/0.9.0 (https://github.com/Krinkle/toollabs-base)';
 	public $cookiePrefix = '';
 
 	// Set by BaseTool
@@ -44,7 +42,7 @@ class GlobalConfig {
 		date_default_timezone_set( 'UTC' );
 
 		// User agent (required to get data from wmf domains)
-		ini_set( 'user_agent', $this->userAgent );
+		ini_set( 'user_agent', HttpRequest::getUserAgent() );
 
 		// Allow request parameter to toggle debug mode
 		if ( $kgReq->hasKey( 'debug' ) ) {
@@ -64,13 +62,6 @@ class GlobalConfig {
 
 		return true;
 	}
-
-	/**
-	 * Get remote base
-	 *
-	 * @return string Remote base path complete from the protocol:// without trailing slash
-	 */
-	public function getRemoteBase() { return $this->remoteBase; }
 
 	/**
 	 * Get cookie prefix

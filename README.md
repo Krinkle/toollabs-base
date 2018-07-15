@@ -7,20 +7,18 @@
 It's recommended you use [Composer](https://getcomposer.org).
 
 * Run `composer require Krinkle/toollabs-base`.
-* Create a symlink to `vendor/krinkle/toollabs-base/public_html` from your application's public directory.
+* Create a symlink from "base/" in your application's root public directory (e.g. public_html) to `vendor/krinkle/toollabs-base/public_html`.
 * Include `vendor/autoload.php` in your program.
-* Set `$kgConf->remoteBase` to where `toollabs-base/public_html is exposed (e.g. `https://example.org/mytool/base` or `http://localhost/mytool/public_html/base`).
 
-## Usage
-
-It's recommended to set `$kgConf->remoteBase` (and any variables your tool may need) from a separate `config.php` file.
+## Example
 
 <pre lang="php">
 require_once __DIR__ . '/vendor/autoload.php';
-require_once __DIR__ . '/config.php';
+// require_once __DIR__ . '/config.php';
 
 $kgBase = BaseTool::newFromArray( array(
 	'displayTitle' => 'Example',
+	'remoteBasePath' => dirname( $_SERVER['PHP_SELF'] ),
 ) );
 $kgBase->flushMainOutput();
 </pre>

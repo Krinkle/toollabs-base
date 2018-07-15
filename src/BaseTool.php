@@ -60,7 +60,7 @@ class BaseTool {
 		$t = new BaseTool();
 
 		if ( isset( $config['remoteBasePath'] ) ) {
-			$t->remoteBasePath = $config['remoteBasePath'];
+			$t->remoteBasePath = rtrim( $config['remoteBasePath'], '/' ) . '/';
 		}
 
 		if ( isset( $config['sourceInfo'] ) ) {
@@ -74,7 +74,7 @@ class BaseTool {
 
 		$t->styles = array(
 			'//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css',
-			$kgConf->remoteBase . '/main.css',
+			'base/main.css',
 		);
 		$t->scripts = array(
 			'//tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/3.2.1/jquery.min.js',
@@ -202,24 +202,22 @@ class BaseTool {
 		}
 	}
 
-	public function expandURL( $url, $protocolRelativeOK = true ) {
-		// '//dom.ain/fi.le'
+	public function expandURL( $url ) {
+		// Handle '//domain.example/path/file.ext'
 		if ( substr( $url, 0, 2 ) == '//' ) {
-			return ( !$protocolRelativeOK ? 'http:' : '' ) . $url;
-
-		// '/fi.le'
-		} elseif ( substr( $url, 0, 1 ) == '/' ) {
-			global $kgConf;
-			return $kgConf->getRemoteBase() . $url;
-
-		// '..://..'
-		} elseif ( strpos( $url, '://' ) !== false ) {
-			return $url;
-
-		// 'fi.le'
-		} else {
-			return $this->remoteBasePath . $url;
+			// Expand legacy use of protocol-relative to plain HTTPS.
+			return 'https:' . $url;
 		}
+
+		// Handle 'scheme://..'
+		// "ASCII alpha, followed by zero or more of alphanumeric, U+002B (+),
+		// U+002D (-), and U+002E (.)" – https://url.spec.whatwg.org/#url-scheme-string
+		if ( preg_match( '/^[a-z][a-z0-9+.-]*:/', $url ) ) {
+			return $url;
+		}
+
+		// Handle'/path/file.ext' or 'path/file.ext'
+		return $this->remoteBasePath . $url;
 	}
 
 	/**
@@ -529,7 +527,6 @@ HTML;
 	}
 
 	public function generatePermalink( $params = array(), $url = false ) {
-
 		$link = $url ? $url : $this->remoteBasePath;
 		$one = true;
 		foreach ( $params as $key => $val ) {

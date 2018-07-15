@@ -1,3 +1,14 @@
+## v1.0.0
+2018-07-15
+
+### Removed
+
+* BaseTool: The path to 'base' can no longer be overidden via kgConf->remoteBase.
+  Use the BaseTool 'remoteBasePath' option to specify the main path for your tool.
+  Within that path, "base/" should point to toollabs-base/public_html.
+* GlobalConfig: The 'remoteBase' and 'userAgent' options were removed.
+* GlobalConfig: The 'getRemoteBase' method was removed.
+
 ## v0.9.0
 2018-07-15
 

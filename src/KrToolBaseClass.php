@@ -29,13 +29,19 @@ class KrToolBaseClass {
 
 	protected function show() {}
 
-	protected function outputException( Exception $e ) {
+	/**
+	 * @param Exception|Throwable $e
+	 */
+	protected function outputException( $e ) {
 		global $kgBase;
 		http_response_code( 500 );
 		$kgBase->addOut( $e->getMessage() . "\n" . $e->getTraceAsString() , 'pre' );
 	}
 
-	public function handleException( Exception $e ) {
+	/**
+	 * @param Exception|Throwable $e
+	 */
+	public function handleException( $e ) {
 		$this->outputException( $e );
 		exit( 1 );
 	}

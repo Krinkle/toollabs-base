@@ -27,6 +27,8 @@ require_once __DIR__ . '/src/HttpRequest.php';
 require_once __DIR__ . '/src/LabsDB.php';
 require_once __DIR__ . '/src/Request.php';
 require_once __DIR__ . '/src/Wiki.php';
+require_once __DIR__ . '/src/GitInfo.php';
+require_once __DIR__ . '/src/Html.php';
 
 // POST overrides GET data
 // We don't use $_REQUEST here to avoid interference from cookies.
@@ -46,11 +48,6 @@ if ( file_exists(  __DIR__ . '/LocalConfig.php' ) ) {
 // Config init must have access to GlobalFunctions, $kgReq, and $kgCache.
 // And must run after LocalConfig.
 $kgConf->initConfig();
-
-function kfIncludeMwClasses() {
-	require_once __DIR__ . '/lib/mw-mock.php';
-}
-kfIncludeMwClasses();
 
 // Debug
 if ( $kgConf->isDebugMode() ) {

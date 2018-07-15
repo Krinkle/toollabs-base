@@ -2,7 +2,12 @@
 <phpunit bootstrap="test/unit/bootstrap.php" colors="true" strict="true">
 	<testsuites>
 		<testsuite name="toollabs-base Test Suite">
-			<directory>./test/unit/suites/</directory>
+			<directory>test/unit/suites/</directory>
 		</testsuite>
 	</testsuites>
+	<filter>
+		<whitelist addUncoveredFilesFromWhitelist="true">
+			<directory suffix=".php">src</directory>
+		</whitelist>
+	</filter>
 </phpunit>

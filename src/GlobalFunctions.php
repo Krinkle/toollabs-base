@@ -2,9 +2,7 @@
 /**
  * Common functions globally available
  *
- * @author Timo Tijhof, 2015
- * @license Public domain
- * @package toollabs-base
+ * @package krinkle/toollabs-base
  * @since v0.1.0
  */
 
@@ -173,9 +171,10 @@ function kfGetAllWikiOptionHtml( $options = array() ) {
 	if ( $options['group'] ) {
 		foreach ( $optionsHtmlGroups as $family => $groupHtml ) {
 			$optionsHtml .=
-				Html::openElement( 'optgroup', array( 'label' => $family ) )
-				. $groupHtml
-				. '</optgroup>';
+				Html::rawElement( 'optgroup',
+					array( 'label' => $family ),
+					$groupHtml
+				);
 
 		}
 	}

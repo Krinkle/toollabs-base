@@ -2,9 +2,7 @@
 /**
  * Main class
  *
- * @author Timo Tijhof, 2015
- * @license Public domain
- * @package toollabs-base
+ * @package krinkle/toollabs-base
  * @since v0.1.0
  */
 
@@ -509,13 +507,14 @@ HTML;
 
 				header( 'Content-Type: text/html; charset=utf-8' );
 				echo '<!DOCTYPE html>'
-				. Html::openElement( 'html', array(
-					'dir' => $contentLanguageDir,
-					'lang' => $contentLanguageCode,
-					'class' => $documentClassses,
-				) )
-				. $innerHTML
-				. '</html>';
+				. Html::rawElement( 'html',
+					array(
+						'dir' => $contentLanguageDir,
+						'lang' => $contentLanguageCode,
+						'class' => $documentClassses,
+					),
+					$innerHTML
+				);
 				break;
 			default:
 				echo $this->mainOutput['body'];

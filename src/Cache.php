@@ -5,9 +5,7 @@
  * Inspired by php-UniversalCache <https://github.com/c9s/php-UniversalCache>
  * Inspired by ObjectCache and BagOStuff <https://github.com/wikimedia/mediawiki-core>
  *
- * @author Timo Tijhof, 2015
- * @license Public domain
- * @package toollabs-base
+ * @package krinkle/toollabs-base
  * @since v0.5.0
  */
 
@@ -18,7 +16,7 @@ class Cache implements CacheInterface {
 	/**
 	 * @param CacheInterface[] $stores
 	 */
-	public function __construct( Array $stores ) {
+	public function __construct( array $stores ) {
 		$this->stores = $stores;
 
 		foreach ( $stores as $i => $store ) {

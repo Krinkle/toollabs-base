@@ -2,9 +2,7 @@
 /**
  * HtmlSelect class
  *
- * @author Timo Tijhof, 2016
- * @license Public domain
- * @package toollabs-base
+ * @package krinkle/toollabs-base
  * @since v0.8.0
  */
 

@@ -4,9 +4,7 @@
  *
  * Mostly boolean and integer substitues for better readability.
  *
- * @author Timo Tijhof, 2015
- * @license Public domain
- * @package toollabs-base
+ * @package krinkle/toollabs-base
  * @since v0.1.0
  */
 

@@ -1,8 +1,6 @@
 <?php
 /**
- * @author Timo Tijhof, 2014
- * @license Public domain
- * @package toollabs-base
+ * @package krinkle/toollabs-base
  * @since v0.3.0
  */
 

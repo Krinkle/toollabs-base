@@ -2,12 +2,9 @@
 /**
  * Interact with request and session data for incoming web request
  *
- * This file is inspired by MediaWiki's WebRequest class.
- * https://svn.wikimedia.org/viewvc/mediawiki/trunk/phase3/includes/WebRequest.php?view=markup&pathrev=82694
+ * This file is inspired by MediaWiki 1.22 (WebRequest class).
  *
- * @author Timo Tijhof, 2015
- * @license Public domain
- * @package toollabs-base
+ * @package krinkle/toollabs-base
  * @since v0.1.0
  */
 

@@ -1,4 +1,5 @@
+/composer.lock
+/coverage
+/vendor
 cache
-vendor
-composer.lock
 LocalConfig.php

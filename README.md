@@ -27,8 +27,8 @@ $kgBase->flushMainOutput();
 
 See [Template](/template) for an example.
 
-## License
+## Versioning
 
-This project is released in the public domain.
+This library follows the [Semantic Versioning guidelines](https://semver.org/).
 
-BaseTool comes with a few classes from the [MediaWiki 1.24](https://www.mediawiki.org/) code base. MediaWiki 1.24 is a collaborative project released under the GNU General Public License v2. For full license text and authors refer to https://git.wikimedia.org/blob/mediawiki%2Fcore.git/fb9023bb2e/CREDITS and https://git.wikimedia.org/blob/mediawiki%2Fcore.git/fb9023bb2e/COPYING.
+Releases will be numbered in the following format: `<major>.<minor>.<patch>`.

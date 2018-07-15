@@ -107,15 +107,20 @@
     padding-bottom: 40px;
     margin-top: 100px;
     background: #f9f9f9;
-    color: #777;
+    color: #666;
     text-align: center;
     border-top: 1px solid #e5e5e5
+}
+
+.base-footer a {
+    /* slightly darker than default link color (#337ab7),
+       for improved contrast on the shaded footer. */
+    color: #3177B0;
 }
 
 .base-footer-links {
     margin-top: 20px;
     padding-left: 0;
-    color: #999
 }
 
 .base-footer-links li {

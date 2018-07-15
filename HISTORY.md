@@ -1,3 +1,20 @@
+## v0.9.0
+2018-07-15
+
+### Improved
+
+* BaseTool: Support PHP 7 Throwable errors in the error handler.
+* page: Update Bootstrap to v3.3.7.
+* page: Update jQuery to v3.2.1.
+* page: Improved color contrast of footer text and footer links,
+  to comply with WCAG 2.0 (AA).
+
+### Removed
+
+* MediaWiki classes GitInfo, Sanitizer and Html have been removed.
+  The Html::element() method, however, was re-introduced as convenience
+  shortcut using plain htmlspecialchars().
+
 ## v0.8.1
 2017-02-27
 

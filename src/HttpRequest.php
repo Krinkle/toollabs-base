@@ -20,7 +20,7 @@ class HttpRequest {
 
 	public static function getUserAgent() {
 		global $kgConf;
-		return 'BaseTool/0.3.0 (https://github.com/Krinkle/toollabs-base) - ' . $kgConf->getRemoteBase();
+		return 'BaseTool/0.9.0 (https://github.com/Krinkle/toollabs-base) - ' . $kgConf->getRemoteBase();
 	}
 
 	/** @return bool|string */

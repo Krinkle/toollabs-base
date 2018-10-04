@@ -19,7 +19,7 @@ class HttpRequest {
 	protected $respHeaders = array();
 
 	public static function getUserAgent() {
-		return 'BaseTool/1.0.0 (https://github.com/Krinkle/toollabs-base)';
+		return 'krinkle/toollabs-base (https://github.com/Krinkle/toollabs-base)';
 	}
 
 	/** @return bool|string */

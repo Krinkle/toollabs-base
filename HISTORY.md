@@ -1,8 +1,11 @@
-## [Unreleased]
+## v1.0.1
+2018-10-04
 
 ### Bug fixes
 
 * Request: Avoid use of deprecated `count(null)` for PHP 7.2.
+* HttpRequest: The default User-Agent string now includes
+  the Composer package name instead of the legacy class name.
 
 ## v1.0.0
 2018-07-15

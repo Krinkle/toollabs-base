@@ -9,13 +9,13 @@
  */
 
 class Request {
-	/** @var Array */
+	/** @var array */
 	protected $raw;
 
-	/** @var Array */
+	/** @var array|null */
 	protected $headers;
 
-	function __construct( Array $raw ) {
+	function __construct( array $raw ) {
 		$this->raw = $raw;
 	}
 
@@ -178,7 +178,7 @@ class Request {
 	 * Initialise the header list
 	 */
 	private function initHeaders() {
-		if ( count( $this->headers ) ) {
+		if ( $this->headers !== null ) {
 			return;
 		}
 

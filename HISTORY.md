@@ -1,3 +1,9 @@
+## [Unreleased]
+
+### Bug fixes
+
+* Request: Avoid use of deprecated `count(null)` for PHP 7.2.
+
 ## v1.0.0
 2018-07-15
 

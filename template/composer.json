@@ -1,7 +1,7 @@
 {
 	"require": {
 		"php": ">=7.0",
-		"Krinkle/toollabs-base": "^1.0.1",
+		"Krinkle/toollabs-base": "^1.0.2",
 		"Krinkle/intuition": "^0.2.0"
 	},
 	"require-dev": {

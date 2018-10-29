@@ -1,3 +1,10 @@
+## v1.0.2
+2018-10-29
+
+### Changes
+
+* BaseTool: Change default license display to plain text.
+
 ## v1.0.1
 2018-10-04
 

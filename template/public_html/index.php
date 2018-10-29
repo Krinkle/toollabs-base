@@ -2,9 +2,7 @@
 /**
  * Main index
  *
- * @author Timo Tijhof, 2015
- * @license https://krinkle.mit-license.org/
- * @package mw-tool-example
+ * @copyright 2018 [Your Name]
  */
 
 /**
@@ -14,9 +12,13 @@
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/../class.php';
-// require_once __DIR__ . '/../config.php';
 
 $tool = new ExampleTool();
+if ( file_exists( __DIR__ . '/../config.php' ) ) {
+	// Optional overrides
+	require __DIR__ . '/../config.php';
+}
+
 $I18N = new Intuition( 'example' );
 
 $kgBase = BaseTool::newFromArray( array(

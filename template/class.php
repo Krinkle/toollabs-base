@@ -2,7 +2,7 @@
 /**
  * Main class
  *
- * @package mw-tool-example
+ * @copyright 2018 [Your Name]
  */
 
 class ExampleTool extends KrToolBaseClass {

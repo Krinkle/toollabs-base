@@ -8,7 +8,7 @@
 	"require-dev": {
 		"jakub-onderka/php-parallel-lint": "1.0.0",
 		"phpunit/phpunit": "^4.1.0",
-		"mikey179/vfsStream": "^1.0"
+		"mikey179/vfsstream": "^1.0"
 	},
 	"autoload": {
 		"files": [

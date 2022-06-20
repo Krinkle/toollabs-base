@@ -1,8 +1,7 @@
 <?php
-/**
- * @covers Html
- */
-class HtmlTest extends PHPUnit_Framework_TestCase {
+use Krinkle\Toolbase\Html;
+
+class HtmlTest extends PHPUnit\Framework\TestCase {
 
 	public function testRawElement() {
 		$this->assertEquals(

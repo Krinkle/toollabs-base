@@ -1,13 +1,13 @@
 <?php
+namespace Krinkle\Toolbase;
+
 /**
  * Helper class for generating HTML tags.
  *
  * This file is inspired by MediaWiki 1.22 (Html class).
  *
- * @package krinkle/toollabs-base
- * @since v0.9.0
+ * @since 0.9.0
  */
-
 class Html {
 	// Void elements per WHATWG HTML spec.
 	// https://html.spec.whatwg.org/multipage/syntax.html#elements-2

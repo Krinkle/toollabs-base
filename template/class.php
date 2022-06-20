@@ -1,24 +1,21 @@
 <?php
-/**
- * Main class
- *
- * @copyright 2018 [Your Name]
- */
+use Krinkle\Toolbase\KrToolBaseClass;
+use Krinkle\Toolbase\Cache;
 
 class ExampleTool extends KrToolBaseClass {
 
-	protected $settingsKeys = array(
+	protected $settingsKeys = [
 		'foo',
-	);
+	];
 
 	protected function show() {
 		global $kgBase;
 
 		$kgBase->setHeadTitle( 'Home' );
-		$kgBase->setLayout( 'header', array(
+		$kgBase->setLayout( 'header', [
 			'titleText' => 'Welcome',
 			'captionHtml' => 'Some text here',
-		) );
+		] );
 
 		$kgBase->addOut( '<div class="container">' );
 
@@ -26,7 +23,7 @@ class ExampleTool extends KrToolBaseClass {
 
 		$kgBase->addOut( 'Hello world' );
 
-		// kfCacheKey( 'example', .. )
+		// Cache::makeKey( 'exampletool-something', $variable );
 
 		// Close container
 		$kgBase->addOut( '</div>' );

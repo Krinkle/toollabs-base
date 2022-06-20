@@ -1,8 +1,7 @@
 <?php
-/**
- * @covers HtmlSelect
- */
-class HtmlSelectTest extends PHPUnit_Framework_TestCase {
+use Krinkle\Toolbase\HtmlSelect;
+
+class HtmlSelectTest extends PHPUnit\Framework\TestCase {
 
 	public function testConstructor() {
 		$select = new HtmlSelect([

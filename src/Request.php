@@ -1,13 +1,13 @@
 <?php
+namespace Krinkle\Toolbase;
+
 /**
  * Interact with request and session data for incoming web request
  *
  * This file is inspired by MediaWiki 1.22 (WebRequest class).
  *
- * @package krinkle/toollabs-base
- * @since v0.1.0
+ * @since 0.1.0
  */
-
 class Request {
 	/** @var array */
 	protected $raw;
@@ -15,18 +15,15 @@ class Request {
 	/** @var array|null */
 	protected $headers;
 
-	function __construct( array $raw ) {
+	public function __construct( array $raw ) {
 		$this->raw = $raw;
 	}
 
 	public function getRawVal( $arr, $key, $default ) {
-		return isset( $arr[$key] ) ? $arr[$key] : $default;
+		return $arr[$key] ?? $default;
 	}
 
-	/**
-	 * @return string|null
-	 */
-	public function getVal( $key, $default = null ) {
+	public function getVal( $key, $default = null ): ?string {
 		$val = $this->getRawVal( $this->raw, $key, $default );
 		if ( is_array( $val ) ) {
 			$val = $default;
@@ -38,48 +35,35 @@ class Request {
 		}
 	}
 
-	/**
-	 * @return array|null
-	 */
-	public function getArray( $name, $default = null ) {
+	public function getArray( $name, $default = null ): ?array {
 		$val = $this->getRawVal( $this->raw, $name, $default );
 		if ( is_null( $val ) ) {
 			return null;
 		} else {
-			return (array) $val;
+			return (array)$val;
 		}
 	}
 
 	/**
-	 * Is the key is set, no matter the value. Useful when dealing with HTML checkboxes.
-	 * @return bool
+	 * Is the key is set, no matter the value. Useful with HTML checkboxes.
 	 */
-	public function hasKey( $key ) {
+	public function hasKey( $key ): bool {
 		return array_key_exists( $key, $this->raw );
 	}
 
-	/**
-	 * @return int
-	 */
-	public function getInt( $key, $default = 0 ) {
+	public function getInt( $key, $default = 0 ): int {
 		return intval( $this->getVal( $key, $default ) );
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function getFuzzyBool( $key, $default = false ) {
+	public function getFuzzyBool( $key, $default = false ): bool {
 		return $this->hasKey( $key ) && $this->getVal( $key ) !== 'false';
 	}
 
 	public function getCookie( $key, $default = null ) {
-		global $kgConf;
-		return $this->getRawVal( $_COOKIE, $kgConf->getCookiePrefix() . $key, $default );
+		return $this->getRawVal( $_COOKIE, $key, $default );
 	}
 
-	public function setCookie( $key, $value, $expire = 0 ) {
-		global $kgConf;
-
+	public function setCookie( string $key, ?string $value, $expire = 0 ) {
 		if ( $value === null && $expire === 0 ) {
 			// Delete cookie
 			$expire = -1;
@@ -96,8 +80,8 @@ class Request {
 		);
 		// http://www.php.net/setcookie
 		return setcookie(
-			$kgConf->getCookiePrefix() . $key,
-			$value,
+			$key,
+			$value ?? '',
 			$options['expire'],
 			$options['path'],
 			$options['domain'],
@@ -112,7 +96,7 @@ class Request {
 	 * @param string $key
 	 * @return mixed
 	 */
-	public function getSessionData( $key ) {
+	public function getSessionData( string $key ) {
 		self::ensureSession();
 		if ( !isset( $_SESSION[ $key ] ) ) {
 			return null;
@@ -126,33 +110,23 @@ class Request {
 	 * @param string $key
 	 * @param mixed $data
 	 */
-	public function setSessionData( $key, $data ) {
+	public function setSessionData( string $key, $data ) {
 		self::ensureSession();
 		$_SESSION[ $key ] = $data;
 	}
 
-	/**
-	 * @return bool
-	 */
-	public function wasPosted() {
+	public function wasPosted(): bool {
 		return isset( $_SERVER['REQUEST_METHOD'] ) && $_SERVER['REQUEST_METHOD'] == 'POST';
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getQueryString(){
+	public function getQueryString(): string {
 		return http_build_query( $this->raw );
 	}
 
 	/**
-	 * Detect the protocol from $_SERVER.
-	 * This is for use prior to Setup.php, when no WebRequest object is available.
-	 * At other times, use the non-static function getProtocol().
-	 *
-	 * @return array
+	 * Detect HTTPS from HTTP protocol.
 	 */
-	public function getProtocol() {
+	public function getProtocol(): string {
 		if ( ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] == 'on' ) ||
 			( isset( $_SERVER['HTTP_X_FORWARDED_PROTO'] ) &&
 			$_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' ) ) {
@@ -182,20 +156,11 @@ class Request {
 			return;
 		}
 
-		$apacheHeaders = function_exists( 'apache_request_headers' ) ? apache_request_headers() : false;
-		if ( $apacheHeaders ) {
-			foreach ( $apacheHeaders as $key => $val ) {
-				$this->headers[strtoupper( $key )] = $val;
-			}
-		} else {
-			foreach ( $_SERVER as $name => $value ) {
-				if ( substr( $name, 0, 5 ) === 'HTTP_' ) {
-					$name = str_replace( '_', '-', substr( $name, 5 ) );
-					$this->headers[$name] = $value;
-				} elseif ( $name === 'CONTENT_LENGTH' ) {
-					$this->headers['CONTENT-LENGTH'] = $value;
-				}
-			}
+		$this->headers = [];
+
+		$apacheHeaders = apache_request_headers();
+		foreach ( $apacheHeaders as $key => $val ) {
+			$this->headers[strtoupper( $key )] = $val;
 		}
 	}
 
@@ -204,7 +169,7 @@ class Request {
 	 *
 	 * @return array Headers keyed by name (normalised to upper case)
 	 */
-	public function getAllHeaders() {
+	public function getAllHeaders(): array {
 		$this->initHeaders();
 		return $this->headers;
 	}
@@ -230,7 +195,7 @@ class Request {
 	 * @param int $modifiedTime
 	 * @return bool True if 304 header was sent
 	 */
-	public function tryLastModified( $modifiedTime ) {
+	public function tryLastModified( $modifiedTime ): bool {
 		$clientCache = $this->getHeader( 'If-Modified-Since' );
 		if ( $clientCache !== false ) {
 			# IE sends sizes after the date like "Wed, 20 Aug 2003 06:51:19 GMT; length=5202"

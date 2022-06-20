@@ -1,5 +1,7 @@
 <?php
-class WikiTest extends PHPUnit_Framework_TestCase {
+use Krinkle\Toolbase\Wiki;
+
+class WikiTest extends PHPUnit\Framework\TestCase {
 
 	public function testGetInstance() {
 		$wiki1 = WikiMock::byDbname( 'foo' );
@@ -58,47 +60,47 @@ class WikiTest extends PHPUnit_Framework_TestCase {
 
 class WikiMock extends Wiki {
 
-	public function getWikiInfo() {
-		return array(
+	public function getWikiInfo(): array {
+		return [
 			'dbname' => $this->dbname,
 			'lang' => 'en',
 			'family' => 'test',
 			'url' => 'http://' . $this->dbname . '.example.org',
 			'slice' => $this->dbname . '.testdb',
-		);
+		];
 	}
 
-	protected function fetchSiteInfo() {
-		return (object) array(
-			'general' => (object) array(
+	protected function fetchSiteInfo(): array {
+		return array(
+			'general' => array(
 				'articlepath' => '/wiki/$1',
 				'scriptpath' => '/w',
 				'script' => '/w/index.php',
 				'server' => '//' . $this->dbname . '.example.org',
 				'servername' => $this->dbname . '.example.org',
 			),
-			'namespaces' => (object) array(
-				'-1' => (object) array(
+			'namespaces' => array(
+				'-1' => array(
 					'id' => -1,
 					'case' => 'first-letter',
 					'*' => 'Special',
 					'canonical' => 'Special',
 				),
-				'0' => (object) array(
+				'0' => array(
 					'id' => 0,
 					'case' => 'first-letter',
 					'*' => '',
 					'subpages' => '',
 					'content' => '',
 				),
-				'1' => (object) array(
+				'1' => array(
 					'id' => 1,
 					'case' => 'first-letter',
 					'*' => 'Talk',
 					'subpages' => '',
 					'canonical' => 'Talk',
 				),
-				'2' => (object) array(
+				'2' => array(
 					'id' => 2,
 					'case' => 'first-letter',
 					'*' => 'User',

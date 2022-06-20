@@ -1,9 +1,9 @@
 <?php
-/**
- * @package krinkle/toollabs-base
- * @since v0.5.0
- */
+namespace Krinkle\Toolbase;
 
+/**
+ * @since 0.5.0
+ */
 class HttpRequest {
 	protected $url;
 	protected $method;
@@ -12,14 +12,20 @@ class HttpRequest {
 	protected $reqHeaders = array();
 	protected $reqData;
 
-	protected $respContent;
-	protected $respHeaderText;
+	protected $respContent = '';
+	protected $respHeaderText = '';
+	protected $restHeaderList;
 	protected $respVersion;
 	protected $respStatus;
 	protected $respHeaders = array();
 
+	/**
+	 * Comply with <https://meta.wikimedia.org/wiki/User-Agent_policy>
+	 */
 	public static function getUserAgent() {
-		return 'krinkle/toollabs-base (https://github.com/Krinkle/toollabs-base)';
+		$tool = BaseTool::getInstance();
+		$toolUA = $tool ? $tool->getUserAgent() : 'unspecified';
+		return "$toolUA; krinkle/toollabs-base (https://github.com/Krinkle/toollabs-base)";
 	}
 
 	/** @return bool|string */
@@ -45,8 +51,9 @@ class HttpRequest {
 	/**
 	 * @param string $url
 	 * @param string $method GET, POST or HEAD
+	 * @param array $options
 	 */
-	public function __construct( $url, $method, $options = array() ) {
+	public function __construct( string $url, string $method, $options = array() ) {
 		$this->url = $url;
 		$this->method = $method;
 
@@ -55,20 +62,20 @@ class HttpRequest {
 		}
 	}
 
-	protected function getHeaderList() {
-		$list = array();
+	protected function getHeaderList(): array {
+		$list = [];
 		foreach ( $this->reqHeaders as $name => $value ) {
 			$list[] = "$name: $value";
 		}
 		return $list;
 	}
 
-	protected function read( $fh, $content ) {
+	protected function read( $fh, $content ): int {
 		$this->respContent .= $content;
 		return strlen( $content );
 	}
 
-	protected function readHeader( $fh, $content ) {
+	protected function readHeader( $fh, $content ): int {
 		$this->respHeaderText .= $content;
 		return strlen( $content );
 	}
@@ -90,16 +97,17 @@ class HttpRequest {
 		}
 	}
 
-	/** @return bool */
-	public function execute() {
+	public function execute(): bool {
 		$curlOptions = array(
-			CURLOPT_TIMEOUT => 10, // seconds
+			// in seconds
+			CURLOPT_TIMEOUT => 10,
 			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_0,
 			CURLOPT_WRITEFUNCTION => array( $this, 'read' ),
 			CURLOPT_HEADERFUNCTION => array( $this, 'readHeader' ),
 			CURLOPT_MAXREDIRS => 2,
 			CURLOPT_FOLLOWLOCATION => true,
-			CURLOPT_ENCODING => '', // All supported encodings
+			 // All supported encodings
+			CURLOPT_ENCODING => '',
 			CURLOPT_USERAGENT => self::getUserAgent(),
 			CURLOPT_SSL_VERIFYHOST => 2,
 			CURLOPT_SSL_VERIFYPEER => true,
@@ -132,7 +140,7 @@ class HttpRequest {
 			$this->error = 'cURL Error: ' . curl_error( $curlHandle );
 			return false;
 		} else {
-			$this->headerList = explode( "\r\n", $this->respHeaderText );
+			$this->restHeaderList = explode( "\r\n", $this->respHeaderText );
 		}
 
 		curl_close( $curlHandle );
@@ -148,18 +156,15 @@ class HttpRequest {
 		return true;
 	}
 
-	/** @return null|string */
-	public function getContent() {
+	public function getContent(): string {
 		return $this->respContent;
 	}
 
-	/** @return int */
-	public function getStatus() {
+	public function getStatus(): int {
 		return (int)$this->respStatus;
 	}
 
-	/** @return null|string */
-	public function getError() {
+	public function getError(): ?string {
 		return $this->error;
 	}
 }

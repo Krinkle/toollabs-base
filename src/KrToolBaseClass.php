@@ -1,16 +1,18 @@
 <?php
+namespace Krinkle\Toolbase;
+
+use Exception;
+use InvalidArgumentException;
+use Throwable;
+
 /**
- * @package krinkle/toollabs-base
- * @since v0.3.0
+ * @since 0.3.0
  */
-
 class KrToolBaseClass {
+	protected $settings = [];
+	protected $settingsKeys = [];
 
-	protected $settings = array();
-
-	protected $settingsKeys = array();
-
-	public function setSettings( $settings ) {
+	public function setSettings( array $settings ) {
 		foreach ( $this->settingsKeys as $key ) {
 			if ( !isset( $this->settings[ $key ] ) && !array_key_exists( $key, $settings ) ) {
 				throw new InvalidArgumentException( "Settings must have key $key." );
@@ -24,30 +26,28 @@ class KrToolBaseClass {
 	}
 
 	public function getSetting( $key ) {
-		return isset( $this->settings[$key] ) ? $this->settings[$key] : null;
+		return $this->settings[$key] ?? null;
 	}
 
 	protected function show() {}
 
-	/**
-	 * @param Exception|Throwable $e
-	 */
-	protected function outputException( $e ) {
+	protected function outputException( Throwable $e ) {
 		global $kgBase;
 		http_response_code( 500 );
 		$kgBase->addOut( $e->getMessage() . "\n" . $e->getTraceAsString() , 'pre' );
 	}
 
 	/**
-	 * @param Exception|Throwable $e
+	 * @param Throwable $e
+	 * @return never
 	 */
-	public function handleException( $e ) {
+	public function handleException( Throwable $e ) {
 		$this->outputException( $e );
 		exit( 1 );
 	}
 
 	public function run() {
-		$section = new kfLogSection( __METHOD__ );
+		$scope = Logger::createScope( __METHOD__ );
 
 		set_exception_handler( array( $this, 'handleException' ) );
 

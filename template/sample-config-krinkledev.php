@@ -8,12 +8,12 @@ $tool->setSettings(array(
 ));
 
 $kgCache->set(
-	kfCacheKey( 'base', 'labsdb', 'meta', 'dbinfos' ),
+	Krinkle\Toolbase\Cache::makeKey( 'toolbase-labsdb-dbinfos' ),
 	array(
-		'krinklewiki' => array(
-			'dbname' => 'krinklewiki',
+		'mywiki' => array(
+			'dbname' => 'mywiki',
 			'family' => 'wikipedia',
-			'url' => 'http://alpha.wikipedia.krinkle.dev',
+			'url' => 'http://mw.localhost:8080',
 			'slice' => 's0.local'
 		),
 		'metawiki' => array(

@@ -1,12 +1,13 @@
 <?php
+namespace Krinkle\Toolbase;
+
 /**
  * A class to help return information about a Git repository.
  *
  * This file is inspired by MediaWiki 1.22 (GitInfo class).
  *
- * @private
- * @package krinkle/toollabs-base
- * @since v0.9.0
+ * @internal
+ * @since 0.9.0
  */
 
 class GitInfo {

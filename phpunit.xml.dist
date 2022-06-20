@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="test/unit/bootstrap.php" colors="true" strict="true">
+<phpunit bootstrap="test/unit/bootstrap.php" colors="true">
 	<testsuites>
-		<testsuite name="toollabs-base Test Suite">
+		<testsuite name="Test Suite">
 			<directory>test/unit/suites/</directory>
 		</testsuite>
 	</testsuites>

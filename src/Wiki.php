@@ -1,9 +1,11 @@
 <?php
-/**
- * @package krinkle/toollabs-base
- * @since v0.5.0
- */
+namespace Krinkle\Toolbase;
 
+use Exception;
+
+/**
+ * @since 0.5.0
+ */
 class Wiki {
 	const NS_MAIN = 0;
 	const NS_TALK = 1;
@@ -67,25 +69,19 @@ class Wiki {
 		$this->dbname = $dbname;
 	}
 
-	/**
-	 * @return string
-	 */
-	public function getDbname() {
+	public function getDbname(): string {
 		return $this->dbname;
 	}
 
-	/**
-	 * @return array
-	 */
-	public function getWikiInfo() {
+	public function getWikiInfo(): array {
 		return LabsDB::getDbInfo( $this->dbname );
 	}
 
 	/**
-	 * @return object|bool
+	 * @return array|false
 	 */
 	protected function fetchSiteInfo() {
-		$section = new KfLogSection( __METHOD__ );
+		$scope = Logger::createScope( __METHOD__ );
 
 		$wikiInfo = $this->getWikiInfo();
 		$data = kfApiRequest( $wikiInfo['url'], array(
@@ -93,23 +89,21 @@ class Wiki {
 			'siprop' => implode( '|', self::$siprops ),
 		) );
 		foreach ( self::$siprops as $siprop ) {
-			if ( !isset( $data->query->$siprop ) ) {
+			if ( !isset( $data['query'][$siprop] ) ) {
 				return false;
 			}
 		}
-		return $data->query;
+		return $data['query'];
 	}
 
 	/**
-	 * @param string $prop See self::$siprops
+	 * @param string $prop One of self::$siprops
 	 * @return array
-	 * @throws Exception If property is not supported
-	 * @throws Exception If fetching failed
 	 */
-	public function getSiteInfo( $prop ) {
+	public function getSiteInfo( string $prop ): array {
 		global $kgCache;
 
-		$key = kfCacheKey( 'base', 'mwapi', $this->dbname, 'siteinfo', $prop );
+		$key = Cache::makeKey( 'toolbase-siteinfo-prop', $this->dbname, $prop );
 		$value = $kgCache->get( $key );
 		if ( $value === false ) {
 			if ( !in_array( $prop, self::$siprops ) ) {
@@ -119,12 +113,12 @@ class Wiki {
 			if ( $values !== false ) {
 				foreach ( self::$siprops as $siprop ) {
 					$kgCache->set(
-						kfCacheKey( 'base', 'mwapi', $this->dbname, 'siteinfo', $siprop  ),
-						$values->$siprop,
+						Cache::makeKey( 'toolbase-siteinfo-prop', $this->dbname, $siprop  ),
+						$values[$siprop],
 						3600
 					);
 				}
-				$value = $values->$prop;
+				$value = $values[$prop];
 			} else {
 				// Don't try again within this request nor for the next few
 				$value = null;
@@ -140,13 +134,13 @@ class Wiki {
 	/**
 	 * @return array
 	 */
-	public function getNamespaces() {
+	public function getNamespaces(): array {
 		static $namespaces = null;
 		if ( $namespaces === null ) {
-			$namespaces = array();
+			$namespaces = [];
 			$data = $this->getSiteInfo( 'namespaces' );
-			foreach ( $data as $i => &$ns ) {
-				$namespaces[ $ns->id ] = $ns->{"*"};
+			foreach ( $data as $i => $ns ) {
+				$namespaces[ $ns['id'] ] = $ns['*'];
 			}
 		}
 
@@ -172,35 +166,37 @@ class Wiki {
 
 	/**
 	 * @param string $pageName
-	 * @param array $query [optional]
+	 * @param array|null $query
 	 * @return string URI
 	 */
-	public function getPageUrl( $pageName, Array $query = null ) {
+	public function getPageUrl( $pageName, array $query = null ): string {
 		static $general = null;
 		if ( $general === null ) {
 			$general = $this->getSiteInfo( 'general' );
 		}
 
 		if ( $query ) {
-			return $general->server . $general->script .
-				'?title=' . self::urlencodePage( $pageName ) .
-				'&' . http_build_query( $query );
+			return $general['server']
+				. $general['script']
+				. '?title=' . self::urlencodePage( $pageName )
+				. '&' . http_build_query( $query );
 		}
 
-		return $general->server . str_replace( '$1', self::urlencodePage( $pageName ), $general->articlepath );
+		return $general['server']
+			. str_replace( '$1', self::urlencodePage( $pageName ), $general['articlepath'] );
 	}
 
 	/**
 	 * @param array $query
 	 * @return string URI
 	 */
-	public function getUrl( Array $query ) {
+	public function getUrl( array $query ): string {
 		static $general = null;
 		if ( $general === null ) {
 			$general = $this->getSiteInfo( 'general' );
 		}
 
-		return $general->server . $general->script . '?' . http_build_query( $query );
+		return $general['server'] . $general['script'] . '?' . http_build_query( $query );
 	}
 
 }

@@ -1,7 +1,9 @@
 <?php
+use Krinkle\Toolbase\MemoryCacheStore;
+
 class MemoryCacheStoreTest extends CacheTestCase {
 
-	protected function setUp() {
+	protected function setUp(): void {
 		parent::setUp();
 		$this->cache = new MemoryCacheStore();
 	}

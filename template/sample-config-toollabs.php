@@ -1,9 +1,7 @@
 <?php
 /**
- * Tool configuration (example for a tool in Tool Labs)
+ * Tool configuration (example for Toolforge)
  */
-
-$kgConf->cookiePrefix = 'example_';
 
 $kgCache->addStore(
 	new RedisCacheStore( array(

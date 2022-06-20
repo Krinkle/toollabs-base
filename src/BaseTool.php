@@ -1,23 +1,19 @@
 <?php
-/**
- * Main class
- *
- * @package krinkle/toollabs-base
- * @since v0.1.0
- */
+namespace Krinkle\Toolbase;
+
+use Exception;
 
 /**
- * @class BaseTool
+ * Base class for Toolforge tools.
  *
- * Base class for all tools created after January 2011.
+ * @since 0.1.0
  * @example
- * <code>
+ *
  *     $Tool = BaseTool::newFromArray( $config );
- * </code>
+ *
  */
 class BaseTool {
 
-	/* Public member variables */
 	/* Accessing these outside the class is discouraged, use or create get/setters instead */
 	var $displayTitle = '';
 	var $remoteBasePath = '';
@@ -45,17 +41,41 @@ class BaseTool {
 	protected $requireJS = false;
 
 	var $headTitle = '';
-	var $I18N = null;
+	private $I18N = null;
 
 	/**
 	 * @var array $sourceInfo Properties:
 	 * issueTrackerUrl, repoViewUrl, repoDir, repoCommitID, repoCommitUrl.
 	 */
-	protected $sourceInfo = null;
+	protected $sourceInfo = [];
+
+	/* The last instance created via newFromArray */
+	private static $instance = null;
+
+	public static function getInstance(): ?self {
+		return self::$instance;
+	}
+
+	private function __construct() {
+	}
 
 	public static function newFromArray( $config ) {
-		global $kgConf;
-		$section = new kfLogSection( __METHOD__ );
+
+		// Init logger status first
+		$req = new Request( $_GET );
+		if ( $req->hasKey( 'debug' ) ) {
+		    $isDebug = $req->getFuzzyBool( 'debug' );
+		    // Persist or unpersist accordingly,
+		    // to allow for form submissions and subsequent browsing.
+		    $req->setCookie( 'debug', $isDebug ? '1' : null );
+		} else {
+		    $isDebug = $req->getCookie( 'debug' ) === '1';
+		}
+		if ( $isDebug ) {
+			Logger::setEnabled();
+		}
+
+		$scope = Logger::createScope( __METHOD__ );
 
 		$t = new BaseTool();
 
@@ -64,21 +84,21 @@ class BaseTool {
 		}
 
 		if ( isset( $config['sourceInfo'] ) ) {
-			$this->sourceInfo = $config['sourceInfo'];
+			$t->sourceInfo = $config['sourceInfo'];
 		}
 
-		$kgConf->I18N = isset( $config['I18N'] ) ? $config['I18N'] : null;
+		$t->I18N = $config['I18N'] ?? null;
 
-		$t->displayTitle = isset( $config['displayTitle'] ) ? $config['displayTitle'] : '';
-		$t->revisionId = isset( $config['revisionId'] ) ? $config['revisionId'] : '';
+		$t->displayTitle = $config['displayTitle'] ?? '';
+		$t->revisionId = $config['revisionId'] ?? '';
 
 		$t->styles = array(
-			'//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css',
+			'https://tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css',
 			'base/main.css',
 		);
 		$t->scripts = array(
-			'//tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/3.2.1/jquery.min.js',
-			'//tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js',
+			'https://tools-static.wmflabs.org/cdnjs/ajax/libs/jquery/3.2.1/jquery.min.js',
+			'https://tools-static.wmflabs.org/cdnjs/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js',
 		);
 
 		if ( isset( $config['authors'] ) ) {
@@ -111,7 +131,9 @@ class BaseTool {
 
 		$t->headTitle = $t->displayTitle;
 
-		kfLog( 'Tool "' . $t->displayTitle . '" instantiated' );
+		Logger::debug( 'Tool "' . $t->displayTitle . '" instantiated' );
+
+		self::$instance = $t;
 
 		return $t;
 	}
@@ -126,9 +148,11 @@ class BaseTool {
 	}
 
 	public function setSourceInfoGithub( $owner, $repo, $repoDir = null ) {
-		$section = new kfLogSection( __METHOD__ );
+		$scope = Logger::createScope( __METHOD__ );
 
 		$this->sourceInfo = array(
+			'repoOwner' => $owner,
+			'repoName' => $repo,
 			'issueTrackerUrl' => "https://github.com/$owner/$repo/issues",
 			'repoViewUrl' => "https://github.com/$owner/$repo",
 		);
@@ -136,28 +160,40 @@ class BaseTool {
 		if ( is_dir( $repoDir ) ) {
 			$gitInfo = new GitInfo( $repoDir );
 			$repoCommitID = $gitInfo->getHeadSHA1();
-			if ( $repoCommitID ) {
+			if ( $repoCommitID !== false ) {
 				$this->sourceInfo['repoDir'] = $repoDir;
 				$this->sourceInfo['repoCommitID'] = substr( $repoCommitID, 0, 8 );
 				$this->sourceInfo['repoCommitUrl'] = "https://github.com/$owner/$repo/commit/$repoCommitID";
 			} else {
-				kfLog( "GitInfo for '$repoDir' failed." );
+				Logger::debug( "GitInfo for '$repoDir' failed." );
 			}
 		}
 	}
 
 	public function getSourceInfo() {
-		$sourceInfo = array(
+		$sourceInfo = $this->sourceInfo + array(
+			'repoOwner' => false,
+			'repoName' => false,
 			'issueTrackerUrl' => false,
 			'repoViewUrl' => false,
 			'repoDir' => false,
 			'repoCommitID' => false,
 			'repoCommitUrl' => false,
 		);
-		if ( is_array( $this->sourceInfo ) ) {
-			$sourceInfo = $this->sourceInfo + $sourceInfo;
-		}
 		return $sourceInfo;
+	}
+
+	/**
+	 * @since 2.0.0
+	 */
+	public function getUserAgent(): string {
+		return trim( sprintf( '%s (%s) %s',
+			$this->sourceInfo['repoName']
+				?: strtr( strip_tags( $this->displayTitle ), ' ', '_' )
+				?: '-',
+			$this->sourceInfo['repoCommitID'] ?: $this->revisionId ?: '-',
+			$this->sourceInfo['repoViewUrl'] ?: $_SERVER['SERVER_NAME'] ?: ''
+		) );
 	}
 
 	public function expandUrlArray( $items = array() ) {
@@ -270,13 +306,12 @@ class BaseTool {
 			return '';
 		}
 
-		global $kgConf;
 		$titleVal = htmlspecialchars( $this->displayTitle );
 
 		$toolnav = array();
 
-		if ( !is_null( $kgConf->I18N ) ) {
-			$toolnav[] = $kgConf->I18N->dashboardBacklink();
+		if ( $this->I18N ) {
+			$toolnav[] = $this->I18N->dashboardBacklink();
 		}
 
 		$toolnav = '<li>' . implode( '</li><li>', $toolnav ) . '</li>';
@@ -332,8 +367,6 @@ HTML;
 			return '';
 		}
 
-		global $kgConf;
-
 		$authorNodes = array();
 		foreach ( $this->authors as $author => $link ) {
 			if ( is_int( $author ) ) {
@@ -368,7 +401,7 @@ HTML;
 		$sourceInfo = $this->getSourceInfo();
 
 		$version = $this->revisionId ? "v{$this->revisionId}" : '';
-		if ( $sourceInfo['repoCommitID'] ) {
+		if ( $sourceInfo['repoCommitID'] !== false ) {
 			$sourceVersion = $sourceInfo['repoCommitID'];
 			if ( $sourceInfo['repoCommitUrl'] ) {
 				$sourceVersion = Html::element( 'a', array(
@@ -404,13 +437,13 @@ HTML;
 
 		$toolnav = '<li>' . implode( '</li><li>·</li><li>', $items ) . '</li>';
 
-		if ( !$kgConf->isDebugMode() ) {
+		if ( !Logger::isEnabled() ) {
 			$debugFooter = '';
 		} else {
 			$debugFooter = '<div class="container"><div class="panel panel-info">'
 				. '<div class="panel-heading"><h3 class="panel-title">Debug log</h3></div>'
 				. '<div class="panel-body">'
-				. kfLogFlush( KR_LOG_RETURN, KR_FLUSH_HTMLPRE )
+				. Logger::flush( Logger::MODE_HTML )
 				. '</div>'
 				. '</div></div>';
 		}
@@ -431,94 +464,84 @@ HTML;
 	}
 
 
-	public function flushMainOutput( $mode = KR_OUTPUT_BROWSER_HTML5 ) {
-		global $kgConf, $kgReq;
+	public function flushMainOutput(): void {
+		// Stylesheets
+		$resourcesHead = '';
+		if ( is_array( $this->styles ) ) {
+			foreach( $this->styles as $style ) {
+				$resourcesHead .= '<link rel="stylesheet" href="' . htmlspecialchars( $style ) . '"/>' . "\n";
+			}
+		}
+		if ( is_array( $this->scriptsHead ) ) {
+			foreach( $this->scriptsHead as $script ) {
+				$resourcesHead .= '<script src="' . htmlspecialchars( $script ) . '"></script>' . "\n";
+			}
+		}
+		$this->addHeadOut( $resourcesHead );
 
-		switch ( $mode ) {
-			case KR_OUTPUT_BROWSER_HTML5:
-
-				// Stylesheets
-				$resourcesHead = '';
-				if ( is_array( $this->styles ) ) {
-					foreach( $this->styles as $style ) {
-						$resourcesHead .= '<link rel="stylesheet" href="' . htmlspecialchars( $style ) . '"/>' . "\n";
-					}
-				}
-				if ( is_array( $this->scriptsHead ) ) {
-					foreach( $this->scriptsHead as $script ) {
-						$resourcesHead .= '<script src="' . htmlspecialchars( $script ) . '"></script>' . "\n";
-					}
-				}
-				$this->addHeadOut( $resourcesHead );
-
-				// window.KRINKLE
-				$this->addHeadOut(
-					'<script>'
-					. 'document.documentElement.className = document.documentElement.className.replace(/\bnojs\b/,\'js\');'
-					. 'window.KRINKLE = ' . json_encode(array(
-						'baseTool' => array(
-							'basePath' => $this->remoteBasePath,
-							'req' => array(
-								 'wasPosted' => $kgReq->wasPosted(),
-							),
-						),
-					))
-					. ';</script>'
-				);
-
-				$documentClassses = array(
-					'client-nojs',
-				);
-				$contentLanguageCode = !is_null( $kgConf->I18N ) ? $kgConf->I18N->getLang() : 'en-US';
-				$contentLanguageDir = !is_null( $kgConf->I18N ) ? $kgConf->I18N->getDir() : 'ltr';
-
-				// Scripts
-				$resourcesBody = '';
-				if ( is_array( $this->scripts ) ) {
-					foreach( $this->scripts as $script ) {
-						$resourcesBody .= '<script defer src="' . htmlspecialchars( $script ) . '"></script>' . "\n";
-					}
-				}
-
-				if ( $this->requireJS ) {
-					$documentClassses[] = 'client-requirejs';
-					$resourcesBody .= '<div class="requirejs-msg">'
-						. kfAlertHtml( 'warning', 'This tool requires JavaScript and/or modern browser features that are not supported by your browser.' )
-						. '</div>';
-				}
-
-				$this->addOut( $resourcesBody );
-
-				$innerHTML =
-					"<head>\n"
-					. '<meta charset="utf-8">'
-					. "\n<title>" . $this->headTitle . "</title>\n"
-					. trim( $this->mainOutput['head'] )
-					. "\n</head>\n"
-					. "<body>\n"
-					. $this->getPageTop()
-					. $this->getPageHeader()
-					. trim( $this->mainOutput['body'] )
-					. $this->getPageFooter()
-					. "\n</body>"
-				;
-
-				header( 'Content-Type: text/html; charset=utf-8' );
-				echo '<!DOCTYPE html>'
-				. Html::rawElement( 'html',
-					array(
-						'dir' => $contentLanguageDir,
-						'lang' => $contentLanguageCode,
-						'class' => $documentClassses,
+		global $kgReq;
+		// window.KRINKLE
+		$this->addHeadOut(
+			'<script>'
+			. 'document.documentElement.className = document.documentElement.className.replace(/\bnojs\b/,\'js\');'
+			. 'window.KRINKLE = ' . json_encode(array(
+				'baseTool' => array(
+					'basePath' => $this->remoteBasePath,
+					'req' => array(
+						 'wasPosted' => $kgReq->wasPosted(),
 					),
-					$innerHTML
-				);
-				break;
-			default:
-				echo $this->mainOutput['body'];
+				),
+			))
+			. ';</script>'
+		);
+
+		$documentClassses = array(
+			'client-nojs',
+		);
+		$contentLanguageCode = $this->I18N ? $this->I18N->getLang() : 'en-US';
+		$contentLanguageDir = $this->I18N ? $this->I18N->getDir() : 'ltr';
+
+		// Scripts
+		$resourcesBody = '';
+		if ( is_array( $this->scripts ) ) {
+			foreach( $this->scripts as $script ) {
+				$resourcesBody .= '<script defer src="' . htmlspecialchars( $script ) . '"></script>' . "\n";
+			}
 		}
 
-		return true;
+		if ( $this->requireJS ) {
+			$documentClassses[] = 'client-requirejs';
+			$resourcesBody .= '<div class="requirejs-msg">'
+				. kfAlertHtml( 'warning', 'This tool requires JavaScript and/or modern browser features that are not supported by your browser.' )
+				. '</div>';
+		}
+
+		$this->addOut( $resourcesBody );
+
+		$innerHTML =
+			"<head>\n"
+			. '<meta charset="utf-8">'
+			. "\n<title>" . $this->headTitle . "</title>\n"
+			. trim( $this->mainOutput['head'] )
+			. "\n</head>\n"
+			. "<body>\n"
+			. $this->getPageTop()
+			. $this->getPageHeader()
+			. trim( $this->mainOutput['body'] )
+			. $this->getPageFooter()
+			. "\n</body>"
+		;
+
+		header( 'Content-Type: text/html; charset=utf-8' );
+		echo '<!DOCTYPE html>'
+			. Html::rawElement( 'html',
+				array(
+					'dir' => $contentLanguageDir,
+					'lang' => $contentLanguageCode,
+					'class' => $documentClassses,
+				),
+				$innerHTML
+			);
 	}
 
 	public function redirect( $url, $status = 302 ) {
@@ -527,20 +550,18 @@ HTML;
 	}
 
 	public function generatePermalink( $params = array(), $url = false ) {
-		$link = $url ? $url : $this->remoteBasePath;
+		$link = $url ?: $this->remoteBasePath;
 		$one = true;
 		foreach ( $params as $key => $val ) {
-
 			if ( $val !== '' && $val !== false && $val !== 0 ) {
-
 				$link .= $one ? '?' : '&';
 				if ( $one ) {
 					$one = false;
 				}
 				$link .= rawurlencode( $key ) . '=' . rawurlencode( $val );
 			}
-
 		}
+
 		return $link;
 	}
 

@@ -1,43 +1,80 @@
 <?php
-/**
- * @package krinkle/toollabs-base
- * @since v0.5.0
- */
+namespace Krinkle\Toolbase;
 
+use Exception;
+use PDO;
+
+/**
+ * @since 0.5.0
+ */
 class LabsDB {
 	/**
 	 * @var array PDO objects keyed by hostname
 	 */
-	protected static $dbConnections = array();
+	protected static $dbConnections = [];
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	protected static $dbInfos;
 
-	/**
-	 * @var array
-	 */
+	/** @var array */
 	protected static $wikiInfos;
+
+	private static $replicaUsername;
+	private static $replicaPassword;
+
+	/**
+	 * Read `replica.my.cnf` from the webserver user's home directory.
+	 */
+	private static function readReplicaConf(): void {
+		if ( self::$replicaUsername && self::$replicaPassword ) {
+			return;
+		}
+
+		$info = posix_getpwuid(posix_geteuid());
+		$homeDir = $info['dir'];
+		$file = $homeDir  . '/replica.my.cnf';
+		if ( !is_readable( $file ) || !is_file( $file ) ) {
+			throw new Exception( 'Failed to fetch credentials from replica.my.cnf' );
+		}
+		$cnf = parse_ini_file( $file );
+		if ( !$cnf || !$cnf['user'] || !$cnf['password'] ) {
+			throw new Exception( 'Failed to fetch credentials from replica.my.cnf' );
+		}
+		self::$replicaUsername = $cnf['user'];
+		self::$replicaPassword = $cnf['password'];
+	}
+
+	/**
+	 * @since 2.0.0
+	 */
+	public static function getReplicaUser(): string {
+		self::readReplicaConf();
+		return self::$replicaUsername;
+	}
+
+	/**
+	 * @since 2.0.0
+	 */
+	public static function getReplicaPassword(): string {
+		self::readReplicaConf();
+		return self::$replicaPassword;
+	}
 
 	/**
 	 * Get a database connection by hostname
 	 *
 	 * Returns a previously established connection or initiates a new one.
-	 *
-	 * @return PDO
-	 * @throws If connection failed
 	 */
-	public static function getConnection( $hostname, $dbname ) {
+	public static function getConnection( $hostname, $dbname ): PDO {
 		if ( isset( self::$dbConnections[ $hostname ] ) ) {
 			$conn = self::$dbConnections[ $hostname ];
 		} else {
-			$section = new kfLogSection( __METHOD__ );
+			$scope = Logger::createScope( __METHOD__ );
 			try {
 				$conn = new LoggedPDO(
 					'mysql:host=' . $hostname . ';dbname=' . $dbname . '_p;charset=utf8',
-					kfDbUsername(),
-					kfDbPassword()
+					self::getReplicaUser(),
+					self::getReplicaPassword()
 				);
 			    $conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
 			} catch ( Exception $e ) {
@@ -53,10 +90,7 @@ class LabsDB {
 		return $conn;
 	}
 
-	/**
-	 * @return PDO
-	 */
-	public static function getMetaDB() {
+	public static function getMetaDB(): PDO {
 		static $metaServer;
 		// meta_p is replicated on all shards, any of these is fine
 		static $servers = array(
@@ -105,11 +139,8 @@ class LabsDB {
 	 *     $m->bindParam( ':total', $total, PDO::PARAM_INT );
 	 *     $m->execute();
 	 *     $rows = $m->fetchAll( PDO::FETCH_ASSOC );
-	 *
-	 * @return PDO
-	 * @throws If dbname could not be found
 	 */
-	public static function getDB( $dbname ) {
+	public static function getDB( $dbname ): PDO {
 		if ( $dbname === 'meta' ) {
 			return self::getMetaDB();
 		}
@@ -122,26 +153,21 @@ class LabsDB {
 		return self::getConnection( $wikiInfo['slice'], $dbname );
 	}
 
-	/**
-	 * @param PDO $conn
-	 */
-	public static function selectDB( $conn, $dbname ) {
+	public static function selectDB( PDO $conn, string $dbname ): void {
         $stmt = $conn->prepare( 'USE `' . $dbname . '_p`;' );
         $stmt->execute();
         unset( $stmt );
 	}
 
 	/**
-	 *
 	 * @param PDO $conn
-	 * @param string $db Database name
-	 * @param string $sql SQL query (with placeholders)
-	 * @param array $bindings Bindings of type PDO::PARAM_STR. Use prepare() if you
-	 *  need different types or if you want to execute multiple times.
+	 * @param string $sql SQL query with placeholders
+	 * @param array|null $bindings Bindings of type PDO::PARAM_STR.
+	 *  Use prepare() if you need different types or to execute multiple times.
 	 * @return array Rows
 	 */
-	public static function query( $conn, $sql, $bindings = null ) {
-		$section = new kfLogSection( __METHOD__ );
+	public static function query( PDO $conn, string $sql, array $bindings = null ): array {
+		$scope = Logger::createScope( __METHOD__ );
 
 		if ( $bindings ) {
 			$m = $conn->prepare( $sql );
@@ -153,10 +179,7 @@ class LabsDB {
 		return $m->fetchAll( PDO::FETCH_ASSOC );
 	}
 
-	/**
-	 * @return array
-	 */
-	protected static function fetchAllDbInfos() {
+	protected static function fetchAllDbInfos(): array {
 		$rows = self::query( self::getMetaDB(),
 			'SELECT dbname, family, url, slice
 			FROM wiki
@@ -164,7 +187,7 @@ class LabsDB {
 			ORDER BY url ASC'
 		);
 
-		$dbInfos = array();
+		$dbInfos = [];
 		foreach ( $rows as &$row ) {
 			$dbInfos[ $row['dbname'] ] = $row;
 		}
@@ -176,16 +199,16 @@ class LabsDB {
 	 * Get information for all (replicated) databases.
 	 *
 	 * See https://wikitech.wikimedia.org/wiki/Nova_Resource:Tools/Help#Metadata_database
-	 *
-	 * @return array
 	 */
-	public static function getAllDbInfos() {
+	public static function getAllDbInfos(): array {
 		if ( !isset( self::$dbInfos ) ) {
 			global $kgCache;
-			$key = kfCacheKey( 'base', 'labsdb', 'meta', 'dbinfos' );
+			$key = Cache::makeKey( 'toolbase-labsdb-dbinfos' );
+			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 			$value = $kgCache->get( $key );
 			if ( $value === false ) {
 				$value = self::fetchAllDbInfos();
+				// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 				$kgCache->set( $key, $value, 3600 * 24 );
 			}
 			self::$dbInfos = $value;
@@ -194,11 +217,7 @@ class LabsDB {
 		return self::$dbInfos;
 	}
 
-	/**
-	 * @param string $dbname
-	 * @return Array
-	 */
-	public static function getDbInfo( $dbname ) {
+	public static function getDbInfo( string $dbname ): array {
 		$dbInfos = self::getAllDbInfos();
 
 		if ( !isset( $dbInfos[ $dbname ] ) ) {
@@ -215,10 +234,8 @@ class LabsDB {
 	 * filter out non-wikis. Do so by removing rows with NULL values for url
 	 * (see wmbug.com/65789). Could simply be done in SQL, but we want to
 	 * cache all db infos, so do here instead.
-	 *
-	 * @return Array
 	 */
-	public static function getAllWikiInfos() {
+	public static function getAllWikiInfos(): array {
 		if ( !isset( self::$wikiInfos ) ) {
 			$wikiInfos = self::getAllDbInfos();
 			foreach ( $wikiInfos as $dbname => &$wikiInfo ) {
@@ -233,54 +250,10 @@ class LabsDB {
 		return self::$wikiInfos;
 	}
 
-	public static function purgeConnections() {
+	public static function purgeConnections(): void {
 		// PDO doesn't have an explicit close method.
 		// Just dereference them.
 		self::$dbConnections = array();
 	}
 }
 
-class LoggedPDO extends PDO {
-	public function __construct( $dsn, $username = null, $password = null ) {
-		parent::__construct( $dsn, $username, $password );
-	}
-
-	public function prepare( $statement, $driver_options = null ) {
-		kfLog( self::generalizeSQL( "query-prepare: $statement" ) );
-		return parent::prepare( $statement );
-	}
-
-	public function query( $statement ) {
-		kfLog( self::generalizeSQL( "query: $statement" ) );
-		return parent::query( $statement );
-	}
-
-	/**
-	 * Remove most variables from an SQL query and replace them with X or N markers.
-	 *
-	 * Based on Database.php of mediawik-core 1.24-alpha
-	 *
-	 * @param string $sql
-	 * @return string
-	 */
-	protected static function generalizeSQL( $sql ) {
-		// This does the same as the regexp below would do, but in such a way
-		// as to avoid crashing php on some large strings.
-		# $sql = preg_replace( "/'([^\\\\']|\\\\.)*'|\"([^\\\\\"]|\\\\.)*\"/", "'X'", $sql );
-
-		$sql = str_replace( "\\\\", '', $sql );
-		$sql = str_replace( "\\'", '', $sql );
-		$sql = str_replace( "\\\"", '', $sql );
-		$sql = preg_replace( "/'.*'/s", "'X'", $sql );
-		$sql = preg_replace( '/".*"/s', "'X'", $sql );
-
-		// All newlines, tabs, etc replaced by single space
-		$sql = preg_replace( '/\s+/', ' ', $sql );
-
-		// All numbers => N
-		$sql = preg_replace( '/-?\d+(,-?\d+)+/s', 'N,...,N', $sql );
-		$sql = preg_replace( '/-?\d+/s', 'N', $sql );
-
-		return $sql;
-	}
-}

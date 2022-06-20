@@ -1,3 +1,32 @@
+## v2.0.0
+2022-06-19
+
+This release requires PHP 7.3 or later.
+
+### Changes
+
+* All classes have been moved under the `Krinkle\Toolbase\` namespace.
+* Most methods now have PHP 7 return types and parameter types.
+* GlobalFunctions: `kfApiRequest` now returns JSON as associative array instead of stdClass.
+
+### Removed
+
+* InitTool: The global `user_agent` INI value is no longer modified.
+  Note that requests made via the HttpRequest class are unaffected, as these already
+  set their own user-agent based on metadata from the BaseTool object.
+
+* Request: Support for `$kgConf->getCookiePrefix()` was removed.
+  Toolforge now hosts tools under their own subdomain.
+  If prefixes are required for other reasons, include them explicitly when calling `setCookie()`.
+
+* GlobalFunctions: `kfCacheKey` was removed in favour of `Cache::makeKey()`.
+* GlobalFunctions: `kfLogSection` was removed in favour of `Logger::createScope()`.
+* GlobalFunctions: `kfLogFlush` was removed in favour of `Logger::flush()`.
+* GlobalFunctions: `kfDbUsername` was removed in favour of `LabsDB::getReplicaUser()`.
+* GlobalFunctions: `kfDbPassword` was removed in favour of `LabsDB::getReplicaPassword()`.
+* GlobalConfig: This class was removed, its moved to `Logger`, `LabsDB`, and `BaseTool`.
+* `$kgConf`: The GlobalConfig singleton was removed in favour of `BaseTool::getInstance()`.
+
 ## v1.0.2
 2018-10-29
 

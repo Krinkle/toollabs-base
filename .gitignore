@@ -1,5 +1,5 @@
+/cache/
+/coverage/
+/vendor/
 /composer.lock
-/coverage
-/vendor
-cache
-LocalConfig.php
+/.phpunit.result.cache

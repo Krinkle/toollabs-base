@@ -23,7 +23,7 @@ class BaseTool {
 	var $scriptsHead = array();
 	var $mainOutput = array( 'head' => '', 'body' => '' );
 	var $authors = array(
-		'@Krinkle' => 'https://github.com/Krinkle',
+		'@Krinkle' => 'https://meta.wikimedia.org/wiki/User:Krinkle',
 	);
 	var $licenses = array(
 		'MIT',
@@ -150,9 +150,8 @@ class BaseTool {
 	public function setSourceInfoGithub( $owner, $repo, $repoDir = null ) {
 		$scope = Logger::createScope( __METHOD__ );
 
-		$this->sourceInfo = array(
-			'repoOwner' => $owner,
-			'repoName' => $repo,
+		$this->sourceInfo += array(
+			'repoName' => "$owner/$repo",
 			'issueTrackerUrl' => "https://github.com/$owner/$repo/issues",
 			'repoViewUrl' => "https://github.com/$owner/$repo",
 		);
@@ -170,9 +169,32 @@ class BaseTool {
 		}
 	}
 
+	/**
+	 * @since 2.1.0
+	 * @param string $repo
+	 * @param string|null $repoDir
+	 */
+	public function setSourceInfoGerrit( string $repo, $repoDir = null ): void {
+		$this->sourceInfo += array(
+			'repoName' => $repo,
+			'repoViewUrl' => "gerrit.wikimedia.org/g/$repo",
+		);
+
+		if ( is_dir( $repoDir ) ) {
+			$gitInfo = new GitInfo( $repoDir );
+			$repoCommitID = $gitInfo->getHeadSHA1();
+			if ( $repoCommitID !== false ) {
+				$this->sourceInfo['repoDir'] = $repoDir;
+				$this->sourceInfo['repoCommitID'] = substr( $repoCommitID, 0, 8 );
+				$this->sourceInfo['repoCommitUrl'] = "https://gerrit.wikimedia.org/g/$repo/+/$repoCommitID";
+			} else {
+				Logger::debug( "GitInfo for '$repoDir' failed." );
+			}
+		}
+	}
+
 	public function getSourceInfo() {
 		$sourceInfo = $this->sourceInfo + array(
-			'repoOwner' => false,
 			'repoName' => false,
 			'issueTrackerUrl' => false,
 			'repoViewUrl' => false,

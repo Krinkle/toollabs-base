@@ -1,5 +1,4 @@
 [![Packagist](https://img.shields.io/packagist/v/Krinkle/toollabs-base.svg?style=flat)](https://packagist.org/packages/Krinkle/toollabs-base)
-[![CI Status](https://github.com/Krinkle/intuition/actions/workflows/CI.yaml/badge.svg)](https://github.com/Krinkle/intuition/actions/workflows/CI.yaml)
 
 # Toolbase
 

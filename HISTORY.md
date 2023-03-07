@@ -1,3 +1,18 @@
+## v2.1.0
+
+2023-03-07
+
+### Added
+
+* Add `BaseTool::setSourceInfoGerrit()`.
+  To advertise a Phabricator project,
+  use `'sourceInfo' => [ 'issueTrackerUrl' => … ]` in the constructor.
+
+### Changes
+
+* `BaseTool::setSourceInfoGithub()` now adds keys to `sourceInfo` instead
+  of replacing the array entirely. The unused `repoOwner` key was removed.
+
 ## v2.0.0
 2022-06-19
 

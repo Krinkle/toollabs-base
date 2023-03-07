@@ -177,7 +177,7 @@ class BaseTool {
 	public function setSourceInfoGerrit( string $repo, $repoDir = null ): void {
 		$this->sourceInfo += array(
 			'repoName' => $repo,
-			'repoViewUrl' => "gerrit.wikimedia.org/g/$repo",
+			'repoViewUrl' => "https://gerrit.wikimedia.org/g/$repo",
 		);
 
 		if ( is_dir( $repoDir ) ) {

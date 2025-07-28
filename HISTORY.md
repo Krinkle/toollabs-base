@@ -1,3 +1,20 @@
+## v2.2.0
+
+2025-07-29
+
+This release requires PHP 7.4 or later.
+
+### Fixed
+
+* Fix various deprecation warnings on PHP 8.2, 8.3 and 8.4.
+* Improve security annotations for phan-taint-check-plugin.
+
+### Changes
+
+* `BaseTool::addOut()` now sets a `string` type hint on the `$content` parameter,
+  and always returns true. Assuming default unstrict mode, this casts non-string
+  content to a string, instead of silently ignoring.
+
 ## v2.1.0
 
 2023-03-07
@@ -52,7 +69,7 @@ This release requires PHP 7.3 or later.
 ## v1.0.1
 2018-10-04
 
-### Bug fixes
+### Fixed
 
 * Request: Avoid use of deprecated `count(null)` for PHP 7.2.
 * HttpRequest: The default User-Agent string now includes
@@ -89,7 +106,7 @@ This release requires PHP 7.3 or later.
 ## v0.8.1
 2017-02-27
 
-### Bug fixes
+### Fixed
 * BaseTool: Make `revisionId` parameter optional. Prevent "Version: v" from
   being displayed on the page if there is no manual version set. Information
   from `setSourceInfoGithub` is not affected.
@@ -118,7 +135,7 @@ Use [Composer](https://getcomposer.org/) to install krinkle/toollabs-base.
 * page: Update jQuery to v1.11.2.
 * page: Upgrade Bootstrap to v3.3.4.
 
-### Bug fixes
+### Fixed
 * LabsDB: Ensure charset=utf8 is set in MySQL connection.
 * HttpRequest: Set followRedirect=true.
 * page: Return HTTP 500 on the exception page.

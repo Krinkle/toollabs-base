@@ -29,12 +29,16 @@ class Html {
 	];
 
 	/**
-	 * Create an HTML tag with raw content (unescaped).
+	 * Wrap an HTML tag around raw content (unescaped).
 	 *
 	 * @param string $element The element name.
+	 * @param-taint $element tainted
 	 * @param array $attribs Associative array of attributes.
+	 * @param-taint $attribs escapes_html
 	 * @param string $content The raw content.
+	 * @param-taint $content tainted
 	 * @return string HTML
+	 * @return-taint escaped
 	 */
 	public static function rawElement( $element, array $attribs = array(), $content = '' ) {
 		$start = "<$element" . self::expandAttributes( $attribs ) . '>';
@@ -45,12 +49,16 @@ class Html {
 	}
 
 	/**
-	 * Create an HTML tag with text content (escaped).
+	 * Create an HTML element with text content (escaped).
 	 *
 	 * @param string $element The element name.
+	 * @param-taint $element tainted
 	 * @param array $attribs Associative array of attributes.
+	 * @param-taint $attribs escapes_html
 	 * @param string $content The text content.
+	 * @param-taint $content escapes_html
 	 * @return string HTML
+	 * @return-taint escaped
 	 */
 	public static function element( $element, array $attribs = array(), $content = '' ) {
 		return self::rawElement( $element, $attribs, strtr( $content, array(

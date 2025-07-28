@@ -38,7 +38,7 @@ class HttpRequest {
 	}
 
 	/** @return bool|string */
-	public static function post( $url, Array $data ) {
+	public static function post( $url, array $data ) {
 		$req = new static( $url, 'POST', array(
 			'data' => $data
 		) );

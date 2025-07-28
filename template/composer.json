@@ -1,13 +1,17 @@
 {
 	"require": {
-		"php": ">=7.3",
-		"krinkle/toollabs-base": "^2.0.0",
+		"php": ">=7.4",
+		"krinkle/toollabs-base": "dev-master",
 		"krinkle/intuition": "^2.3.3"
 	},
 	"require-dev": {
-		"php-parallel-lint/php-parallel-lint": "1.3.2"
+		"php-parallel-lint/php-parallel-lint": "1.4.0"
 	},
 	"scripts": {
+		"serve": [
+			"Composer\\Config::disableProcessTimeout",
+			"php -S localhost:4000 -t public_html/"
+		],
 		"test": "parallel-lint . --exclude vendor"
 	}
 }

@@ -1,8 +1,6 @@
 <?php
 namespace Krinkle\Toolbase;
 
-use Exception;
-
 /**
  * Base class for Toolforge tools.
  *
@@ -279,29 +277,31 @@ class BaseTool {
 	}
 
 	/**
-	 * Add a string to the output memory
+	 * Add a string to the output buffer
 	 *
-	 * @param $str string String to be added to the memory
-	 * @param $wrapTag string (optional) Name of the tag to wrap the string in.
-	 *  If this is used the contents of $str will be html-escaped!
-	 * @param $attributes string (optional) When using a wrapTag these attributes
-	 *  will be applied as well. Both the keys and the values will be escaped, don't do
-	 *  so they should be passed raw to addOut()
-	 * @return boolean Returns true on success, false on failure
+	 * @param $content string Raw RTML to add to the output buffer
+	 * @param-taint $content tainted
+	 * @param $wrapTag string (optional) Name of the HTML tag to wrap the string in.
+	 *  If this is set, then $content will be escaped as plain text instead.
+	 *  This is deprecated in favour of Html::element.
+	 * @param $attribs string (optional) When using $wrapTag, these attributes
+	 *  will be set on the open tag.
+	 * @return true
 	 */
-	public function addOut( $str, $wrapTag = 0, $attributes = array() ) {
-		if ( is_string( $str ) ) {
-			if ( is_string( $wrapTag ) ) {
-				$str = Html::element( $wrapTag, $attributes, $str );
-			}
-			$this->mainOutput['body'] .= $str;
-			return true;
-		} else {
-			return false;
+	public function addOut( string $content, $wrapTag = null, $attribs = array() ) {
+		if ( is_string( $wrapTag ) ) {
+			$content = Html::element( $wrapTag, $attribs, $content );
 		}
+		$this->mainOutput['body'] .= $content;
+		return true;
 	}
-	public function addHtml( $str ) {
-		return $this->addOut( $str );
+
+	/**
+	 * @param string $html
+	 * @param-taint $html tainted
+	 */
+	public function addHtml( string $html ): void {
+		$this->addOut( $html );
 	}
 
 	public function addHeadOut( $str ) {

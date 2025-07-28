@@ -14,10 +14,10 @@ class LabsDB {
 	protected static $dbConnections = [];
 
 	/** @var array */
-	protected static $dbInfos;
+	protected static $dbInfos = null;
 
 	/** @var array */
-	protected static $wikiInfos;
+	protected static $wikiInfos = null;
 
 	private static $replicaUsername;
 	private static $replicaPassword;
@@ -166,7 +166,7 @@ class LabsDB {
 	 *  Use prepare() if you need different types or to execute multiple times.
 	 * @return array Rows
 	 */
-	public static function query( PDO $conn, string $sql, array $bindings = null ): array {
+	public static function query( PDO $conn, string $sql, ?array $bindings = null ): array {
 		$scope = Logger::createScope( __METHOD__ );
 
 		if ( $bindings ) {
@@ -201,14 +201,12 @@ class LabsDB {
 	 * See https://wikitech.wikimedia.org/wiki/Nova_Resource:Tools/Help#Metadata_database
 	 */
 	public static function getAllDbInfos(): array {
-		if ( !isset( self::$dbInfos ) ) {
+		if ( self::$dbInfos === null ) {
 			global $kgCache;
 			$key = Cache::makeKey( 'toolbase-labsdb-dbinfos' );
-			// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 			$value = $kgCache->get( $key );
 			if ( $value === false ) {
 				$value = self::fetchAllDbInfos();
-				// @phan-suppress-next-line PhanPossiblyUndeclaredVariable
 				$kgCache->set( $key, $value, 3600 * 24 );
 			}
 			self::$dbInfos = $value;
@@ -236,7 +234,7 @@ class LabsDB {
 	 * cache all db infos, so do here instead.
 	 */
 	public static function getAllWikiInfos(): array {
-		if ( !isset( self::$wikiInfos ) ) {
+		if ( self::$wikiInfos === null ) {
 			$wikiInfos = self::getAllDbInfos();
 			foreach ( $wikiInfos as $dbname => &$wikiInfo ) {
 				if ( !$wikiInfo['url'] ) {

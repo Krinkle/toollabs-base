@@ -27,7 +27,7 @@ class HtmlSelect {
 		$this->default = $default;
 	}
 
-	public function addOption( string $value, string $text = null ): void {
+	public function addOption( string $value, ?string $text = null ): void {
 		$this->options[$value] = $text ?? $value;
 	}
 

@@ -1,5 +1,6 @@
 <?php
 abstract class CacheTestCase extends PHPUnit\Framework\TestCase {
+	protected $cache;
 
 	public static function provideValues() {
 		return array(

@@ -55,7 +55,7 @@ class Request {
 		return intval( $this->getVal( $key, $default ) );
 	}
 
-	public function getFuzzyBool( $key, $default = false ): bool {
+	public function getFuzzyBool( $key ): bool {
 		return $this->hasKey( $key ) && $this->getVal( $key ) !== 'false';
 	}
 

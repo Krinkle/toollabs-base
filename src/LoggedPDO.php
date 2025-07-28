@@ -4,10 +4,7 @@ namespace Krinkle\Toolbase;
 use PDO;
 
 /**
- * @phan-file-suppress UnusedPluginFileSuppression
- * @phan-file-suppress PhanParamSignatureMismatchInternal for PDO::prepare and ::query
- * @phan-file-suppress PhanParamSignatureRealMismatchHasParamTypeInternal
- * @phan-file-suppress PhanParamSignatureRealMismatchTooManyRequiredParametersInternal
+ * @phan-file-suppress PhanUnusedPublicMethodParameter
  */
 class LoggedPDO extends PDO {
 	public function __construct( $dsn, $username = null, $password = null ) {

@@ -271,7 +271,7 @@ function kfEscapeShellArg() {
 	return implode( ' ', $args );
 }
 
-function kfFormatBytes( $size, $precision = 2 ) {
+function kfFormatBytes( $size ) {
 	$units = array( ' B', ' KB', ' MB', ' GB', ' TB' );
 	for ( $i = 0; $size >= 1024 && $i < 4; $i++ ) {
 		$size /= 1024;

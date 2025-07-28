@@ -7,6 +7,8 @@ use Krinkle\Toolbase\MemoryCacheStore;
 class CacheTest extends CacheTestCase {
 	protected static $root;
 
+	private $memoryCache1, $memoryCache2, $memoryCache3, $fileCache;
+
 	public static function setUpBeforeClass(): void {
 		self::$root = vfsStream::setup( 'test/cache' );
 	}

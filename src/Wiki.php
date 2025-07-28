@@ -169,7 +169,7 @@ class Wiki {
 	 * @param array|null $query
 	 * @return string URI
 	 */
-	public function getPageUrl( $pageName, array $query = null ): string {
+	public function getPageUrl( $pageName, ?array $query = null ): string {
 		static $general = null;
 		if ( $general === null ) {
 			$general = $this->getSiteInfo( 'general' );

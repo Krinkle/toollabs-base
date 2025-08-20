@@ -20,12 +20,12 @@ class HttpRequest {
 	protected $respHeaders = array();
 
 	/**
-	 * Comply with <https://meta.wikimedia.org/wiki/User-Agent_policy>
+	 * Comply with https://meta.wikimedia.org/wiki/User-Agent_policy
 	 */
 	public static function getUserAgent() {
 		$tool = BaseTool::getInstance();
 		$toolUA = $tool ? $tool->getUserAgent() : 'unspecified';
-		return "$toolUA; krinkle/toollabs-base (https://github.com/Krinkle/toollabs-base)";
+		return "$toolUA; krinkle/toollabs-base (https://gerrit.wikimedia.org/g/labs/tools/toolbase/)";
 	}
 
 	/** @return bool|string */

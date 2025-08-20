@@ -2,8 +2,8 @@
 namespace Krinkle\Toolbase;
 
 /**
- * Inspired by php-MemoryCache <https://github.com/c9s/php-UniversalCache>
- * Inspired by HashBagOStuff <https://github.com/wikimedia/mediawiki-core>
+ * Inspired by php-MemoryCache https://github.com/c9s/php-UniversalCache
+ * Inspired by HashBagOStuff https://gerrit.wikimedia.org/g/mediawiki/core
  */
 class MemoryCacheStore extends CacheStoreBase {
 	/** @var array */

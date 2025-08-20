@@ -1,4 +1,4 @@
-[![Packagist](https://img.shields.io/packagist/v/Krinkle/toollabs-base.svg?style=flat)](https://packagist.org/packages/Krinkle/toollabs-base)
+[![Packagist](https://img.shields.io/packagist/v/krinkle/toollabs-base.svg?style=flat)](https://packagist.org/packages/krinkle/toollabs-base)
 
 # Toolbase
 

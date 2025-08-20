@@ -11,6 +11,8 @@ This release requires PHP 7.4 or later.
 
 ### Changes
 
+* Moved repository from https://github.com/Krinkle/toollabs-base
+  to https://gerrit.wikimedia.org/g/labs/tools/toolbase/.
 * `BaseTool::addOut()` now sets a `string` type hint on the `$content` parameter,
   and always returns true. Assuming default unstrict mode, this casts non-string
   content to a string, instead of silently ignoring.

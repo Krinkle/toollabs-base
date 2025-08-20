@@ -4,8 +4,8 @@ namespace Krinkle\Toolbase;
 /**
  * Multi-cache interface
  *
- * Inspired by php-UniversalCache <https://github.com/c9s/php-UniversalCache>
- * Inspired by ObjectCache and BagOStuff <https://github.com/wikimedia/mediawiki-core>
+ * Inspired by php-UniversalCache https://github.com/c9s/php-UniversalCache
+ * Inspired by ObjectCache and BagOStuff https://gerrit.wikimedia.org/g/mediawiki/core
  *
  * @since 0.5.0
  */
